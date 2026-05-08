@@ -11,7 +11,7 @@ import type { EnvironmentBadgeProps } from './EnvironmentBadge.model'
 
 const props = defineProps<EnvironmentBadgeProps>()
 
-const normalizedEnvironment = computed(() => props.environment || 'dev')
+const normalizedEnvironment = computed(() => props.environment || 'development')
 </script>
 
 <style lang="scss" scoped>
@@ -28,7 +28,7 @@ const normalizedEnvironment = computed(() => props.environment || 'dev')
   text-transform: uppercase;
   letter-spacing: 0.06em;
 
-  &[data-environment='prod'] {
+  &[data-environment='production'] {
     color: var(--pietru-color-success);
     border-color: color-mix(in srgb, var(--pietru-color-success) 22%, var(--pietru-color-border));
     background: color-mix(in srgb, var(--pietru-color-success) 12%, transparent);
@@ -40,7 +40,7 @@ const normalizedEnvironment = computed(() => props.environment || 'dev')
     background: color-mix(in srgb, var(--pietru-color-accent) 12%, transparent);
   }
 
-  &[data-environment='dev'] {
+  &[data-environment='development'] {
     color: var(--pietru-color-warning);
     border-color: color-mix(in srgb, var(--pietru-color-warning) 22%, var(--pietru-color-border));
     background: color-mix(in srgb, var(--pietru-color-warning) 12%, transparent);

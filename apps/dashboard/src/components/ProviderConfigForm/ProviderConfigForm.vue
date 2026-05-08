@@ -21,16 +21,17 @@
     <label>
       <span>Mode</span>
       <select v-model="form.mode">
-        <option value="live">live</option>
-        <option value="capture">capture</option>
+        <option value="send">Send</option>
+        <option value="capture">Capture</option>
+        <option value="send_and_capture">Send & Capture</option>
       </select>
     </label>
     <label>
       <span>Environment</span>
       <select v-model="form.environment">
-        <option value="dev">dev</option>
-        <option value="preview">preview</option>
-        <option value="prod">prod</option>
+        <option value="development">Development</option>
+        <option value="preview">Preview</option>
+        <option value="production">Production</option>
       </select>
     </label>
     <button type="submit" :disabled="pending">Save provider config</button>
@@ -53,8 +54,8 @@ const emit = defineEmits<{
 const form = reactive<ProviderConfigPayload>({
   providerType: props.initialValue?.providerType || 'resend',
   config: props.initialValue?.config || {},
-  mode: props.initialValue?.mode || 'live',
-  environment: props.initialValue?.environment || 'dev',
+  mode: props.initialValue?.mode || 'send',
+  environment: props.initialValue?.environment || 'development',
   defaultFrom: props.initialValue?.defaultFrom || '',
   allowedDomains: props.initialValue?.allowedDomains || [],
 })

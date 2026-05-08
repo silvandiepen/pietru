@@ -14,20 +14,20 @@ export const useProvidersStore = defineStore('providers', {
   }),
   actions: {
     async list(projectId: string) {
-      const response = await apiRequest<{ providerConfigs: ProviderConfig[] }>(`/projects/${projectId}/provider-configs`)
-      this.items[projectId] = response.providerConfigs
-      return response.providerConfigs
+      const response = await apiRequest<ProviderConfig[]>(`/projects/${projectId}/provider-configs`)
+      this.items[projectId] = response
+      return response
     },
     async create(projectId: string, payload: ProviderConfigPayload) {
-      const response = await apiRequest<{ providerConfig: ProviderConfig }>(`/projects/${projectId}/provider-configs`, {
+      const response = await apiRequest<ProviderConfig>(`/projects/${projectId}/provider-configs`, {
         method: 'POST',
         body: JSON.stringify(payload),
       })
       await this.list(projectId)
-      return response.providerConfig
+      return response
     },
     async update(projectId: string, configId: string, payload: Partial<ProviderConfigPayload>) {
-      const response = await apiRequest<{ providerConfig: ProviderConfig }>(
+      const response = await apiRequest<ProviderConfig>(
         `/projects/${projectId}/provider-configs/${configId}`,
         {
           method: 'PATCH',
@@ -35,7 +35,7 @@ export const useProvidersStore = defineStore('providers', {
         },
       )
       await this.list(projectId)
-      return response.providerConfig
+      return response
     },
     async validate(projectId: string, configId: string) {
       return apiRequest<{ valid: boolean; message?: string }>(`/projects/${projectId}/provider-configs/${configId}/validate`, {

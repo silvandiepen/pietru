@@ -23,45 +23,45 @@ export const useProjectsStore = defineStore('projects', {
     async list() {
       this.loading = true
       try {
-        const response = await apiRequest<{ projects: Project[] }>('/projects')
-        this.items = response.projects
-        if (!this.activeProjectId && response.projects[0]) {
-          this.activeProjectId = response.projects[0].id
+        const response = await apiRequest<Project[]>('/projects')
+        this.items = response
+        if (!this.activeProjectId && response[0]) {
+          this.activeProjectId = response[0].id
         }
-        return response.projects
+        return response
       } finally {
         this.loading = false
       }
     },
     async create(payload: CreateProjectPayload) {
-      const response = await apiRequest<{ project: Project }>('/projects', {
+      const response = await apiRequest<Project>('/projects', {
         method: 'POST',
         body: JSON.stringify(payload),
       })
-      this.items.unshift(response.project)
-      this.activeProjectId = response.project.id
-      return response.project
+      this.items.unshift(response)
+      this.activeProjectId = response.id
+      return response
     },
     async get(id: string) {
-      const response = await apiRequest<{ project: Project }>(`/projects/${id}`)
+      const response = await apiRequest<Project>(`/projects/${id}`)
       const existing = this.items.findIndex((item) => item.id === id)
       if (existing >= 0) {
-        this.items.splice(existing, 1, response.project)
+        this.items.splice(existing, 1, response)
       } else {
-        this.items.push(response.project)
+        this.items.push(response)
       }
-      return response.project
+      return response
     },
     async update(id: string, payload: Partial<CreateProjectPayload>) {
-      const response = await apiRequest<{ project: Project }>(`/projects/${id}`, {
+      const response = await apiRequest<Project>(`/projects/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(payload),
       })
       const index = this.items.findIndex((item) => item.id === id)
       if (index >= 0) {
-        this.items.splice(index, 1, response.project)
+        this.items.splice(index, 1, response)
       }
-      return response.project
+      return response
     },
     async delete(id: string) {
       await apiRequest(`/projects/${id}`, { method: 'DELETE' })

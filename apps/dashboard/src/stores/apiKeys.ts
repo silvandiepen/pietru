@@ -16,18 +16,18 @@ export const useApiKeysStore = defineStore('apiKeys', {
   }),
   actions: {
     async list(projectId: string) {
-      const response = await apiRequest<{ apiKeys: ApiKey[] }>(`/projects/${projectId}/api-keys`)
-      this.items[projectId] = response.apiKeys
-      return response.apiKeys
+      const response = await apiRequest<ApiKey[]>(`/projects/${projectId}/api-keys`)
+      this.items[projectId] = response
+      return response
     },
     async create(projectId: string, payload: ApiKeyCreatePayload) {
-      const response = await apiRequest<{ apiKey: ApiKeyCreateResponse }>(`/projects/${projectId}/api-keys`, {
+      const response = await apiRequest<ApiKeyCreateResponse>(`/projects/${projectId}/api-keys`, {
         method: 'POST',
         body: JSON.stringify(payload),
       })
-      this.lastCreatedKey = response.apiKey
+      this.lastCreatedKey = response
       await this.list(projectId)
-      return response.apiKey
+      return response
     },
     async revoke(projectId: string, keyId: string) {
       await apiRequest(`/projects/${projectId}/api-keys/${keyId}`, {

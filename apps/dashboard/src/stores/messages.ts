@@ -43,22 +43,22 @@ export const useMessagesStore = defineStore('messages', {
           project: projectId,
           ...filters,
         } as MessageFilters & { project: string })
-        const response = await apiRequest<{ messages: Message[]; nextCursor?: string | null }>(`/messages?${query}`)
-        this.items = response.messages
+        const response = await apiRequest<{ items: Message[]; nextCursor?: string | null }>(`/messages?${query}`)
+        this.items = response.items
         this.nextCursor = response.nextCursor ?? null
-        return response.messages
+        return response.items
       } finally {
         this.loading = false
       }
     },
     async get(messageId: string) {
-      const response = await apiRequest<{ message: MessageDetail }>(`/messages/${messageId}`)
-      this.detail = response.message
-      return response.message
+      const response = await apiRequest<MessageDetail>(`/messages/${messageId}`)
+      this.detail = response
+      return response
     },
     async listTestInboxMessages(inbox: string) {
-      const response = await apiRequest<{ messages: InboxMessage[] }>(`/test-inboxes/${inbox}/messages`)
-      return response.messages
+      const response = await apiRequest<InboxMessage[]>(`/test-inboxes/${inbox}/messages`)
+      return response
     },
   },
 })

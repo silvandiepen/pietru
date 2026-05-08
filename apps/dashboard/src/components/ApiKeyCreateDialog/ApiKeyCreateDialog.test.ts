@@ -11,11 +11,11 @@ describe('ApiKeyCreateDialog', () => {
     })
 
     await wrapper.find('input').setValue('Worker key')
-    await wrapper.find('select').setValue('prod')
+    await wrapper.find('select').setValue('production')
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(wrapper.emitted('submit')?.[0]).toEqual([
-      { name: 'Worker key', environment: 'prod' },
+      { name: 'Worker key', environment: 'production' },
     ])
   })
 })

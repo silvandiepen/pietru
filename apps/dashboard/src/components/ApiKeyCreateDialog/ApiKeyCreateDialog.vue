@@ -20,9 +20,9 @@
         <label>
           <span>Environment</span>
           <select v-model="form.environment">
-            <option value="dev">dev</option>
-            <option value="preview">preview</option>
-            <option value="prod">prod</option>
+            <option value="development">Development</option>
+            <option value="preview">Preview</option>
+            <option value="production">Production</option>
           </select>
         </label>
         <button type="submit" :disabled="pending">Create key</button>
@@ -48,7 +48,7 @@ const emit = defineEmits<{
 
 const form = reactive<ApiKeyCreateDialogSubmitPayload>({
   name: '',
-  environment: 'dev',
+  environment: 'development',
 })
 
 function submit() {
