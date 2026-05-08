@@ -14,6 +14,8 @@ app.use(
   '*',
   cors({
     origin: [
+      'https://app.pietru.hakobs.com',
+      'https://pietru.hakobs.com',
       /^https:\/\/[a-z0-9-]+\.pietru-dashboard\.pages\.dev$/,
       /^https:\/\/[a-z0-9-]+\.pietru-marketing\.pages\.dev$/,
       'http://localhost:5173',
