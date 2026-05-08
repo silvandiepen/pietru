@@ -1,0 +1,24 @@
+{
+  "name": "@pietru/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pietru/auth": "file:../../packages/auth",
+    "@pietru/core": "file:../../packages/core",
+    "@pietru/providers": "file:../../packages/providers",
+    "@pietru/validation": "file:../../packages/validation",
+    "hono": "^4.7.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250510.0",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.15.2"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "types": ["@cloudflare/workers-types"],
+    "paths": {
+      "@pietru/core": ["../../packages/core/src/index.ts"],
+      "@pietru/auth": ["../../packages/auth/src/index.ts"],
+      "@pietru/providers": ["../../packages/providers/src/index.ts"],
+      "@pietru/validation": ["../../packages/validation/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -1,0 +1,18 @@
+name = "pietru-api"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+account_id = "8cef251b5fdcf6c6f63db98b7aa49f9a"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pietru-production"
+database_id = "b10d5417-73b1-4000-be98-ebdb1a070275"
+migrations_dir = "../../packages/db/migrations"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "ccf2e217b60d44e4bd6aeff05aaa52b6"
+
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "pietru-storage"
