@@ -114,6 +114,18 @@ export interface ProviderEvent {
   payload: unknown;
 }
 
+export interface EmailTemplate {
+  id: string;
+  projectId: string;
+  name: string;
+  description: string | null;
+  subject: string;
+  html: string | null;
+  text: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MailProvider {
   sendEmail(message: OutgoingEmail, config: ProviderConfig): Promise<ProviderSendResult>;
   validateConfig(config: ProviderConfig): Promise<void>;

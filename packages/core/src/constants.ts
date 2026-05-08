@@ -34,4 +34,5 @@ export const API_KEY_PREFIXES = {
   production: 'mg_pk_live_',
   development: 'mg_pk_test_',
   preview: 'mg_pk_test_',
+  account: 'mg_ak_',
 } as const;
