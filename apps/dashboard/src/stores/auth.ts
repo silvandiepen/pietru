@@ -41,13 +41,13 @@ export const useAuthStore = defineStore('auth', {
       this.clearError()
 
       try {
-        const response = await apiRequest<{ user: AuthUser }>('/auth/login', {
+        const response = await apiRequest<{ data: { user: AuthUser } }>('/auth/login', {
           method: 'POST',
           body: JSON.stringify(payload),
         })
-        this.user = response.user
+        this.user = response.data.user
         this.initialized = true
-        return response.user
+        return this.user
       } catch (error) {
         this.setError(error)
         throw error
@@ -60,13 +60,13 @@ export const useAuthStore = defineStore('auth', {
       this.clearError()
 
       try {
-        const response = await apiRequest<{ user: AuthUser }>('/auth/register', {
+        const response = await apiRequest<{ data: { user: AuthUser } }>('/auth/register', {
           method: 'POST',
           body: JSON.stringify(payload),
         })
-        this.user = response.user
+        this.user = response.data.user
         this.initialized = true
-        return response.user
+        return this.user
       } catch (error) {
         this.setError(error)
         throw error
@@ -82,8 +82,8 @@ export const useAuthStore = defineStore('auth', {
     },
     async me() {
       try {
-        const response = await apiRequest<{ user: AuthUser }>('/auth/me')
-        this.user = response.user
+        const response = await apiRequest<{ data: AuthUser }>('/auth/me')
+        this.user = response.data
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) {
           this.user = null
@@ -121,9 +121,9 @@ export const useAuthStore = defineStore('auth', {
       })
     },
     async loadSessions() {
-      const response = await apiRequest<{ sessions: AuthSession[] }>('/auth/sessions')
-      this.sessions = response.sessions
-      return response.sessions
+      const response = await apiRequest<{ data: AuthSession[] }>('/auth/sessions')
+      this.sessions = response.data
+      return this.sessions
     },
     async revokeSession(id: string) {
       await apiRequest(`/auth/sessions/${id}`, { method: 'DELETE' })
