@@ -23,6 +23,6 @@ describe('HomeView', () => {
     })
 
     expect(wrapper.text()).toContain('One API for every app that sends email')
-    expect(wrapper.text()).toContain('Launch dashboard')
+    expect(wrapper.text()).toContain('Launch Dashboard')
   })
 })

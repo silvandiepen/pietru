@@ -22,7 +22,7 @@ describe('FeaturesView', () => {
       },
     })
 
-    expect(wrapper.text()).toContain('Open dashboard')
-    expect(wrapper.text()).toContain('Configure providers, default senders, and domain policy centrally for each project environment.')
+    expect(wrapper.text()).toContain('Open Dashboard')
+    expect(wrapper.text()).toContain('Swap provider modes, configure sender policies, and manage routing rules')
   })
 })
