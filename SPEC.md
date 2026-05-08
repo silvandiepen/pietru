@@ -1,676 +1,54 @@
-# Pietru Mail Gateway Specification
+# Pietru Mail Gateway — Build Specification
 
-Status: draft v0.1  
-Repository: `silvandiepen/pietru`  
-Primary domains: `pietru.dev`, `app.pietru.dev`, `api.pietru.dev`  
-Primary goal: a fully API-first, Cloudflare-native, multi-tenant mail gateway for sending, capturing, debugging, routing, and tracking outgoing email across projects.
+## Overview
 
-## 1. Overview
+Pietru is a centralized, API-first, Cloudflare-native mail gateway for sending, capturing, debugging, routing, and tracking outgoing email across projects. One API for every app that sends email.
 
-Pietru is a centralized mail gateway service for applications. It gives every app one stable API for sending email while Pietru handles provider routing, logging, capture mode, testing, event tracking, and project-level configuration.
+## Domains
 
-Applications should not need to know whether email is sent through Resend, SMTP, Postmark, Mailgun, or another provider. Applications call Pietru. Pietru decides what to do based on the project, environment, provider configuration, and sending mode.
+- `pietru.dev` — marketing/docs site (Vue SPA on CF Pages)
+- `app.pietru.dev` — authenticated dashboard (Vue SPA on CF Pages)
+- `api.pietru.dev` — public API (Hono on CF Workers + D1 + R2 + KV)
 
-The product should be small, direct, developer-focused, and reliable. It should feel like a useful internal infrastructure product that can later become a public SaaS.
+## Stack
 
-## 2. Product summary
+- **API**: Hono, TypeScript, Cloudflare Workers, D1, R2, KV, Queues
+- **Dashboard**: Vue 3, TypeScript, Vite, @sil/ui, SCSS, CSS custom properties, Pinia
+- **Marketing**: Vue 3, TypeScript, Vite, @sil/ui, SCSS
+- **Shared packages**: core, auth, db, providers, validation
+- **Node**: 25
+- **Monorepo**: npm workspaces (NOT pnpm)
+- **Package manager**: npm
 
-Pietru centralizes:
+## Monorepo Structure
 
-- email sending
-- provider routing
-- message logging
-- debugging
-- test capture mode
-- event tracking
-- per-project API keys
-- per-environment configuration
-- provider webhooks
-- email inspection
-- test inboxes
+```
+apps/
+  api/                    # Hono Worker — api.pietru.dev
+  dashboard/              # Vue SPA — app.pietru.dev
+  marketing/              # Vue SPA — pietru.dev
 
-The core idea:
-
-> One API for every app that sends email.
-
-## 3. Goals
-
-- Provide one consistent email API for all apps.
-- Decouple applications from individual email providers.
-- Allow provider changes without application changes.
-- Enable testing without sending to real inboxes.
-- Provide full visibility into outgoing messages.
-- Support multiple projects and environments.
-- Support project API keys scoped by environment.
-- Support capture-only, send-only, and send-and-capture modes.
-- Store useful logs for debugging.
-- Track provider events such as sent, delivered, bounced, and failed.
-- Run fully on Cloudflare infrastructure where possible.
-- Expose all product capabilities through `api.pietru.dev`.
-
-## 4. Non-goals for MVP
-
-The MVP should not include:
-
-- custom inbound user domains
-- general mailbox hosting
-- IMAP
-- POP3
-- full newsletter tooling
-- drag-and-drop template builder
-- marketing automation
-- contact lists
-- campaigns
-- bulk sending
-- scheduling
-- provider fallback
-- advanced analytics
-- multi-user teams
-- custom provider plugins
-
-These can be added later if the core gateway proves useful.
-
-## 5. Product surfaces
-
-Pietru uses three primary domains:
-
-```txt
-pietru.dev      -> marketing site, documentation, public landing pages
-app.pietru.dev  -> authenticated dashboard
-api.pietru.dev  -> public API used by apps and dashboard
+packages/
+  core/                   # shared types, utils, constants
+  auth/                   # password hashing, JWT, session, token logic
+  db/                     # D1 schema, migrations, query helpers
+  providers/              # mail provider adapters (Resend first)
+  validation/             # Zod request/response schemas
 ```
 
-All meaningful functionality must be available through api.pietru.dev. The dashboard is a client of the API, not a separate privileged backend.
+## Crypto Constraints (CRITICAL)
 
-6. Default stack
+Cloudflare Workers do NOT support bcrypt, argon2, WASM, or `new Function()`.
 
-Use the normal Sil stack:
+- **Password hashing**: PBKDF2 via Web Crypto API (`crypto.subtle`). Format: `pbkdf2$100000$<salt-hex>$<hash-hex>`
+- **API key hashing**: SHA-256 via `crypto.subtle.digest`
+- **Provider secrets**: AES-GCM encryption via `crypto.subtle` (encrypt before D1 storage)
+- **JWT**: Use `hono/jwt` (pure JS, no WASM)
+- **NO**: hash-wasm, argon2, bcrypt, argon2-browser, eval, new Function
 
-Vue 3
-TypeScript
-Vite
-@sil/ui
-SCSS
-BEM-style component classes
-shared design tokens
-Cloudflare Workers
-Cloudflare D1
-Cloudflare R2
-Cloudflare KV where useful
-Cloudflare Queues where useful
-Cloudflare Email Workers where useful later
-API-first architecture
-monorepo structure
-reusable packages for core logic, provider adapters, validation, and UI
+## D1 Schema
 
-No traditional server should be required for the MVP.
-
-7. Cloudflare architecture
-
-Pietru should be fully Cloudflare-native.
-
-Recommended services:
-
-Workers for API endpoints.
-D1 for relational data: users, projects, API keys, provider configs, messages, events.
-R2 for raw email payloads, large HTML bodies, MIME snapshots, attachments, and long-term archives.
-KV for short-lived cache, rate-limit counters, verification tokens, and idempotency lookups if appropriate.
-Queues for asynchronous sending, retries, webhook processing, and slow provider calls.
-Cron Triggers for cleanup, retries, digest jobs, and retention tasks.
-Email Workers for future inbound handling and platform-owned addresses.
-Turnstile for signup/login abuse protection where needed.
-
-High-level architecture:
-
-Apps / SDKs / Dashboard
-  -> api.pietru.dev Worker
-    -> Auth + API key validation
-    -> Core mail gateway logic
-    -> D1 metadata storage
-    -> R2 raw body/storage layer
-    -> KV cache/idempotency/rate limits
-    -> Queue for send jobs
-      -> Provider worker
-        -> Resend / SMTP / future providers
-    -> Provider webhook endpoints
-      -> Queue
-      -> D1 message events
-8. Core concepts
-8.1 User
-
-A user owns projects.
-
-A user can:
-
-register with email and password
-confirm their email address
-log in
-reset a forgotten password
-manage their profile
-create projects
-create and revoke API keys
-configure providers
-view message logs
-inspect captured messages
-8.2 Project
-
-A project represents one application or product that sends email.
-
-A project contains:
-
-name
-slug
-owner user
-environments
-API keys
-provider configurations
-message logs
-message events
-sending mode
-allowed sender domains
-webhooks
-rate limits
-8.3 Environment
-
-Every project can have separate environments.
-
-Default environments:
-
-development
-preview
-production
-
-Each environment can have its own:
-
-API keys
-provider config
-sending mode
-default from address
-allowed domains
-rate limits
-8.4 Provider configuration
-
-A provider configuration defines how email is sent for a project/environment.
-
-Initial provider:
-
-Resend
-
-Future providers:
-
-SMTP
-Postmark
-Mailgun
-custom webhook provider
-fallback provider chains
-8.5 Message
-
-A message is one attempted email send.
-
-A message can be:
-
-queued
-sent
-captured
-failed
-
-A message should always be visible in the dashboard and API, even if sending fails.
-
-8.6 Message event
-
-A message event is an update from the gateway or provider.
-
-Examples:
-
-queued
-captured
-sent
-delivered
-bounced
-complained
-failed
-opened
-clicked
-
-Open/click tracking is future scope. Do not build it into MVP unless the provider gives it for free and it does not complicate the product.
-
-9. Authentication
-
-Pietru should have its own authentication system.
-
-9.1 User auth
-
-Users register with:
-
-email
-password
-
-Required auth flows:
-
-register
-email verification
-login
-logout
-forgot password
-reset password
-change password
-update profile
-list active sessions
-revoke sessions
-
-Passwords must be securely hashed using a strong password hashing strategy suitable for the Workers runtime.
-
-Email verification and password reset tokens must be:
-
-single-use
-stored hashed
-time-limited
-revocable by issuing a new token
-9.2 Sessions
-
-Dashboard sessions should use secure HTTP-only cookies.
-
-Session requirements:
-
-stored in D1 or KV with D1 metadata
-tied to user ID
-revocable
-expiring
-protected with secure cookie settings
-usable by app.pietru.dev against api.pietru.dev
-9.3 Project API keys
-
-Project API keys are used by apps to call the sending API.
-
-Example:
-
-Authorization: Bearer mg_pk_xxxxx
-
-Requirements:
-
-generated once
-shown once
-stored hashed
-scoped to project
-scoped to environment
-revocable
-optionally named
-optionally restricted by origin/IP later
-never stored in plaintext
-
-Prefix format:
-
-mg_pk_live_xxxxx
-mg_pk_test_xxxxx
-
-The prefix should help identify key type without exposing secret material.
-
-10. API design
-
-The API must be the source of truth. The dashboard should only call API endpoints.
-
-Base URL:
-
-https://api.pietru.dev
-10.1 Send message
-POST /messages
-Authorization: Bearer mg_pk_xxx
-Idempotency-Key: reset-abc123
-Content-Type: application/json
-
-Request:
-
-{
-  "to": "user@example.com",
-  "from": "App <noreply@app.com>",
-  "subject": "Reset password",
-  "html": "<p>Your code is 1234</p>",
-  "text": "Your code is 1234",
-  "tags": {
-    "type": "password-reset",
-    "userId": "abc123"
-  }
-}
-
-Response:
-
-{
-  "id": "msg_123",
-  "status": "sent"
-}
-
-The endpoint should support synchronous responses but can internally use a queue. For MVP, it may send directly if provider latency is acceptable. The design should allow queue-based sending later without changing the public API.
-
-10.2 Query messages
-GET /messages
-Authorization: Bearer user-session-or-project-key
-
-Query params:
-
-project
-environment
-to
-from
-status
-provider
-tag
-createdAfter
-createdBefore
-limit
-cursor
-10.3 Get message details
-GET /messages/:id
-Authorization: Bearer user-session-or-project-key
-
-Returns:
-
-message metadata
-rendered HTML preview URL or body
-text body
-tags
-provider result
-events
-error details if failed
-10.4 Test inbox messages
-GET /test-inboxes/:inbox/messages
-Authorization: Bearer user-session-or-project-key
-
-Example:
-
-test-user-1@local.test
-
-Captured emails sent to test addresses should be retrievable without ever sending to real inboxes.
-
-10.5 Project endpoints
-GET    /projects
-POST   /projects
-GET    /projects/:id
-PATCH  /projects/:id
-DELETE /projects/:id
-10.6 API key endpoints
-GET    /projects/:id/api-keys
-POST   /projects/:id/api-keys
-DELETE /projects/:id/api-keys/:keyId
-10.7 Provider config endpoints
-GET   /projects/:id/provider-configs
-POST  /projects/:id/provider-configs
-PATCH /projects/:id/provider-configs/:configId
-POST  /projects/:id/provider-configs/:configId/validate
-10.8 Webhook endpoints
-POST /webhooks/providers/resend
-POST /webhooks/providers/postmark
-POST /webhooks/providers/mailgun
-
-Only Resend is required for v1.
-
-11. Sending modes
-
-Each project/environment can run in one of three modes.
-
-Mode	Behavior
-send	Sends email through configured provider and stores metadata/logs.
-capture	Does not send. Stores the message only.
-send_and_capture	Sends through provider and stores full captured body for inspection.
-
-Recommended defaults:
-
-development: capture
-preview: capture
-production: send or send_and_capture depending on project setting
-12. Provider system
-
-Provider adapters must implement a small interface.
-
-export interface MailProvider {
-  sendEmail(
-    message: OutgoingEmail,
-    config: ProviderConfig
-  ): Promise<ProviderSendResult>;
-
-  validateConfig(config: ProviderConfig): Promise<void>;
-
-  handleWebhook?(payload: unknown, headers: Headers): Promise<ProviderEvent[]>;
-}
-12.1 Resend provider v1
-
-The first provider should be Resend.
-
-Requirements:
-
-send HTML and text email
-support from/to/reply-to/cc/bcc if present
-return provider message ID
-handle provider errors
-validate API key/config where possible
-process Resend webhooks if configured
-12.2 SMTP provider v2
-
-SMTP can be added later.
-
-SMTP requirements:
-
-host
-port
-secure mode
-username
-password
-default from
-allowed domains
-
-SMTP config secrets must be encrypted before storage.
-
-12.3 Future providers
-
-Future providers:
-
-Postmark
-Mailgun
-Amazon SES
-custom HTTP provider
-fallback provider chain
-13. Project configuration
-
-Example project/environment config:
-
-export interface ProjectEnvironmentConfig {
-  id: string;
-  projectId: string;
-  environment: 'development' | 'preview' | 'production';
-  provider: 'resend' | 'smtp' | 'postmark' | 'mailgun' | 'custom';
-  providerConfigId: string;
-  mode: 'send' | 'capture' | 'send_and_capture';
-  defaultFrom?: string;
-  allowedDomains: string[];
-  rateLimitPerMinute?: number;
-  rateLimitPerDay?: number;
-}
-
-Provider config example:
-
-export interface ProviderConfig {
-  id: string;
-  projectId: string;
-  environment: string;
-  providerType: 'resend';
-  configEncrypted: string;
-  defaultFrom: string;
-  allowedDomains: string[];
-  mode: 'send' | 'capture' | 'send_and_capture';
-  createdAt: string;
-  updatedAt: string;
-}
-14. Message model
-export interface Message {
-  id: string;
-  projectId: string;
-  providerConfigId?: string;
-  environment: string;
-
-  to: string;
-  from: string;
-  replyTo?: string;
-  cc?: string[];
-  bcc?: string[];
-
-  subject: string;
-  html?: string;
-  text?: string;
-
-  status: 'queued' | 'sent' | 'captured' | 'failed';
-
-  provider?: string;
-  providerMessageId?: string;
-
-  error?: string;
-  tags?: Record<string, string>;
-
-  rawStorageKey?: string;
-  htmlStorageKey?: string;
-  textStorageKey?: string;
-
-  createdAt: string;
-  queuedAt?: string;
-  sentAt?: string;
-  failedAt?: string;
-}
-
-For small messages, HTML/text can be stored directly in D1. For larger messages, store bodies in R2 and keep references in D1. The implementation should support moving large bodies to R2 from the start.
-
-15. Message events
-export interface MessageEvent {
-  id: string;
-  messageId: string;
-  projectId: string;
-
-  type:
-    | 'queued'
-    | 'captured'
-    | 'sent'
-    | 'delivered'
-    | 'bounced'
-    | 'complained'
-    | 'failed';
-
-  provider?: string;
-  payload?: unknown;
-
-  createdAt: string;
-}
-
-Provider webhook payloads should be stored in a normalized event model, with the raw provider payload stored either in D1 JSON or R2 if large.
-
-16. Test inbox system
-
-The test inbox system allows development and preview environments to capture emails without sending real messages.
-
-Example fake addresses:
-
-test-user-1@local.test
-reset-flow@local.test
-checkout@local.test
-
-Captured messages are grouped by inbox name.
-
-Endpoint:
-
-GET /test-inboxes/test-user-1/messages
-
-Rules:
-
-capture mode always stores messages.
-send_and_capture stores messages and also sends them.
-send stores metadata but may not store full body unless configured.
-Test inboxes are project/environment scoped.
-17. Platform-owned inbound addresses
-
-Custom user domains are out of scope for v1.
-
-For now, Pietru may support platform-owned inbound addresses under:
-
-@pietru.dev
-
-Possible future internal address format:
-
-project-slug@pietru.dev
-project-slug+tag@pietru.dev
-
-This should be treated as future or optional infrastructure, not required for the sending gateway MVP.
-
-If implemented, incoming mail flow:
-
-Email to project-slug@pietru.dev
-  -> Cloudflare Email Routing
-  -> Email Worker
-  -> parse local part and plus tag
-  -> store metadata in D1
-  -> store raw MIME / attachments in R2
-  -> expose through API
-
-Do not support custom user domains in v1. Custom inbound domains would require domain verification, Cloudflare DNS/MX setup, routing configuration, and a paid plan. Keep this out of MVP.
-
-18. Project hooks
-
-Each project can define optional webhooks.
-
-Example:
-
-export interface ProjectHooks {
-  onSend?: string;
-  onFail?: string;
-  onDelivered?: string;
-  onBounce?: string;
-}
-
-Use cases:
-
-forward events to the app
-update internal DBs
-send analytics events
-trigger workflows
-connect to an event bus later
-
-Hooks are not required for MVP, but the data model should allow them later.
-
-19. Security requirements
-User passwords must be securely hashed.
-Project API keys must be hashed.
-Provider API keys must be encrypted.
-Password reset tokens must be hashed.
-Email verification tokens must be hashed.
-Domain restrictions must be enforced before sending.
-Rate limits must apply per project/environment/API key.
-Idempotency keys must be supported for send requests.
-Message access must be scoped to the owning project/user.
-Provider webhook signatures must be verified where supported.
-Sensitive provider config must never be returned through the API.
-Logs must not expose API keys or provider secrets.
-20. Rate limiting
-
-Rate limits should exist at multiple levels:
-
-global abuse limits
-user account limits
-project limits
-environment limits
-API key limits
-provider limits
-
-MVP can start with simple project-level and API-key-level limits.
-
-21. Idempotency
-
-POST /messages must support Idempotency-Key.
-
-Behavior:
-
-Same project + same idempotency key returns the original message result.
-Prevents duplicate password reset, verification, and billing emails.
-Store idempotency records in KV or D1.
-Idempotency records should expire after a defined period, for example 24 hours.
-22. Database schema
-
-Initial D1 schema:
-
+```sql
 CREATE TABLE users (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL UNIQUE,
@@ -705,7 +83,7 @@ CREATE TABLE projects (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
   name TEXT NOT NULL,
-  slug TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
@@ -779,154 +157,177 @@ CREATE TABLE message_events (
   FOREIGN KEY (message_id) REFERENCES messages(id),
   FOREIGN KEY (project_id) REFERENCES projects(id)
 );
-23. Dashboard MVP
+```
 
-The dashboard lives at:
+## API Endpoints
 
-https://app.pietru.dev
+Base: `https://api.pietru.dev`
 
-Views:
+### Auth (session-based, HTTP-only cookies)
+```
+POST   /auth/register          { email, password } → user + session cookie
+POST   /auth/login             { email, password } → user + session cookie
+POST   /auth/logout            → clear cookie
+POST   /auth/verify-email      { token }
+POST   /auth/forgot-password   { email }
+POST   /auth/reset-password    { token, password }
+POST   /auth/change-password   { currentPassword, newPassword }  (authed)
+GET    /auth/me                → current user  (authed)
+GET    /auth/sessions          → list sessions  (authed)
+DELETE /auth/sessions/:id      → revoke session  (authed)
+```
 
-23.1 Auth
-Register.
-Verify email.
-Login.
-Forgot password.
-Reset password.
-Profile.
-23.2 Projects
-List projects.
-Create project.
-Edit project name/slug.
-View provider status.
-View environment configuration.
-23.3 API keys
-Create key.
-Show key once.
-List keys.
-Revoke key.
-Filter by environment.
-23.4 Provider settings
-Select provider.
-Add provider API key.
-Set default from address.
-Set allowed domains.
-Validate config.
-Choose sending mode.
-23.5 Messages
-List messages.
-Filter/search messages.
-Inspect email content.
-See provider status.
-See events.
-See errors.
-Copy message ID.
-23.6 Test inboxes
-List captured inboxes.
-Open inbox.
-View captured emails.
-Inspect HTML/text.
-Copy raw content.
-24. UI direction
+### Projects (authed)
+```
+GET    /projects
+POST   /projects               { name, slug }
+GET    /projects/:id
+PATCH  /projects/:id           { name?, slug? }
+DELETE /projects/:id
+```
 
-The UI should be minimal and functional.
+### API Keys (authed)
+```
+GET    /projects/:id/api-keys
+POST   /projects/:id/api-keys           { name?, environment } → shows key ONCE
+DELETE /projects/:id/api-keys/:keyId
+```
 
-Use @sil/ui and the default design system.
+### Provider Configs (authed)
+```
+GET    /projects/:id/provider-configs
+POST   /projects/:id/provider-configs            { providerType, config, mode, environment, defaultFrom, allowedDomains }
+PATCH  /projects/:id/provider-configs/:configId
+POST   /projects/:id/provider-configs/:configId/validate
+```
 
-The dashboard should not feel like a heavy enterprise admin panel. It should feel like a small developer tool.
+### Messages (authed OR project API key)
+```
+POST   /messages              { to, from, subject, html?, text?, tags? } + Authorization: Bearer mg_pk_xxx
+GET    /messages              ?project&environment&to&from&status&limit&cursor
+GET    /messages/:id
+```
 
-Priorities:
+### Test Inboxes (authed OR project API key)
+```
+GET    /test-inboxes/:inbox/messages
+```
 
-clear project switcher
-clear environment indicator
-obvious send/capture mode
-fast message search
-readable email inspection
-clear error messages
-simple setup instructions
-25. Suggested monorepo structure
-apps/
-  marketing/              # pietru.dev
-  dashboard/              # app.pietru.dev
-  api/                    # api.pietru.dev Worker
+### Webhooks (public, signature-verified)
+```
+POST   /webhooks/providers/resend
+```
 
-packages/
-  core/                   # shared business logic
-  auth/                   # auth/session/password/token logic
-  db/                     # D1 schema, migrations, queries
-  providers/              # mail provider adapters
-  validation/             # request schemas and validation
-  ui/                     # optional wrappers around @sil/ui patterns
-  sdk/                    # future JS/TS SDK
-  config/                 # shared config/types
+## Authentication
 
-workers/
-  queue-mail/             # optional async send worker
-  email-inbound/          # optional future Email Worker
-  cron/                   # cleanup/retry tasks
-26. MVP scope
+### User Auth
+- Sessions via HTTP-only cookies (`SameSite=None; Secure` for cross-domain)
+- JWT stored in cookie, verified via `hono/jwt`
+- Session tokens stored hashed in D1
 
-Build first:
+### Project API Keys
+- Prefix: `mg_pk_live_xxxxx` (production), `mg_pk_test_xxxxx` (development/preview)
+- Generated once, shown once, stored hashed (SHA-256)
+- Scoped to project + environment
+- Passed as `Authorization: Bearer mg_pk_xxx`
 
-monorepo setup
-marketing shell
-dashboard shell
-API Worker
-D1 migrations
-user registration
-email verification
-login/logout
-forgot/reset password
-projects
-project API keys
-provider config for Resend
-POST /messages
-capture mode
-send mode through Resend
-message storage
-message list/detail UI
-basic test inbox view
-basic rate limiting
-idempotency support
-27. Future features
-Templates
-Scheduling
-Bulk sending
-Provider fallback
-Provider health checks
-Analytics
-SMTP provider
-Postmark provider
-Mailgun provider
-Public SaaS pricing
-Teams
-Custom inbound domains as Pro feature
-Hosted @pietru.dev inbound addresses
-API SDK
-CLI
-Webhook replay
-Message replay
-Delivery insights
-28. Acceptance criteria for MVP
+## Sending Modes
 
-The MVP is successful when:
+| Mode | Behavior |
+|------|----------|
+| `send` | Sends through provider, stores metadata |
+| `capture` | Stores message, does NOT send |
+| `send_and_capture` | Sends AND stores full body |
 
-A user can register with email/password.
-The user can verify their email.
-The user can log in to app.pietru.dev.
-The user can create a project.
-The user can create a project API key.
-The user can configure Resend for a project/environment.
-An app can call POST /messages with the project API key.
-Pietru can send through Resend in send mode.
-Pietru can capture without sending in capture mode.
-Pietru can send and store in send_and_capture mode.
-The dashboard shows message logs.
-The dashboard shows errors and provider result details.
-Test inboxes can show captured messages.
-All core actions are available through api.pietru.dev.
-29. Summary
+Defaults: development=capture, preview=capture, production=send
 
-Pietru is a centralized, multi-project email gateway that standardizes sending, enables testing, and provides full visibility into outgoing mail.
+## Provider System
 
-It should start small with Resend, capture mode, message logging, and a clean dashboard. The architecture must remain API-first and Cloudflare-native so it can later grow into a public SaaS without changing the core model.
+```typescript
+export interface MailProvider {
+  sendEmail(message: OutgoingEmail, config: ProviderConfig): Promise<ProviderSendResult>;
+  validateConfig(config: ProviderConfig): Promise<void>;
+  handleWebhook?(payload: unknown, headers: Headers): Promise<ProviderEvent[]>;
+}
+```
+
+First provider: Resend. Uses `fetch` to call Resend API directly (no SDK).
+
+## CORS
+
+API must allow:
+- `https://app.pietru.dev`
+- `https://pietru.dev`
+- `http://localhost:5173` (dev)
+- `http://localhost:5174` (dev dashboard)
+
+Credentials: true. Expose: Set-Cookie.
+
+## Wrangler Config (apps/api/wrangler.toml)
+
+```toml
+name = "pietru-api"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pietru-production"
+database_id = "placeholder"
+migrations_dir = "../../packages/db/migrations"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "placeholder"
+
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "pietru-storage"
+```
+
+## Dashboard App (apps/dashboard)
+
+- Vue 3 + Vite + Pinia + Vue Router
+- @sil/ui for components
+- CSS custom properties only (no Sass variables)
+- SCSS for nesting/mixins only
+- BEMM-style classes
+
+### Views
+- `/login` — login form
+- `/register` — register form
+- `/forgot-password` — forgot password
+- `/reset-password` — reset password
+- `/verify-email` — email verification
+- `/` — dashboard home (project list)
+- `/projects/:id` — project detail (env config, API keys, providers)
+- `/projects/:id/messages` — message list
+- `/projects/:id/messages/:messageId` — message detail (inspect HTML/text, events)
+- `/projects/:id/test-inboxes` — test inbox list
+- `/projects/:id/test-inboxes/:inbox` — captured messages
+- `/settings` — profile, password, sessions
+
+### API Client
+- Pinia store `useApi` with fetch wrapper
+- Auto-includes credentials: 'include'
+- Base URL from env var `VITE_PIETRU_API_URL`
+
+## Marketing Site (apps/marketing)
+
+- Simple Vue 3 + Vite SPA
+- Landing page, features, docs links
+- @sil/ui for consistent look
+- Minimal — just a shell for now
+
+## Key Implementation Notes
+
+1. D1 `result.meta.changes` for affected rows (NOT `meta.rows_changed`)
+2. Hono `c.json()` status needs `ContentfulStatusCode` cast
+3. PBKDF2: 100,000 iterations, SHA-256, 16-byte salt
+4. API key prefix format: `mg_pk_live_` / `mg_pk_test_` + 32 random chars
+5. Idempotency keys: hash with SHA-256, store in message, check before creating
+6. Large HTML/text bodies: store in R2, keep reference in D1
+7. Message IDs: `msg_` prefix + nanoid-style random string
+8. All timestamps: ISO 8601 strings
+9. Error responses: `{ error: { code: string, message: string } }`
+10. Success responses: `{ data: T }`

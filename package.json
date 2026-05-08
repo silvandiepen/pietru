@@ -1,0 +1,21 @@
+{
+  "name": "pietru",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w apps/api",
+    "dev:dashboard": "npm run dev -w apps/dashboard",
+    "dev:marketing": "npm run dev -w apps/marketing",
+    "build:api": "npm run build -w apps/api",
+    "build:dashboard": "npm run build -w apps/dashboard",
+    "build:marketing": "npm run build -w apps/marketing",
+    "typecheck": "npm run typecheck -ws --if-present"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
