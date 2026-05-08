@@ -30,3 +30,13 @@ export async function generateApiKey(environment: Environment): Promise<{ key: s
     hash: await hashApiKey(key),
   };
 }
+
+export async function generateAccountApiKey(): Promise<{ key: string; prefix: string; hash: string }> {
+  const prefix = 'mg_ak_';
+  const key = `${prefix}${randomString(32)}`;
+  return {
+    key,
+    prefix,
+    hash: await hashApiKey(key),
+  };
+}
