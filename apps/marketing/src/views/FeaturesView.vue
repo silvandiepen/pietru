@@ -1,136 +1,188 @@
-<template>
-  <div class="features-view">
-    <header class="features-view__header">
-      <RouterLink to="/" class="features-view__brand">Pietru</RouterLink>
-      <nav class="features-view__nav">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/features">Features</RouterLink>
-        <a :href="dashboardUrl">Open dashboard</a>
-      </nav>
-    </header>
-
-    <main class="features-view__main">
-      <section v-for="feature in features" :key="feature.title" class="features-view__section">
-        <h1>{{ feature.title }}</h1>
-        <p>{{ feature.description }}</p>
-      </section>
-    </main>
-  </div>
-</template>
-
 <script lang="ts" setup>
-const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://8f26d547.pietru-dashboard.pages.dev'
+const dashboardUrl =
+  import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app-pietru.hakobs.com'
 
 const features = [
   {
+    num: '01',
     title: 'Send',
-    description: 'Issue project-scoped API keys per environment and keep each application on one predictable API contract.',
+    desc: 'Ship transactional email through a stable, versioned project API. Generate environment-specific keys for production, staging, and development.',
   },
   {
+    num: '02',
     title: 'Capture',
-    description: 'Capture test traffic in safe inboxes so development and preview environments never leak real email.',
+    desc: 'Intercept non-production mail and route it into private test inboxes. Never accidentally send test emails to real users again.',
   },
   {
+    num: '03',
     title: 'Debug',
-    description: 'Read metadata, raw errors, text bodies, and rendered HTML in one place when a message misbehaves.',
+    desc: 'Inspect full payloads, provider responses, rendered HTML, and error details for every message. Built-in search and filtering.',
   },
   {
+    num: '04',
     title: 'Track',
-    description: 'Follow event timelines for queued, sent, delivered, and failed states without stitching together provider dashboards.',
+    desc: 'Follow every message through the delivery lifecycle. See accepted, delivered, bounced, and complained events in a unified timeline.',
   },
   {
+    num: '05',
     title: 'Route',
-    description: 'Configure providers, default senders, and domain policy centrally for each project environment.',
+    desc: 'Swap provider modes, configure sender policies, and manage routing rules — all from the dashboard without touching application code.',
   },
 ]
 </script>
 
+<template>
+  <div class="page">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <span class="eyebrow">Features</span>
+        <h1 class="hero__title">
+          Everything you need to control email at scale
+        </h1>
+        <p class="hero__summary">
+          From sending and capturing to debugging and routing — Pietru gives you
+          one unified gateway for all your mail.
+        </p>
+      </div>
+    </section>
+
+    <!-- Feature detail sections -->
+    <section
+      v-for="(feature, i) in features"
+      :key="feature.num"
+      class="detail"
+      :class="i % 2 === 0 ? 'detail--dark' : 'detail--light'"
+    >
+      <div class="container detail__inner">
+        <span class="detail__num">{{ feature.num }}</span>
+        <h2 class="detail__title">{{ feature.title }}</h2>
+        <p class="detail__desc">{{ feature.desc }}</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <div class="container cta__inner">
+        <h2 class="cta__title">Get started in minutes</h2>
+        <a :href="dashboardUrl" class="cta__link">Open Dashboard</a>
+      </div>
+    </section>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-.features-view {
-  min-height: 100vh;
-  background: var(--pietru-color-background);
-  color: var(--pietru-color-foreground);
+/* ---------- variables ---------- */
+$bg-dark: #020b22;
+$bg-light: #0a1628;
+$text-muted: #8888a0;
+$accent: #55c267;
 
-  &__header,
-  &__nav {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+/* ---------- shared ---------- */
+.container {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 6vw, 4rem);
+}
+
+/* ---------- hero ---------- */
+.hero {
+  padding: 6rem 0 4rem;
+
+  &__inner {
+    text-align: center;
   }
 
-  &__header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    width: min(100%, 75rem);
-    margin: 0 auto;
-    justify-content: space-between;
-    padding: 1.25rem clamp(1rem, 6vw, 8rem);
-    background: rgba(2, 11, 34, 0.92);
-    border-bottom: 1px solid var(--pietru-color-border);
-    backdrop-filter: blur(12px);
+  .eyebrow {
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: $text-muted;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
   }
 
-  &__brand {
-    color: var(--pietru-color-foreground);
-    font-size: 1.15rem;
+  &__title {
+    font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    text-decoration: none;
+    color: #fff;
+    margin: 0;
   }
 
-  &__main {
-    width: min(100%, 75rem);
-    margin: 0 auto;
-    padding: 4rem clamp(1rem, 6vw, 8rem) 6rem;
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  &__nav a {
-    color: var(--pietru-color-foreground);
-    text-decoration: none;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--pietru-color-text-muted);
-    }
-  }
-
-  &__section {
-    padding: 1.75rem;
-    border: 1px solid var(--pietru-color-border);
-    border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-surface);
-    box-shadow: var(--pietru-shadow-panel);
-
-    h1 {
-      margin: 0 0 0.75rem;
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      font-weight: 600;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      color: var(--pietru-color-foreground);
-    }
-
-    p {
-      margin-bottom: 0;
-      color: var(--pietru-color-text-muted);
-    }
+  &__summary {
+    color: $text-muted;
+    max-width: 36rem;
+    margin: 1.25rem auto 0;
+    line-height: 1.6;
   }
 }
 
-@media (max-width: 640px) {
-  .features-view {
-    &__header,
-    &__nav {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+/* ---------- feature detail ---------- */
+.detail {
+  padding: 5rem 0;
 
-    &__header {
-      padding-top: 1rem;
-      padding-bottom: 1rem;
+  &--dark {
+    background-color: $bg-dark;
+  }
+
+  &--light {
+    background-color: $bg-light;
+  }
+
+  &__inner {
+    text-align: center;
+  }
+
+  &__num {
+    display: block;
+    font-size: 0.85rem;
+    color: $text-muted;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+
+  &__desc {
+    color: $text-muted;
+    max-width: 32rem;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+}
+
+/* ---------- cta ---------- */
+.cta {
+  padding: 5rem 0;
+
+  &__inner {
+    text-align: center;
+  }
+
+  &__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 2rem;
+  }
+
+  &__link {
+    display: inline-block;
+    background-color: $accent;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.85;
     }
   }
 }

@@ -1,241 +1,218 @@
-<template>
-  <div class="home-view">
-    <header class="home-view__header">
-      <RouterLink to="/" class="home-view__brand">Pietru</RouterLink>
-      <nav class="home-view__nav">
-        <RouterLink to="/features">Features</RouterLink>
-        <a :href="dashboardUrl">Open dashboard</a>
-      </nav>
-    </header>
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
 
-    <main class="home-view__main">
-      <section class="home-view__hero">
-        <p class="home-view__eyebrow">One API for every app that sends email</p>
-        <h1>Centralize delivery, capture, debugging, and routing without scattering email logic.</h1>
-        <p class="home-view__summary">
-          Pietru gives product teams one Cloudflare-native mail gateway for transactional sends, test inboxes,
-          event tracing, and provider controls.
-        </p>
-        <div class="home-view__cta">
-          <a :href="dashboardUrl">Launch dashboard</a>
-          <RouterLink to="/features">Explore features</RouterLink>
-        </div>
-      </section>
-
-      <section class="home-view__features">
-        <article v-for="feature in features" :key="feature.title" class="home-view__feature-card">
-          <h2>{{ feature.title }}</h2>
-          <p>{{ feature.description }}</p>
-        </article>
-      </section>
-    </main>
-
-    <footer class="home-view__footer">
-      <p>© 2026 Pietru. Built for teams that ship email-heavy products.</p>
-    </footer>
-  </div>
-</template>
-
-<script lang="ts" setup>
-const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://8f26d547.pietru-dashboard.pages.dev'
+const dashboardUrl =
+  import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app-pietru.hakobs.com'
 
 const features = [
-  { title: 'Send', description: 'Ship transactional email through a stable project API with environment-aware keys.' },
-  { title: 'Capture', description: 'Route non-production mail into test inboxes instead of real recipients.' },
-  { title: 'Debug', description: 'Inspect full payloads, provider failures, and rendered HTML for every message.' },
-  { title: 'Track', description: 'Review delivery lifecycle events in one timeline per message.' },
-  { title: 'Route', description: 'Swap provider modes and sender policy without touching each application.' },
+  {
+    title: 'Send',
+    desc: 'Reliable transactional email delivery through a single API endpoint.',
+  },
+  {
+    title: 'Capture',
+    desc: 'Intercept and inspect emails in test inboxes during development.',
+  },
+  {
+    title: 'Debug',
+    desc: 'Trace every email event with detailed logs and diagnostics.',
+  },
+  {
+    title: 'Track',
+    desc: 'Monitor opens, clicks, bounces, and delivery status in real time.',
+  },
+  {
+    title: 'Route',
+    desc: 'Control provider routing and failover policies from one place.',
+  },
 ]
 </script>
 
+<template>
+  <div class="home">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">One API for every app that sends email</p>
+        <h1 class="hero-heading">
+          Centralize delivery, capture, debugging, and routing without
+          scattering email logic.
+        </h1>
+        <p class="hero-summary">
+          Pietru gives product teams one Cloudflare-native mail gateway for
+          transactional sends, test inboxes, event tracing, and provider
+          controls.
+        </p>
+        <div class="cta-row">
+          <a :href="dashboardUrl" class="btn btn-primary">Launch Dashboard</a>
+          <RouterLink to="/features" class="btn btn-secondary"
+            >Explore Features</RouterLink
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <div class="wrap">
+        <h2 class="section-heading">Focused tools for every email need</h2>
+        <div class="card-grid">
+          <div v-for="f in features" :key="f.title" class="card">
+            <h3 class="card-title">{{ f.title }}</h3>
+            <p class="card-desc">{{ f.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <div class="wrap">
+        <h2 class="section-heading">Ready to centralize your email?</h2>
+        <a :href="dashboardUrl" class="btn btn-primary">Launch Dashboard</a>
+      </div>
+    </section>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-.home-view {
-  min-height: 100vh;
-  background: var(--pietru-color-background);
-  color: var(--pietru-color-foreground);
+/* ── variables ── */
+:root {
+  --color-text: #ffffff;
+  --color-muted: #8888a0;
+  --color-accent: #55c267;
+  --color-section-alt: #0a1628;
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --btn-border: rgba(255, 255, 255, 0.12);
+}
 
-  &__header,
-  &__nav,
-  &__cta {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
+/* ── layout helpers ── */
+.wrap {
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 6vw, 4rem);
+}
 
-  &__header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    justify-content: space-between;
-    width: min(100%, 75rem);
-    margin: 0 auto;
-    padding: 1.25rem clamp(1rem, 6vw, 8rem);
-    background: rgba(2, 11, 34, 0.92);
-    border-bottom: 1px solid var(--pietru-color-border);
-    backdrop-filter: blur(12px);
-  }
+/* ── sections ── */
+.hero {
+  width: 100%;
+  padding: 8rem 0 6rem;
+}
 
-  &__brand {
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    text-decoration: none;
-    color: var(--pietru-color-foreground);
-  }
+.features {
+  width: 100%;
+  background: var(--color-section-alt);
+  padding: 6rem 0;
+}
 
-  &__main {
-    width: min(100%, 75rem);
-    margin: 0 auto;
-    padding: 4rem clamp(1rem, 6vw, 8rem) 6rem;
-    display: grid;
-    gap: 5rem;
-  }
+.cta {
+  width: 100%;
+  padding: 6rem 0;
+  text-align: center;
+}
 
-  &__hero {
-    max-width: 48rem;
-    display: grid;
-    gap: 1.5rem;
+/* ── typography ── */
+.eyebrow {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
 
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 6vw, 4rem);
-      font-weight: 600;
-      line-height: 1.02;
-      letter-spacing: -0.02em;
-    }
-  }
+.hero-heading {
+  color: var(--color-text);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+}
 
-  &__eyebrow,
-  &__summary {
-    color: var(--pietru-color-text-muted);
-    margin: 0;
-  }
+.hero-summary {
+  color: var(--color-muted);
+  max-width: 36rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
 
-  &__eyebrow {
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
+.section-heading {
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+}
 
-  &__summary {
-    max-width: 42rem;
-  }
+/* ── buttons ── */
+.cta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
 
-  &__cta a,
-  &__nav a {
-    text-decoration: none;
-    transition:
-      color 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease;
-  }
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
 
-  &__nav a {
-    color: var(--pietru-color-foreground);
-
-    &:hover {
-      color: var(--pietru-color-text-muted);
-    }
-  }
-
-  &__cta a {
-    padding: 0.7rem 1.2rem;
-    border: 1px solid var(--pietru-color-border);
-    border-radius: var(--pietru-radius-pill);
-    background: transparent;
-    color: var(--pietru-color-foreground);
-    font-weight: 500;
-
-    &:first-child {
-      border-color: var(--pietru-color-accent);
-      background: var(--pietru-color-accent);
-      color: var(--pietru-color-background);
-
-      &:hover {
-        background: var(--pietru-color-accent-hover);
-        border-color: var(--pietru-color-accent-hover);
-      }
-    }
-
-    &:last-child {
-      border-color: rgba(255, 255, 255, 0.12);
-
-      &:hover {
-        border-color: rgba(255, 255, 255, 0.24);
-        color: var(--pietru-color-foreground);
-      }
-    }
-  }
-
-  &__features {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
-  }
-
-  &__feature-card {
-    padding: 1.5rem;
-    border: 1px solid var(--pietru-color-border);
-    border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-surface);
-    box-shadow: var(--pietru-shadow-panel);
-
-    h2 {
-      margin: 0 0 0.75rem;
-      color: var(--pietru-color-foreground);
-      font-size: clamp(1.15rem, 2vw, 1.35rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    p {
-      color: var(--pietru-color-text-muted);
-      margin-bottom: 0;
-    }
-  }
-
-  &__footer {
-    width: min(100%, 75rem);
-    margin: 0 auto;
-    padding: 0 clamp(1rem, 6vw, 8rem) 2rem;
-
-    p {
-      margin: 0;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--pietru-color-border);
-      color: var(--pietru-color-text-muted);
-      font-size: 0.95rem;
-    }
+  &:hover {
+    opacity: 0.85;
   }
 }
 
-@media (max-width: 980px) {
-  .home-view__features {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.btn-primary {
+  background: var(--color-accent);
+  color: #0d1a0f;
+  border: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--btn-border);
+}
+
+/* ── feature cards ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.card {
+  padding: 1.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  background: var(--card-bg);
+}
+
+.card-title {
+  color: var(--color-text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-desc {
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+/* ── responsive ── */
+@media (max-width: 64em) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
-  .home-view {
-    &__header,
-    &__nav,
-    &__cta {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    &__header {
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-
-    &__main {
-      padding-top: 3rem;
-      gap: 4rem;
-    }
-  }
-
-  .home-view__features {
+@media (max-width: 40em) {
+  .card-grid {
     grid-template-columns: 1fr;
   }
 }
