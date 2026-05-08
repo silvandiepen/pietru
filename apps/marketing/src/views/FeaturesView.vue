@@ -2,7 +2,7 @@
   <div class="features-view">
     <header class="features-view__header">
       <RouterLink to="/">Pietru</RouterLink>
-      <a href="https://app.pietru.dev">Open dashboard</a>
+      <a :href="dashboardUrl">Open dashboard</a>
     </header>
 
     <main class="features-view__main">
@@ -15,6 +15,8 @@
 </template>
 
 <script lang="ts" setup>
+const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://8f26d547.pietru-dashboard.pages.dev'
+
 const features = [
   {
     title: 'Send',

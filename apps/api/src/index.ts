@@ -13,7 +13,12 @@ const app = new Hono<{ Bindings: Env; Variables: AppVariables }>();
 app.use(
   '*',
   cors({
-    origin: ['https://app.pietru.dev', 'https://pietru.dev', 'http://localhost:5173', 'http://localhost:5174'],
+    origin: [
+      'https://8f26d547.pietru-dashboard.pages.dev',
+      'https://ce09b891.pietru-marketing.pages.dev',
+      'http://localhost:5173',
+      'http://localhost:5174',
+    ],
     credentials: true,
     exposeHeaders: ['Set-Cookie'],
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

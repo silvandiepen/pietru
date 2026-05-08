@@ -4,7 +4,7 @@
       <RouterLink to="/" class="home-view__brand">Pietru</RouterLink>
       <nav class="home-view__nav">
         <RouterLink to="/features">Features</RouterLink>
-        <a href="https://app.pietru.dev">Open dashboard</a>
+        <a :href="dashboardUrl">Open dashboard</a>
       </nav>
     </header>
 
@@ -17,7 +17,7 @@
           event tracing, and provider controls.
         </p>
         <div class="home-view__cta">
-          <a href="https://app.pietru.dev">Launch dashboard</a>
+          <a :href="dashboardUrl">Launch dashboard</a>
           <RouterLink to="/features">Explore features</RouterLink>
         </div>
       </section>
@@ -33,6 +33,8 @@
 </template>
 
 <script lang="ts" setup>
+const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://8f26d547.pietru-dashboard.pages.dev'
+
 const features = [
   { title: 'Send', description: 'Ship transactional email through a stable project API with environment-aware keys.' },
   { title: 'Capture', description: 'Route non-production mail into test inboxes instead of real recipients.' },
