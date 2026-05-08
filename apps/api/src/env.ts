@@ -11,6 +11,7 @@ export interface Env {
 export interface AppVariables {
   userId?: string;
   sessionId?: string;
+  accountId?: string;
   projectId?: string;
   environment?: Environment;
 }

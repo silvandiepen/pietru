@@ -105,3 +105,64 @@ export const requireProjectApiKey = createMiddleware<AppMiddleware>(async (c, ne
 
   await next();
 });
+
+export async function authenticateAccountApiKey(
+  c: { env: Env; set: <K extends keyof AppVariables>(key: K, value: AppVariables[K]) => void },
+  key: string,
+): Promise<Response | { userId: string; accountId: string }> {
+  if (!key.startsWith(API_KEY_PREFIXES.account)) {
+    return errorResponse('unauthorized', 'Invalid API key prefix');
+  }
+
+  const hash = await hashApiKey(key);
+  const record = await c.env.DB.prepare(
+    'SELECT id, user_id, revoked_at FROM account_api_keys WHERE key_hash = ?',
+  )
+    .bind(hash)
+    .first<{ id: string; user_id: string; revoked_at: string | null }>();
+
+  if (!record || record.revoked_at) {
+    return errorResponse('unauthorized', 'Invalid API key');
+  }
+
+  c.set('userId', record.user_id);
+  c.set('accountId', record.id);
+  return { userId: record.user_id, accountId: record.id };
+}
+
+export const requireAccountApiKey = createMiddleware<AppMiddleware>(async (c, next) => {
+  const authorization = c.req.header('Authorization');
+  if (!authorization?.startsWith('Bearer ')) {
+    return errorResponse('unauthorized', 'Missing API key');
+  }
+
+  const result = await authenticateAccountApiKey(c, authorization.slice('Bearer '.length).trim());
+  if (result instanceof Response) {
+    return result;
+  }
+
+  await next();
+});
+
+export const requireAccountOrProjectApiKey = createMiddleware<AppMiddleware>(async (c, next) => {
+  const authorization = c.req.header('Authorization');
+  if (!authorization?.startsWith('Bearer ')) {
+    return errorResponse('unauthorized', 'Missing API key');
+  }
+
+  const rawKey = authorization.slice('Bearer '.length).trim();
+
+  if (rawKey.startsWith(API_KEY_PREFIXES.account)) {
+    const result = await authenticateAccountApiKey(c, rawKey);
+    if (result instanceof Response) {
+      return result;
+    }
+  } else {
+    const result = await authenticateProjectApiKey(c, rawKey);
+    if (result instanceof Response) {
+      return result;
+    }
+  }
+
+  await next();
+});

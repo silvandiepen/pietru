@@ -7,6 +7,7 @@ import {
   generateId,
   type MessageStatus,
   parseEmail,
+  renderTemplate,
   safeJsonParse,
 } from '@pietru/core';
 import { ResendProvider } from '@pietru/providers';
@@ -105,6 +106,35 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
     return c.json({ error: { code: 'unauthorized', message: 'Missing project scope' } }, 401);
   }
 
+  // Resolve template if templateId is provided
+  let resolvedSubject = body.data.subject ?? '';
+  let resolvedHtml = body.data.html ?? null;
+  let resolvedText = body.data.text ?? null;
+
+  if (body.data.templateId) {
+    const template = await c.env.DB.prepare('SELECT * FROM email_templates WHERE id = ? AND project_id = ?')
+      .bind(body.data.templateId, projectId)
+      .first<{
+        id: string;
+        subject: string;
+        html: string | null;
+        text: string | null;
+      }>();
+
+    if (!template) {
+      return c.json({ error: { code: 'not_found', message: 'Template not found' } }, 404);
+    }
+
+    const templateData = body.data.data ?? {};
+    resolvedSubject = renderTemplate(template.subject, templateData);
+    resolvedHtml = template.html ? renderTemplate(template.html, templateData) : null;
+    resolvedText = template.text ? renderTemplate(template.text, templateData) : null;
+  }
+
+  if (!resolvedHtml && !resolvedText) {
+    return c.json({ error: { code: 'validation_error', message: 'Template must have html or text' } }, 400);
+  }
+
   const idempotencyKey = c.req.header('Idempotency-Key');
   let idempotencyHash: string | null = null;
   if (idempotencyKey) {
@@ -137,8 +167,8 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
     return c.json({ error: { code: 'missing_from', message: 'From address is required' } }, 400);
   }
 
-  const htmlStorageKey = mode !== SENDING_MODES.send ? await putIfPresent(c.env.STORAGE, `${messageId}/html`, body.data.html) : null;
-  const textStorageKey = mode !== SENDING_MODES.send ? await putIfPresent(c.env.STORAGE, `${messageId}/text`, body.data.text) : null;
+  const htmlStorageKey = mode !== SENDING_MODES.send ? await putIfPresent(c.env.STORAGE, `${messageId}/html`, resolvedHtml ?? undefined) : null;
+  const textStorageKey = mode !== SENDING_MODES.send ? await putIfPresent(c.env.STORAGE, `${messageId}/text`, resolvedText ?? undefined) : null;
   const rawStorageKey =
     mode === SENDING_MODES.sendAndCapture
       ? await putIfPresent(c.env.STORAGE, `${messageId}/raw`, JSON.stringify(body.data))
@@ -166,9 +196,9 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
           id: messageId,
           to: body.data.to,
           from: fromAddress,
-          subject: body.data.subject,
-          html: body.data.html,
-          text: body.data.text,
+          subject: resolvedSubject,
+          html: resolvedHtml,
+          text: resolvedText,
           cc: body.data.cc,
           bcc: body.data.bcc,
           replyTo: body.data.replyTo,
@@ -204,13 +234,14 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
       providerConfig?.id ?? null,
       environment,
       body.data.to,
+      Array.isArray(body.data.to) ? body.data.to.join(', ') : body.data.to,
       fromAddress,
       body.data.replyTo ?? null,
       JSON.stringify(body.data.cc ?? []),
       JSON.stringify(body.data.bcc ?? []),
-      body.data.subject,
-      mode === SENDING_MODES.send ? body.data.html ?? null : null,
-      mode === SENDING_MODES.send ? body.data.text ?? null : null,
+      resolvedSubject,
+      mode === SENDING_MODES.send ? resolvedHtml ?? null : null,
+      mode === SENDING_MODES.send ? resolvedText ?? null : null,
       status,
       provider,
       providerMessageId,
@@ -292,6 +323,18 @@ messageRoutes.get('/messages', async (c) => {
         where += ` AND ${column} = ?`;
         filters.push(value);
       }
+    }
+
+    const dateFrom = c.req.query('dateFrom');
+    if (dateFrom) {
+      where += ' AND m.created_at >= ?';
+      filters.push(dateFrom);
+    }
+
+    const dateTo = c.req.query('dateTo');
+    if (dateTo) {
+      where += ' AND m.created_at <= ?';
+      filters.push(dateTo);
     }
 
     if (decodedCursor) {
@@ -384,6 +427,71 @@ messageRoutes.get('/messages/:id', async (c) => {
     .all();
 
   return c.json({ data: { ...message, events: events.results } });
+});
+
+// Test inbox: list captured messages for a project+environment combo
+// inbox format: {projectSlug}-{environment} (e.g. "my-app-development")
+messageRoutes.get('/test-inboxes/:inbox/messages', async (c) => {
+  const inbox = c.req.param('inbox');
+  if (!inbox) {
+    return c.json({ error: { code: 'validation_error', message: 'Inbox is required' } }, 400);
+  }
+
+  const authResult = await authenticateAccess(c);
+  if (authResult instanceof Response) {
+    return authResult;
+  }
+
+  // Parse inbox: last dash-separated segment is the environment, rest is the slug
+  const lastDash = inbox.lastIndexOf('-');
+  if (lastDash < 0) {
+    return c.json({ error: { code: 'validation_error', message: 'Invalid inbox format' } }, 400);
+  }
+
+  const environment = inbox.slice(lastDash + 1);
+  const slug = inbox.slice(0, lastDash);
+
+  // Validate environment
+  if (!['development', 'preview'].includes(environment)) {
+    return c.json({ error: { code: 'validation_error', message: 'Invalid environment for test inbox' } }, 400);
+  }
+
+  const limit = Math.min(Number(c.req.query('limit') ?? 50), 100);
+
+  if ('userId' in authResult) {
+    const project = await c.env.DB.prepare('SELECT id FROM projects WHERE slug = ? AND user_id = ?')
+      .bind(slug, authResult.userId)
+      .first<{ id: string }>();
+
+    if (!project) {
+      return c.json({ error: { code: 'not_found', message: 'Project not found' } }, 404);
+    }
+
+    const result = await c.env.DB.prepare(
+      'SELECT * FROM messages WHERE project_id = ? AND environment = ? ORDER BY created_at DESC LIMIT ?',
+    )
+      .bind(project.id, environment, limit)
+      .all();
+
+    return c.json({ data: result.results });
+  }
+
+  // API key auth: verify project slug matches
+  const project = await c.env.DB.prepare('SELECT id FROM projects WHERE id = ? AND slug = ?')
+    .bind(authResult.projectId, slug)
+    .first<{ id: string }>();
+
+  if (!project) {
+    return c.json({ error: { code: 'not_found', message: 'Project not found' } }, 404);
+  }
+
+  const result = await c.env.DB.prepare(
+    'SELECT * FROM messages WHERE project_id = ? AND environment = ? ORDER BY created_at DESC LIMIT ?',
+  )
+    .bind(authResult.projectId, environment, limit)
+    .all();
+
+  return c.json({ data: result.results });
 });
 
 export { messageRoutes };
