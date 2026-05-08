@@ -1,8 +1,12 @@
 <template>
   <div class="features-view">
     <header class="features-view__header">
-      <RouterLink to="/">Pietru</RouterLink>
-      <a :href="dashboardUrl">Open dashboard</a>
+      <RouterLink to="/" class="features-view__brand">Pietru</RouterLink>
+      <nav class="features-view__nav">
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/features">Features</RouterLink>
+        <a :href="dashboardUrl">Open dashboard</a>
+      </nav>
     </header>
 
     <main class="features-view__main">
@@ -44,34 +48,69 @@ const features = [
 <style lang="scss" scoped>
 .features-view {
   min-height: 100vh;
-  padding: 1.5rem;
+  background: var(--pietru-color-background);
+  color: var(--pietru-color-foreground);
+
+  &__header,
+  &__nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
 
   &__header {
-    max-width: 68rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: min(100%, 75rem);
     margin: 0 auto;
-    display: flex;
     justify-content: space-between;
-    gap: 1rem;
+    padding: 1.25rem clamp(1rem, 6vw, 8rem);
+    background: rgba(2, 11, 34, 0.92);
+    border-bottom: 1px solid var(--pietru-color-border);
+    backdrop-filter: blur(12px);
+  }
+
+  &__brand {
+    color: var(--pietru-color-foreground);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-decoration: none;
   }
 
   &__main {
-    max-width: 68rem;
+    width: min(100%, 75rem);
     margin: 0 auto;
-    padding: 4rem 0 2rem;
+    padding: 4rem clamp(1rem, 6vw, 8rem) 6rem;
     display: grid;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  &__nav a {
+    color: var(--pietru-color-foreground);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--pietru-color-text-muted);
+    }
   }
 
   &__section {
-    padding: 1.5rem;
+    padding: 1.75rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface);
     box-shadow: var(--pietru-shadow-panel);
 
     h1 {
-      margin-top: 0;
-      font-size: 1.6rem;
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--pietru-color-foreground);
     }
 
     p {
@@ -82,9 +121,17 @@ const features = [
 }
 
 @media (max-width: 640px) {
-  .features-view__header {
-    flex-direction: column;
-    align-items: flex-start;
+  .features-view {
+    &__header,
+    &__nav {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__header {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
   }
 }
 </style>

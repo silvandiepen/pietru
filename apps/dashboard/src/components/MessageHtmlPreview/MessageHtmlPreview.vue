@@ -14,7 +14,7 @@ defineProps<MessageHtmlPreviewProps>()
 
 const emptyState = `
   <html>
-    <body style="font-family: sans-serif; color: #475569; padding: 24px;">
+    <body style="font-family: Inter, system-ui, sans-serif; color: #8888a0; background: #020b22; padding: 24px;">
       No HTML content available for this message.
     </body>
   </html>
@@ -27,6 +27,6 @@ const emptyState = `
   min-height: 36rem;
   border: 1px solid var(--pietru-color-border);
   border-radius: var(--pietru-radius-md);
-  background: white;
+  background: var(--pietru-color-surface);
 }
 </style>

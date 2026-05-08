@@ -3,6 +3,7 @@
   display: grid;
   place-items: center;
   padding: 1.5rem;
+  background: var(--pietru-color-background);
 
   &__card {
     width: min(28rem, 100%);
@@ -11,13 +12,19 @@
     padding: 1.5rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface);
     box-shadow: var(--pietru-shadow-panel);
   }
 
   label {
     display: grid;
     gap: 0.45rem;
+    color: var(--pietru-color-text-muted);
+  }
+
+  p,
+  a {
+    color: var(--pietru-color-text-muted);
   }
 
   input,
@@ -27,10 +34,21 @@
     border-radius: var(--pietru-radius-sm);
   }
 
+  input {
+    background: var(--pietru-color-surface-sidebar);
+    color: var(--pietru-color-text);
+
+    &:focus {
+      outline: none;
+      border-color: var(--pietru-color-accent);
+    }
+  }
+
   button {
     background: var(--pietru-color-accent);
-    color: white;
+    color: var(--pietru-color-background);
     border-color: var(--pietru-color-accent);
+    font-weight: 500;
   }
 
   &__error {

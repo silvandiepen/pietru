@@ -1,19 +1,22 @@
 :root {
-  --pietru-font-family-base: "IBM Plex Sans", "Segoe UI", sans-serif;
-  --pietru-font-family-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
-  --pietru-color-accent: #2563eb;
-  --pietru-color-accent-soft: #dbeafe;
-  --pietru-color-surface: #f5f7fb;
-  --pietru-color-panel: #ffffff;
-  --pietru-color-panel-strong: #e2e8f0;
-  --pietru-color-border: #cbd5e1;
-  --pietru-color-text: #0f172a;
-  --pietru-color-text-muted: #475569;
-  --pietru-color-success: #15803d;
-  --pietru-color-warning: #b45309;
-  --pietru-color-danger: #b91c1c;
-  --pietru-shadow-panel: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --pietru-color-background: #020b22;
+  --pietru-color-foreground: #ffffff;
+  --pietru-color-surface: #141414;
+  --pietru-color-surface-sidebar: #0a1628;
+  --pietru-color-border: rgba(255, 255, 255, 0.06);
+  --pietru-color-text: #ffffff;
+  --pietru-color-text-muted: #8888a0;
+  --pietru-color-accent: #55c267;
+  --pietru-color-accent-soft: rgba(85, 194, 103, 0.15);
+  --pietru-color-danger: #f40935;
+  --pietru-color-warning: #ff8d22;
+  --pietru-color-success: #55c267;
+  --pietru-font-family-base: Inter, system-ui, sans-serif;
+  --pietru-font-family-mono: "SF Mono", Monaco, Consolas, monospace;
   --pietru-radius-sm: 8px;
   --pietru-radius-md: 12px;
   --pietru-radius-lg: 18px;
+  --pietru-shadow-panel: none;
+  --pietru-color-panel: #141414;
+  --pietru-color-panel-strong: #1a1a2e;
 }

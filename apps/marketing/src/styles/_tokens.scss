@@ -1,13 +1,16 @@
 :root {
-  --pietru-font-family-base: "IBM Plex Sans", "Segoe UI", sans-serif;
-  --pietru-color-accent: #2563eb;
-  --pietru-color-surface: #f8fafc;
-  --pietru-color-panel: #ffffff;
-  --pietru-color-border: #cbd5e1;
-  --pietru-color-text: #0f172a;
-  --pietru-color-text-muted: #475569;
+  --pietru-color-background: #020b22;
+  --pietru-color-foreground: #ffffff;
+  --pietru-color-surface: #141414;
+  --pietru-color-border: rgba(255, 255, 255, 0.06);
+  --pietru-color-text: #ffffff;
+  --pietru-color-text-muted: #8888a0;
+  --pietru-color-accent: #55c267;
+  --pietru-color-accent-hover: #66d477;
+  --pietru-font-family-base: Inter, system-ui, sans-serif;
   --pietru-radius-sm: 8px;
   --pietru-radius-md: 12px;
   --pietru-radius-lg: 20px;
-  --pietru-shadow-panel: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --pietru-radius-pill: 999px;
+  --pietru-shadow-panel: none;
 }

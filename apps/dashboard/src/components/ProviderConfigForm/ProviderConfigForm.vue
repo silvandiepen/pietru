@@ -84,6 +84,7 @@ function submit() {
   label {
     display: grid;
     gap: 0.45rem;
+    color: var(--pietru-color-text-muted);
   }
 
   input,
@@ -92,13 +93,23 @@ function submit() {
     padding: 0.75rem 0.9rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-sm);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface-sidebar);
+    color: var(--pietru-color-text);
+  }
+
+  input,
+  select {
+    &:focus {
+      outline: none;
+      border-color: var(--pietru-color-accent);
+    }
   }
 
   button {
     background: var(--pietru-color-accent);
-    color: white;
+    color: var(--pietru-color-background);
     border-color: var(--pietru-color-accent);
+    font-weight: 500;
   }
 }
 </style>

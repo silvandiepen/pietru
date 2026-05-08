@@ -6,25 +6,36 @@
 </script>
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
   color: var(--pietru-color-text);
-  background: var(--pietru-color-surface);
+  background: var(--pietru-color-background);
   font-family: var(--pietru-font-family-base);
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  color-scheme: dark;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--pietru-color-background);
+}
+
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--pietru-color-surface);
+  background: var(--pietru-color-background);
   color: var(--pietru-color-text);
 }
 
 a {
   color: inherit;
+  text-decoration-color: var(--pietru-color-border);
 }
 
 button,
@@ -32,5 +43,17 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  color: inherit;
+}
+
+#app {
+  min-height: 100vh;
+  background: var(--pietru-color-background);
 }
 </style>

@@ -29,6 +29,10 @@
         </article>
       </section>
     </main>
+
+    <footer class="home-view__footer">
+      <p>© 2026 Pietru. Built for teams that ship email-heavy products.</p>
+    </footer>
   </div>
 </template>
 
@@ -47,7 +51,8 @@ const features = [
 <style lang="scss" scoped>
 .home-view {
   min-height: 100vh;
-  padding: 1.5rem;
+  background: var(--pietru-color-background);
+  color: var(--pietru-color-foreground);
 
   &__header,
   &__nav,
@@ -58,35 +63,45 @@ const features = [
   }
 
   &__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     justify-content: space-between;
-    max-width: 72rem;
+    width: min(100%, 75rem);
     margin: 0 auto;
+    padding: 1.25rem clamp(1rem, 6vw, 8rem);
+    background: rgba(2, 11, 34, 0.92);
+    border-bottom: 1px solid var(--pietru-color-border);
+    backdrop-filter: blur(12px);
   }
 
   &__brand {
     font-size: 1.15rem;
-    font-weight: 700;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     text-decoration: none;
+    color: var(--pietru-color-foreground);
   }
 
   &__main {
-    max-width: 72rem;
+    width: min(100%, 75rem);
     margin: 0 auto;
-    padding: 5rem 0 3rem;
+    padding: 4rem clamp(1rem, 6vw, 8rem) 6rem;
     display: grid;
-    gap: 3rem;
+    gap: 5rem;
   }
 
   &__hero {
     max-width: 48rem;
     display: grid;
-    gap: 1.25rem;
+    gap: 1.5rem;
 
     h1 {
       margin: 0;
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      line-height: 0.96;
-      letter-spacing: -0.04em;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
     }
   }
 
@@ -96,45 +111,100 @@ const features = [
     margin: 0;
   }
 
+  &__eyebrow {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  &__summary {
+    max-width: 42rem;
+  }
+
   &__cta a,
   &__nav a {
     text-decoration: none;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  &__nav a {
+    color: var(--pietru-color-foreground);
+
+    &:hover {
+      color: var(--pietru-color-text-muted);
+    }
   }
 
   &__cta a {
-    padding: 0.85rem 1.05rem;
+    padding: 0.7rem 1.2rem;
     border: 1px solid var(--pietru-color-border);
-    border-radius: 999px;
-    background: var(--pietru-color-panel);
-    box-shadow: var(--pietru-shadow-panel);
+    border-radius: var(--pietru-radius-pill);
+    background: transparent;
+    color: var(--pietru-color-foreground);
+    font-weight: 500;
 
     &:first-child {
       border-color: var(--pietru-color-accent);
       background: var(--pietru-color-accent);
-      color: white;
+      color: var(--pietru-color-background);
+
+      &:hover {
+        background: var(--pietru-color-accent-hover);
+        border-color: var(--pietru-color-accent-hover);
+      }
+    }
+
+    &:last-child {
+      border-color: rgba(255, 255, 255, 0.12);
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.24);
+        color: var(--pietru-color-foreground);
+      }
     }
   }
 
   &__features {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
   }
 
   &__feature-card {
-    padding: 1.25rem;
+    padding: 1.5rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface);
     box-shadow: var(--pietru-shadow-panel);
 
     h2 {
-      margin-top: 0;
+      margin: 0 0 0.75rem;
+      color: var(--pietru-color-foreground);
+      font-size: clamp(1.15rem, 2vw, 1.35rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
     }
 
     p {
       color: var(--pietru-color-text-muted);
       margin-bottom: 0;
+    }
+  }
+
+  &__footer {
+    width: min(100%, 75rem);
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 6vw, 8rem) 2rem;
+
+    p {
+      margin: 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--pietru-color-border);
+      color: var(--pietru-color-text-muted);
+      font-size: 0.95rem;
     }
   }
 }
@@ -152,6 +222,16 @@ const features = [
     &__cta {
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    &__header {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    &__main {
+      padding-top: 3rem;
+      gap: 4rem;
     }
   }
 

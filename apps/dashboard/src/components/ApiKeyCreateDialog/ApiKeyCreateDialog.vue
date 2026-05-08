@@ -67,7 +67,7 @@ function submit() {
   &__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.45);
+    background: color-mix(in srgb, var(--pietru-color-background) 72%, transparent);
   }
 
   &__panel {
@@ -77,7 +77,7 @@ function submit() {
     padding: 1.25rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-lg);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface);
     box-shadow: var(--pietru-shadow-panel);
   }
 
@@ -90,6 +90,11 @@ function submit() {
   &__header {
     grid-template-columns: 1fr auto;
     align-items: center;
+
+    h3 {
+      margin: 0;
+      font-weight: 600;
+    }
   }
 
   &__revealed code {
@@ -97,8 +102,8 @@ function submit() {
     margin-top: 0.75rem;
     padding: 0.9rem;
     border-radius: var(--pietru-radius-sm);
-    background: #0f172a;
-    color: #f8fafc;
+    background: var(--pietru-color-surface-sidebar);
+    color: var(--pietru-color-text);
     font-family: var(--pietru-font-family-mono);
     word-break: break-all;
   }
@@ -106,6 +111,7 @@ function submit() {
   label {
     display: grid;
     gap: 0.4rem;
+    color: var(--pietru-color-text-muted);
   }
 
   input,
@@ -116,10 +122,27 @@ function submit() {
     border-radius: var(--pietru-radius-sm);
   }
 
+  input,
+  select {
+    background: var(--pietru-color-surface-sidebar);
+    color: var(--pietru-color-text);
+
+    &:focus {
+      outline: none;
+      border-color: var(--pietru-color-accent);
+    }
+  }
+
+  button {
+    background: transparent;
+    color: var(--pietru-color-text);
+  }
+
   button[type='submit'] {
     background: var(--pietru-color-accent);
-    color: white;
+    color: var(--pietru-color-background);
     border-color: var(--pietru-color-accent);
+    font-weight: 500;
   }
 }
 </style>

@@ -31,9 +31,10 @@ function formatTimestamp(value: string) {
 <style lang="scss" scoped>
 .message-row {
   cursor: pointer;
+  transition: background-color 160ms ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--pietru-color-accent) 5%, white);
+    background: color-mix(in srgb, var(--pietru-color-text) 4%, var(--pietru-color-surface));
   }
 
   td {
@@ -54,6 +55,7 @@ function formatTimestamp(value: string) {
     height: 0.6rem;
     border-radius: 50%;
     background: var(--pietru-color-text-muted);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, currentColor 16%, transparent);
 
     &[data-status='sent'],
     &[data-status='delivered'] {

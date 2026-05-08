@@ -14,8 +14,8 @@ app.use(
   '*',
   cors({
     origin: [
-      'https://8f26d547.pietru-dashboard.pages.dev',
-      'https://ce09b891.pietru-marketing.pages.dev',
+      /^https:\/\/[a-z0-9-]+\.pietru-dashboard\.pages\.dev$/,
+      /^https:\/\/[a-z0-9-]+\.pietru-marketing\.pages\.dev$/,
       'http://localhost:5173',
       'http://localhost:5174',
     ],

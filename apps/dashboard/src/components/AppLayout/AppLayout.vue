@@ -80,15 +80,17 @@ defineEmits<{
     gap: 1.5rem;
     padding: 1.5rem;
     border-right: 1px solid var(--pietru-color-border);
-    background: #eef2f8;
+    background: var(--pietru-color-surface-sidebar);
   }
 
   &__brand {
     display: grid;
     gap: 0.2rem;
+    color: var(--pietru-color-text);
 
     strong {
       font-size: 1.2rem;
+      font-weight: 600;
     }
 
     span {
@@ -106,17 +108,23 @@ defineEmits<{
     border-radius: var(--pietru-radius-sm);
     text-decoration: none;
     color: var(--pietru-color-text-muted);
+    transition: background-color 160ms ease, color 160ms ease;
+
+    &:hover {
+      background: var(--pietru-color-border);
+      color: var(--pietru-color-text);
+    }
 
     &.router-link-active {
-      background: var(--pietru-color-panel);
+      background: var(--pietru-color-border);
       color: var(--pietru-color-text);
-      box-shadow: var(--pietru-shadow-panel);
     }
   }
 
   &__content {
     display: grid;
     grid-template-rows: auto 1fr;
+    background: var(--pietru-color-background);
   }
 
   &__topbar {
@@ -125,10 +133,12 @@ defineEmits<{
     gap: 1rem;
     align-items: center;
     padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--pietru-color-border);
 
     h1 {
       margin: 0;
       font-size: 1.5rem;
+      font-weight: 600;
     }
 
     p {

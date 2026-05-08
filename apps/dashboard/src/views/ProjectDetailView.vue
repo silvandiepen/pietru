@@ -165,11 +165,13 @@ function closeDialog() {
       padding: 0.7rem 0.9rem;
       border: 1px solid var(--pietru-color-border);
       border-radius: var(--pietru-radius-sm);
-      background: var(--pietru-color-panel);
+      background: transparent;
+      color: var(--pietru-color-text-muted);
 
       &[data-active='true'] {
-        border-color: var(--pietru-color-accent);
-        color: var(--pietru-color-accent);
+        border-color: var(--pietru-color-border);
+        background: var(--pietru-color-border);
+        color: var(--pietru-color-text);
       }
     }
   }
@@ -194,6 +196,7 @@ function closeDialog() {
       padding: 1rem;
       border: 1px solid var(--pietru-color-panel-strong);
       border-radius: var(--pietru-radius-sm);
+      background: var(--pietru-color-surface-sidebar);
     }
   }
 
@@ -205,7 +208,8 @@ function closeDialog() {
     padding: 0.75rem 0.9rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-sm);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface-sidebar);
+    color: var(--pietru-color-text);
   }
 }
 </style>

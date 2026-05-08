@@ -43,9 +43,9 @@ function formatTimestamp(value: string) {
 
   button {
     padding: 0.65rem 0.9rem;
-    border: 1px solid var(--pietru-color-danger);
+    border: 1px solid color-mix(in srgb, var(--pietru-color-danger) 45%, var(--pietru-color-border));
     border-radius: var(--pietru-radius-sm);
-    background: white;
+    background: color-mix(in srgb, var(--pietru-color-danger) 10%, transparent);
     color: var(--pietru-color-danger);
   }
 }

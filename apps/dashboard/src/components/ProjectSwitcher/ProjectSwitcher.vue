@@ -42,8 +42,13 @@ function onChange(event: Event) {
     padding: 0.7rem 0.9rem;
     border: 1px solid var(--pietru-color-border);
     border-radius: var(--pietru-radius-sm);
-    background: var(--pietru-color-panel);
+    background: var(--pietru-color-surface);
     color: var(--pietru-color-text);
+
+    &:focus {
+      outline: none;
+      border-color: var(--pietru-color-accent);
+    }
   }
 }
 </style>
