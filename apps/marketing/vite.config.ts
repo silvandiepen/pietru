@@ -25,6 +25,8 @@ export default defineConfig({
     },
   },
   test: {
+    include: ['apps/marketing/src/**/*.test.ts'],
+    plugins: [vue()],
     environment: 'jsdom',
     globals: true,
   },

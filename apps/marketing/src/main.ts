@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 
+import '@sil/ui/style.css'
+
 import App from './App.vue'
 import router from './router'
 

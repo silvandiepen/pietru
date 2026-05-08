@@ -9,7 +9,7 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "@sil/ui": "1.23.4",
+    "@sil/ui": "^1.23.6",
     "pinia": "3.0.4",
     "vue": "3.5.34",
     "vue-router": "5.0.6"

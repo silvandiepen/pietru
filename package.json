@@ -7,15 +7,24 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev -w apps/api",
-    "dev:dashboard": "npm run dev -w apps/dashboard",
-    "dev:marketing": "npm run dev -w apps/marketing",
+    "build:packages": "npm run build -ws --if-present --include-workspace-root=false --workspaces=packages/*",
     "build:api": "npm run build -w apps/api",
     "build:dashboard": "npm run build -w apps/dashboard",
     "build:marketing": "npm run build -w apps/marketing",
-    "typecheck": "npm run typecheck -ws --if-present"
+    "build": "npm run build:packages && npm run build:api && npm run build:dashboard && npm run build:marketing",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:dashboard": "npm run dev -w apps/dashboard",
+    "dev:marketing": "npm run dev -w apps/marketing",
+    "typecheck": "tsc --build",
+    "test": "vitest run && vitest run --config apps/dashboard/vite.config.ts && vitest run --config apps/marketing/vite.config.ts",
+    "typecheck:api": "tsc --noEmit -p apps/api/tsconfig.json",
+    "typecheck:dashboard": "vue-tsc --noEmit -p apps/dashboard/tsconfig.json",
+    "typecheck:marketing": "vue-tsc --noEmit -p apps/marketing/tsconfig.json"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@sil/ui": "^1.23.5"
   }
 }
