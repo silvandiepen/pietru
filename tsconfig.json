@@ -1,16 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
-  },
-  "exclude": ["node_modules", "dist"]
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/auth" },
+    { "path": "packages/db" },
+    { "path": "packages/providers" },
+    { "path": "packages/validation" },
+    { "path": "apps/api" },
+    { "path": "apps/dashboard" },
+    { "path": "apps/marketing" }
+  ]
 }
