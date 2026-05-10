@@ -8,13 +8,13 @@ describe('MessageRow', () => {
       props: {
         message: {
           id: 'msg_1',
-          projectId: 'p1',
+          project_id: 'p1',
           environment: 'dev',
-          toAddress: 'to@example.com',
-          fromAddress: 'from@example.com',
+          to_address: 'to@example.com',
+          from_address: 'from@example.com',
           subject: 'Hello',
           status: 'sent',
-          createdAt: '2026-05-08T10:00:00.000Z',
+          created_at: '2024-01-15T10:30:00Z',
         },
       },
     })

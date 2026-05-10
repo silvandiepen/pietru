@@ -200,6 +200,22 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
       let providerConfigObj: ProviderConfig;
 
       if (providerConfig.provider_type === 'pietru') {
+        // Verify the from domain is verified in our shared SES account
+        const fromDomain = parsedFrom.email?.split('@')[1]?.toLowerCase();
+        if (fromDomain) {
+          const domainVerification = await c.env.DB.prepare(
+            'SELECT verification_status FROM domain_verifications WHERE domain = ? AND verification_status = ?',
+          )
+            .bind(fromDomain, 'SUCCESS')
+            .first<{ verification_status: string }>();
+          if (!domainVerification) {
+            return c.json(
+              { error: { code: 'domain_not_verified', message: `Domain "${fromDomain}" is not verified. Verify it in your project's Domains tab before sending via Pietru SMTP.` } },
+              400,
+            );
+          }
+        }
+
         // Use Pietru's shared SES credentials
         providerConfigObj = {
           providerType: 'ses',

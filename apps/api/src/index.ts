@@ -15,6 +15,7 @@ import { emailHookRoutes } from './routes/email-hooks';
 import { statsRoutes } from './routes/stats';
 import { inboxRoutes } from './routes/inbox';
 import { replyRoutes } from './routes/reply';
+import { domainVerificationRoutes } from './routes/domain-verifications';
 import { reservedRoutes } from './routes/reserved-addresses';
 import { testAliasRoutes } from './routes/test-aliases';
 
@@ -74,6 +75,7 @@ app.route('/v1', inboxRoutes);
 app.route('/v1', replyRoutes);
 app.route('/v1', reservedRoutes);
 app.route('/v1', testAliasRoutes);
+app.route('/v1', domainVerificationRoutes);
 
 import { handleInboundEmail } from './inbound';
 

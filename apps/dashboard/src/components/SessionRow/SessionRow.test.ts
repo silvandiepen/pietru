@@ -9,9 +9,9 @@ describe('SessionRow', () => {
       props: {
         session: {
           id: 'sess_1',
-          createdAt: '2026-05-08T10:00:00.000Z',
-          expiresAt: '2026-05-09T10:00:00.000Z',
-          userAgent: 'Safari',
+          created_at: '2024-01-15T10:30:00Z',
+          expires_at: '2024-01-16T10:30:00Z',
+          user_agent: 'Safari',
         },
       },
       global: {

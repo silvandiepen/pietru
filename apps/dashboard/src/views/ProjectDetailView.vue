@@ -111,6 +111,62 @@
         </ul>
       </section>
 
+      <section v-if="tab === 'domains'" class="project-detail-view__panel">
+        <h3>{{ $t('projectDetail.headingDomains') }}</h3>
+        <p class="project-detail-view__domains-desc">{{ $t('projectDetail.domainsDescription') }}</p>
+
+        <form class="project-detail-view__domain-form" @submit.prevent="addDomain">
+          <input
+            v-model="newDomain"
+            type="text"
+            placeholder="example.com"
+            required
+          />
+          <button type="submit" :disabled="domainStore.loading">{{ $t('projectDetail.buttonAddDomain') }}</button>
+        </form>
+
+        <p v-if="domainStore.error" class="project-detail-view__error">{{ domainStore.error }}</p>
+
+        <ul v-if="domainStore.items.length" class="project-detail-view__list">
+          <li v-for="dv in domainStore.items" :key="dv.id">
+            <div>
+              <strong>{{ dv.domain }}</strong>
+              <p>
+                <span :class="`domain-status domain-status--${(dv.verification_status || '').toLowerCase()}`">
+                  {{ $t(`projectDetail.domainStatus${dv.verification_status || 'PENDING'}`) }}
+                </span>
+                ·
+                <span :class="`domain-status domain-status--${(dv.dkim_status || '').toLowerCase()}`">
+                  DKIM: {{ $t(`projectDetail.domainStatus${dv.dkim_status || 'PENDING'}`) }}
+                </span>
+              </p>
+            </div>
+            <div class="project-detail-view__hook-actions">
+              <button type="button" @click="refreshDomain(dv.id)">{{ $t('projectDetail.buttonRefreshDomain') }}</button>
+              <button type="button" @click="removeDomain(dv.id)">{{ $t('projectDetail.buttonRemoveDomain') }}</button>
+            </div>
+
+            <!-- DNS records panel -->
+            <div v-if="dv.dkim_tokens && dv.dkim_tokens.length" class="project-detail-view__dns-records">
+              <h4>{{ $t('projectDetail.headingDnsRecords') }}</h4>
+              <p>{{ $t('projectDetail.dnsRecordsDescription', { domain: dv.domain }) }}</p>
+              <div class="project-detail-view__dns-record">
+                <label>Type: TXT</label>
+                <code>_amazonses.{{ dv.domain }}</code>
+                <code>{{ $t('projectDetail.dnsRecordValueHint') }}</code>
+              </div>
+              <div v-for="token in dv.dkim_tokens" :key="token" class="project-detail-view__dns-record">
+                <label>Type: CNAME</label>
+                <code>{{ token }}._domainkey.{{ dv.domain }}</code>
+                <code>{{ token }}.dkim.amazonses.com</code>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <p v-else class="project-detail-view__empty">{{ $t('projectDetail.noDomains') }}</p>
+      </section>
+
       <ApiKeyCreateDialog
         :open="dialogOpen"
         :revealed-key="apiKeysStore.lastCreatedKey?.key || null"
@@ -131,6 +187,7 @@ import AppLayout from '@/components/AppLayout'
 import EnvironmentBadge from '@/components/EnvironmentBadge'
 import ProviderConfigForm from '@/components/ProviderConfigForm'
 import { useApiKeysStore } from '@/stores/apiKeys'
+import { useDomainVerificationsStore } from '@/stores/domainVerifications'
 import { useEmailHooksStore } from '@/stores/emailHooks'
 import { useProjectsStore } from '@/stores/projects'
 import { useProvidersStore } from '@/stores/providers'
@@ -143,6 +200,7 @@ const projectsStore = useProjectsStore()
 const apiKeysStore = useApiKeysStore()
 const providersStore = useProvidersStore()
 const emailHooksStore = useEmailHooksStore()
+const domainStore = useDomainVerificationsStore()
 const { t } = useI18n()
 
 const tabs = [
@@ -150,10 +208,12 @@ const tabs = [
   { key: 'api keys' as const, label: computed(() => t('projectDetail.tabApiKeys')) },
   { key: 'provider config' as const, label: computed(() => t('projectDetail.tabProviderConfig')) },
   { key: 'hooks' as const, label: computed(() => 'Hooks') },
+  { key: 'domains' as const, label: computed(() => t('projectDetail.tabDomains')) },
 ]
 const tab = ref<(typeof tabs)[number]['key']>('environments')
 const dialogOpen = ref(false)
 const providerValidationMessage = ref('')
+const newDomain = ref('')
 
 const hookForm = reactive({
   name: '',
@@ -176,6 +236,7 @@ onMounted(async () => {
     apiKeysStore.list(projectId.value),
     providersStore.list(projectId.value),
     emailHooksStore.list(projectId.value),
+    domainStore.fetchAll(projectId.value),
   ])
   projectsStore.setActiveProject(projectId.value)
 })
@@ -223,6 +284,24 @@ async function toggleHook(hookId: string) {
 
 async function deleteHook(hookId: string) {
   await emailHooksStore.delete(projectId.value, hookId)
+}
+
+async function addDomain() {
+  if (!newDomain.value.trim()) return
+  try {
+    await domainStore.addDomain(projectId.value, newDomain.value.trim())
+    newDomain.value = ''
+  } catch {
+    // error is shown via domainStore.error
+  }
+}
+
+async function refreshDomain(domainId: string) {
+  await domainStore.verifyDomain(projectId.value, domainId)
+}
+
+async function removeDomain(domainId: string) {
+  await domainStore.removeDomain(projectId.value, domainId)
 }
 
 function closeDialog() {
@@ -335,6 +414,97 @@ function closeDialog() {
     button[data-active="true"] {
       border-color: var(--pietru-color-accent);
       color: var(--pietru-color-accent);
+    }
+  }
+
+  &__domains-desc {
+    color: var(--pietru-color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  &__domain-form {
+    display: flex;
+    gap: 0.75rem;
+
+    input {
+      flex: 1;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--pietru-color-border);
+      border-radius: var(--pietru-radius-sm);
+      background: var(--pietru-color-surface-sidebar);
+      color: var(--pietru-color-text);
+
+      &:focus {
+        outline: none;
+        border-color: var(--pietru-color-accent);
+      }
+    }
+
+    button {
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--pietru-color-accent);
+      border-radius: var(--pietru-radius-sm);
+      background: var(--pietru-color-accent);
+      color: var(--pietru-color-background);
+      font-weight: 500;
+
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__error {
+    color: #e53e3e;
+    font-size: 0.875rem;
+  }
+
+  &__empty {
+    color: var(--pietru-color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  &__dns-records {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--pietru-color-border);
+    border-radius: var(--pietru-radius-sm);
+    background: var(--pietru-color-surface-sidebar);
+
+    h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    p {
+      margin: 0 0 0.75rem;
+      font-size: 0.8rem;
+      color: var(--pietru-color-text-muted);
+    }
+  }
+
+  &__dns-record {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-size: 0.8rem;
+
+    label {
+      color: var(--pietru-color-text-muted);
+      font-weight: 500;
+    }
+
+    code {
+      padding: 0.25rem 0.5rem;
+      background: var(--pietru-color-panel-strong);
+      border-radius: var(--pietru-radius-sm);
+      font-family: monospace;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: nowrap;
     }
   }
 
