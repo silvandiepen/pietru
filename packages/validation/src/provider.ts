@@ -15,9 +15,12 @@ const sesConfigSchema = z.object({
   defaultMailFromDomain: z.string().nullable().optional(),
 });
 
+/** Pietru SMTP — no user credentials needed, uses system SES */
+const pietruConfigSchema = z.object({}).optional().default({});
+
 export const createProviderConfigSchema = z.object({
   providerType: z.string().min(1),
-  config: z.union([resendConfigSchema, sesConfigSchema]),
+  config: z.union([resendConfigSchema, sesConfigSchema, pietruConfigSchema]),
   mode: z.enum(['send', 'capture', 'send_and_capture']),
   environment: z.enum(['development', 'preview', 'production']),
   defaultFrom: z.string().optional(),

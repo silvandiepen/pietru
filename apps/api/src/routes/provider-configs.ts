@@ -70,10 +70,13 @@ providerConfigRoutes.post('/projects/:id/provider-configs', requireUserSession, 
     return c.json({ error: { code: 'validation_error', message: body.error.issues[0]?.message ?? 'Invalid payload' } }, 400);
   }
 
-  await getProvider(body.data.providerType).validateConfig({
-    providerType: body.data.providerType,
-    ...body.data.config,
-  });
+  // Skip credential validation for Pietru SMTP (uses system credentials)
+  if (body.data.providerType !== 'pietru') {
+    await getProvider(body.data.providerType).validateConfig({
+      providerType: body.data.providerType,
+      ...body.data.config,
+    });
+  }
 
   const now = new Date().toISOString();
   const id = generateId('pcfg');
@@ -141,10 +144,12 @@ providerConfigRoutes.patch('/projects/:id/provider-configs/:configId', requireUs
     allowedDomains: body.data.allowedDomains ?? JSON.parse(existing.allowed_domains_json ?? '[]'),
   };
 
-  await getProvider(merged.providerType).validateConfig({
-    providerType: merged.providerType,
-    ...merged.config,
-  });
+  if (merged.providerType !== 'pietru') {
+    await getProvider(merged.providerType).validateConfig({
+      providerType: merged.providerType,
+      ...merged.config,
+    });
+  }
 
   const updatedAt = new Date().toISOString();
   await c.env.DB.prepare(
@@ -188,14 +193,16 @@ providerConfigRoutes.post('/projects/:id/provider-configs/:configId/validate', r
     return c.json({ error: { code: 'not_found', message: 'Provider config not found' } }, 404);
   }
 
-  await getProvider(existing.provider_type).validateConfig(
-    {
-      providerType: existing.provider_type,
-      ...(JSON.parse(await decrypt(existing.config_encrypted, c.env.ENCRYPTION_KEY)) as z.infer<
-        typeof createProviderConfigSchema
-      >['config']),
-    },
-  );
+  if (existing.provider_type !== 'pietru') {
+    await getProvider(existing.provider_type).validateConfig(
+      {
+        providerType: existing.provider_type,
+        ...(JSON.parse(await decrypt(existing.config_encrypted, c.env.ENCRYPTION_KEY)) as z.infer<
+          typeof createProviderConfigSchema
+        >['config']),
+      },
+    );
+  }
 
   return c.json({ data: { ok: true } });
 });

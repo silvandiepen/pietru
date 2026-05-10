@@ -5,8 +5,16 @@
       <select v-model="form.providerType">
         <option value="resend">{{ $t('providerConfig.optionResend') }}</option>
         <option value="ses">{{ $t('providerConfig.optionSes') }}</option>
+        <option value="pietru">{{ $t('providerConfig.optionPietru') }}</option>
       </select>
     </label>
+
+    <!-- Pietru SMTP — no credentials needed -->
+    <template v-if="form.providerType === 'pietru'">
+      <div class="pietru-info">
+        <p>{{ $t('providerConfig.pietruDescription') }}</p>
+      </div>
+    </template>
 
     <!-- Resend fields -->
     <template v-if="form.providerType === 'resend'">
@@ -117,6 +125,8 @@ function submit() {
       accessKeyId: sesAccessKeyId.value,
       secretAccessKey: sesSecretAccessKey.value,
     }
+  } else if (form.providerType === 'pietru') {
+    config = {}
   } else {
     config = { apiKey: apiKey.value }
   }
@@ -166,6 +176,16 @@ function submit() {
     color: var(--pietru-color-background);
     border-color: var(--pietru-color-accent);
     font-weight: 500;
+  }
+
+  .pietru-info {
+    padding: 0.75rem;
+    border-radius: var(--pietru-radius-sm);
+    background: var(--pietru-color-surface-sidebar);
+    border: 1px solid var(--pietru-color-border);
+    color: var(--pietru-color-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 }
 </style>

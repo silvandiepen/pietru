@@ -197,22 +197,39 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
     }
 
     try {
-      const providerSecrets = JSON.parse(await decrypt(providerConfig.config_encrypted, c.env.ENCRYPTION_KEY)) as Record<string, unknown>;
-      const provider = getMailProvider(providerConfig.provider_type);
-      const providerConfigObj: ProviderConfig = {
-        providerType: providerConfig.provider_type,
-        apiKey: (providerSecrets.apiKey as string) ?? '',
-        webhookSecret: providerSecrets.webhookSecret as string | undefined,
-        mode: providerConfig.mode,
-        environment: providerConfig.environment,
-        defaultFrom: providerConfig.default_from,
-        allowedDomains,
-        region: providerSecrets.region as string | undefined,
-        accessKeyId: providerSecrets.accessKeyId as string | undefined,
-        secretAccessKey: providerSecrets.secretAccessKey as string | undefined,
-        configurationSetName: providerSecrets.configurationSetName as string | null | undefined,
-        defaultMailFromDomain: providerSecrets.defaultMailFromDomain as string | null | undefined,
-      };
+      let providerConfigObj: ProviderConfig;
+
+      if (providerConfig.provider_type === 'pietru') {
+        // Use Pietru's shared SES credentials
+        providerConfigObj = {
+          providerType: 'ses',
+          mode: providerConfig.mode,
+          environment: providerConfig.environment,
+          defaultFrom: providerConfig.default_from,
+          allowedDomains,
+          region: c.env.PIETRU_SES_REGION,
+          accessKeyId: c.env.PIETRU_SES_ACCESS_KEY_ID,
+          secretAccessKey: c.env.PIETRU_SES_SECRET_ACCESS_KEY,
+        };
+      } else {
+        const providerSecrets = JSON.parse(await decrypt(providerConfig.config_encrypted, c.env.ENCRYPTION_KEY)) as Record<string, unknown>;
+        providerConfigObj = {
+          providerType: providerConfig.provider_type,
+          apiKey: (providerSecrets.apiKey as string) ?? '',
+          webhookSecret: providerSecrets.webhookSecret as string | undefined,
+          mode: providerConfig.mode,
+          environment: providerConfig.environment,
+          defaultFrom: providerConfig.default_from,
+          allowedDomains,
+          region: providerSecrets.region as string | undefined,
+          accessKeyId: providerSecrets.accessKeyId as string | undefined,
+          secretAccessKey: providerSecrets.secretAccessKey as string | undefined,
+          configurationSetName: providerSecrets.configurationSetName as string | null | undefined,
+          defaultMailFromDomain: providerSecrets.defaultMailFromDomain as string | null | undefined,
+        };
+      }
+
+      const provider = getMailProvider(providerConfig.provider_type === 'pietru' ? 'ses' : providerConfig.provider_type);
       const sendResult = await provider.sendEmail(
         {
           id: messageId,

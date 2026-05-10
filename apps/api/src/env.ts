@@ -9,6 +9,9 @@ export interface Env {
   SYSTEM_EMAIL_API_KEY: string;
   SYSTEM_EMAIL_FROM: string;
   DASHBOARD_URL: string;
+  PIETRU_SES_REGION: string;
+  PIETRU_SES_ACCESS_KEY_ID: string;
+  PIETRU_SES_SECRET_ACCESS_KEY: string;
 }
 
 export interface AppVariables {
