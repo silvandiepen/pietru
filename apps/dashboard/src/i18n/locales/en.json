@@ -7,7 +7,7 @@
     "navProjects": "Projects",
     "navProjectDetail": "Project detail",
     "navMessages": "Messages",
-    "navTestInboxes": "Test inboxes",
+    "navTestInboxes": "Test aliases",
     "navSettings": "Settings",
     "navAdmin": "Admin",
     "topbarFallback": "Dashboard",
@@ -111,12 +111,21 @@
     "validationValid": "Provider config is valid.",
     "validationFailed": "Validation failed."
   },
-  "testInboxes": {
-    "title": "Test inboxes",
-    "description": "Open a captured inbox to inspect messages sent through non-live environments."
-  },
-  "testInboxDetail": {
-    "description": "Captured messages for this inbox."
+  "testAliases": {
+    "title": "Test aliases",
+    "description": "Create email aliases on test.pietru.dev to capture and test emails without using real addresses.",
+    "labelAlias": "Alias",
+    "placeholderAlias": "my-alias",
+    "labelProject": "Link to project",
+    "optionNoProject": "No project",
+    "labelDescription": "Description",
+    "placeholderDescription": "e.g. Signup flow test",
+    "buttonCreate": "Create alias",
+    "empty": "No test aliases yet. Create one above to start capturing emails.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "copy": "Copy",
+    "delete": "Delete"
   },
   "settings": {
     "title": "Settings",
