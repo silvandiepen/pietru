@@ -31,7 +31,7 @@
 <script lang="ts" setup>
 import { PillHeader, PlatformFooter } from '@sil/ui'
 
-const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app-pietru.hakobs.com'
+const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
 
 function openDashboard() {
   window.open(dashboardUrl, '_blank')

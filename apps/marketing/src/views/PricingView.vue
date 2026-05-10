@@ -6,7 +6,7 @@ import { Button, Card, Colors } from '@sil/ui'
 const { t, tm, rt } = useI18n()
 
 const dashboardUrl =
-  import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app-pietru.hakobs.com'
+  import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
 
 const planKeys = ['free', 'pro'] as const
 
