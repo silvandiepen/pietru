@@ -7,6 +7,7 @@
  * - multipart/alternative (picks HTML first, falls back to text)
  * - multipart/mixed with nested multipart/alternative
  * - Base64 and quoted-printable content transfer encodings
+ * - OTP/code extraction from email bodies
  */
 
 function decodeBase64(str: string): string {
@@ -46,11 +47,9 @@ function findBoundaries(raw: string, boundary: string): Boundary[] {
     const startIdx = raw.indexOf(delimiter, pos);
     if (startIdx === -1) break;
 
-    // Skip past the delimiter line
     const lineEnd = raw.indexOf('\n', startIdx);
     if (lineEnd === -1) break;
 
-    // Check for close delimiter
     const line = raw.slice(startIdx, lineEnd).trim();
     if (line === closeDelimiter) break;
 
@@ -75,10 +74,9 @@ function parseHeaders(block: string): Record<string, string> {
   let currentKey = '';
 
   for (const line of lines) {
-    if (line === '') break; // blank line = end of headers
+    if (line === '') break;
 
     if (/^[ \t]/.test(line) && currentKey) {
-      // Continuation line
       headers[currentKey] += ' ' + line.trim();
     } else {
       const colonIdx = line.indexOf(':');
@@ -92,77 +90,78 @@ function parseHeaders(block: string): Record<string, string> {
   return headers;
 }
 
-function getBodyBlock(headers: Record<string, string>, fullBlock: string): string {
-  // Find the blank line separating headers from body
+function getBodyBlock(fullBlock: string): string {
   const headerEnd = fullBlock.search(/\r?\n\r?\n/);
   if (headerEnd === -1) return '';
   return fullBlock.slice(headerEnd).replace(/^\r?\n/, '');
 }
 
-export function extractEmailBody(raw: string): { html: string | null; text: string | null } {
-  // Normalize line endings
-  const normalized = raw.replace(/\r\n/g, '\n');
-
-  // Split headers from body at first blank line
+function parsePart(content: string): { html: string | null; text: string | null } {
+  const normalized = content.replace(/\r\n/g, '\n');
   const firstBlank = normalized.indexOf('\n\n');
-  const topHeaders = firstBlank !== -1
+  const headers = firstBlank !== -1
     ? parseHeaders(normalized.slice(0, firstBlank))
     : parseHeaders(normalized);
 
-  const contentType = (topHeaders['content-type'] ?? 'text/plain').toLowerCase();
-  const contentTransferEncoding = topHeaders['content-transfer-encoding'];
+  const contentType = headers['content-type'] ?? 'text/plain';
+  const encoding = headers['content-transfer-encoding'];
+  const body = firstBlank !== -1 ? normalized.slice(firstBlank + 2) : '';
+  const decoded = decodeContent(body, encoding);
+  const lowerCt = contentType.toLowerCase();
 
-  // Single-part message
-  if (!contentType.startsWith('multipart/')) {
-    const body = firstBlank !== -1 ? normalized.slice(firstBlank + 2) : '';
-    const decoded = decodeContent(body, contentTransferEncoding);
-
-    if (contentType.includes('text/html')) return { html: decoded, text: null };
-    return { html: null, text: decoded };
-  }
-
-  // Multipart message — extract boundary
-  const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/);
-  if (!boundaryMatch) return { html: null, text: null };
-
-  const boundary = boundaryMatch[1];
-  const parts = findBoundaries(normalized, boundary);
-
-  let html: string | null = null;
-  let text: string | null = null;
-
-  for (const part of parts) {
-    const partContent = normalized.slice(part.start, part.end);
-    const partHeaders = parseHeaders(partContent);
-    const partContentType = (partHeaders['content-type'] ?? 'text/plain').toLowerCase();
-    const partEncoding = partHeaders['content-transfer-encoding'];
-
-    // Handle nested multipart (e.g. multipart/mixed containing multipart/alternative)
-    if (partContentType.startsWith('multipart/')) {
-      const nestedBoundaryMatch = partContentType.match(/boundary="?([^";\s]+)"?/);
-      if (nestedBoundaryMatch) {
-        const nestedParts = findBoundaries(partContent, nestedBoundaryMatch[1]);
-        for (const nested of nestedParts) {
-          const nestedContent = partContent.slice(nested.start, nested.end);
-          const nestedHeaders = parseHeaders(nestedContent);
-          const nestedContentType = (nestedHeaders['content-type'] ?? 'text/plain').toLowerCase();
-          const nestedEncoding = nestedHeaders['content-transfer-encoding'];
-          const nestedBody = getBodyBlock(nestedHeaders, nestedContent);
-          const decoded = decodeContent(nestedBody, nestedEncoding);
-
-          if (nestedContentType.includes('text/html') && !html) html = decoded;
-          else if (nestedContentType.includes('text/plain') && !text) text = decoded;
-        }
+  if (lowerCt.startsWith('multipart/')) {
+    const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/);
+    if (boundaryMatch) {
+      const parts = findBoundaries(normalized, boundaryMatch[1]);
+      let html: string | null = null;
+      let text: string | null = null;
+      for (const part of parts) {
+        const sub = parsePart(normalized.slice(part.start, part.end));
+        if (sub.html && !html) html = sub.html;
+        if (sub.text && !text) text = sub.text;
       }
-      continue;
+      return { html, text };
     }
-
-    const body = getBodyBlock(partHeaders, partContent);
-    const decoded = decodeContent(body, partEncoding);
-
-    if (partContentType.includes('text/html') && !html) html = decoded;
-    else if (partContentType.includes('text/plain') && !text) text = decoded;
+    return { html: null, text: null };
   }
 
-  return { html, text };
+  if (lowerCt.includes('text/html')) return { html: decoded, text: null };
+  return { html: null, text: decoded };
+}
+
+export function extractEmailBody(raw: string): { html: string | null; text: string | null } {
+  return parsePart(raw);
+}
+
+/**
+ * Extract OTP/verification codes from email body text or HTML.
+ * Looks for common patterns:
+ * - "Your code is: 123456"
+ * - "verification code: 123456"
+ * - "OTP: 123456"
+ * - Standalone 4-8 digit numbers in common contexts
+ * - "123456 is your code"
+ */
+export function extractOtp(html: string | null, text: string | null): string | null {
+  // Prefer text, fall back to stripped HTML
+  const content = text ?? (html ? html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : null);
+  if (!content) return null;
+
+  const patterns = [
+    // "Your code is: 123456" / "code is 123456" / "verification code: 123456"
+    /(?:code|pin|otp|passcode|token|verification)[\s:is]*(\d{4,8})/i,
+    // "123456 is your code" / "123456 is your verification"
+    /(\d{4,8})\s+is\s+your\s+(?:code|verification|pin|otp|passcode)/i,
+    // Standalone code in quotes, brackets, or bold
+    /(?:["'\[`]|\b)(\d{4,8})(?:["'\]`]|\b)(?:\s*(?:is|are|\.|,|!|\s))/,
+    // Amazon AWS style: "Your verification code is 123456"
+    /(?:verification|security)\s+(?:code|number)[\s:is]*(\d{4,8})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = content.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+
+  return null;
 }

@@ -1,7 +1,7 @@
 import { generateId, parseInboundAddress } from '@pietru/core';
 import { MESSAGE_STATUSES } from '@pietru/core';
 import type { Env } from '../env';
-import { extractEmailBody } from './email-parser';
+import { extractEmailBody, extractOtp } from './email-parser';
 
 const INBOUND_DOMAIN = 'pietru.dev';
 const TEST_DOMAIN = 'test.pietru.dev';
@@ -18,7 +18,7 @@ export async function handleInboundEmail(
 
   console.log(`[email] Received email: ${fromAddress} → ${toAddress}`);
 
-  // Read the raw email stream and parse the body
+  // Read the raw email stream
   const chunks: Uint8Array[] = [];
   const reader = message.raw.getReader();
 
@@ -40,11 +40,25 @@ export async function handleInboundEmail(
     offset += chunk.length;
   }
 
+  // Cache raw email to R2
+  const rawStorageKey = `${messageId}/raw.eml`;
+  try {
+    await env.STORAGE.put(rawStorageKey, rawEmail, {
+      httpMetadata: { contentType: 'message/rfc822' },
+    });
+    console.log(`[email] Cached raw email in R2: ${rawStorageKey} (${totalLength} bytes)`);
+  } catch (err) {
+    console.error(`[email] Failed to cache raw email to R2:`, err);
+  }
+
   // Parse HTML/text body from raw MIME
   const rawText = new TextDecoder('utf-8', { fatal: false }).decode(rawEmail);
   const { html, text } = extractEmailBody(rawText);
 
-  console.log(`[email] Parsed body: ${totalLength} bytes raw, html=${html ? html.length + 'b' : 'null'}, text=${text ? text.length + 'b' : 'null'}`);
+  // Extract OTP if present
+  const otp = extractOtp(html, text);
+
+  console.log(`[email] Parsed body: ${totalLength} bytes raw, html=${html ? html.length + 'b' : 'null'}, text=${text ? text.length + 'b' : 'null'}, otp=${otp ?? 'none'}`);
 
   // Extract headers
   const subject = message.headers.get('subject') ?? '(no subject)';
@@ -149,7 +163,7 @@ export async function handleInboundEmail(
         provider_message_id, error, tags_json, raw_storage_key, html_storage_key,
         text_storage_key, idempotency_key_hash, created_at, queued_at, sent_at, failed_at
       ) VALUES (?, ?, NULL, 'production', ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'cloudflare_email_routing',
-      NULL, NULL, ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL)`,
+      NULL, NULL, ?, ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL)`,
     ).bind(
       messageId,
       projectId,
@@ -162,6 +176,7 @@ export async function handleInboundEmail(
       text,
       MESSAGE_STATUSES.received,
       tags ? JSON.stringify(tags) : null,
+      rawStorageKey,
       now,
     ).run();
 
@@ -180,7 +195,7 @@ export async function handleInboundEmail(
       projectId ?? 'none',
       'received',
       'cloudflare_email_routing',
-      JSON.stringify({ to: toAddress, from: fromAddress, parsed: !!parsed }),
+      JSON.stringify({ to: toAddress, from: fromAddress, parsed: !!parsed, otp }),
       now,
     ).run();
   } catch (err) {
@@ -246,6 +261,7 @@ export async function handleInboundEmail(
                 subject,
                 tag: parsed?.tag ?? null,
                 user_slug: parsed?.userSlug ?? null,
+                otp,
               },
             };
 
