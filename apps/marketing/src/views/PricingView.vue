@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'lezu-i18n/vue'
 import { ref } from 'vue'
-import { Button, Card, Colors } from '@sil/ui'
 
 const { t, i18n } = useI18n()
 
@@ -35,54 +34,47 @@ function toggleFaq(index: number) {
 </script>
 
 <template>
-  <div class="page">
-    <!-- Hero -->
-    <section class="section section--primary-soft">
+  <div class="page pricing-page">
+    <section class="section">
       <div class="section__wrap section__wrap--center">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('pricing.eyebrow') }}</div>
-          <h1 class="section__title">{{ $t('pricing.heroTitle') }}</h1>
+          <h1 class="section__title section__title--hero">
+            {{ $t('pricing.heroTitle') }}
+          </h1>
           <p class="section__subtitle">{{ $t('pricing.heroSummary') }}</p>
         </header>
       </div>
     </section>
 
-    <!-- Plans -->
-    <section class="section section--surface">
+    <section class="section section--alt">
       <div class="section__wrap">
         <div class="plans-grid">
-          <Card
-            v-for="plan in plans"
-            :key="plan.key"
-            variant="ghost"
-            class="plan-card"
-          >
-            <h3 class="plan-card__name">{{ plan.name }}</h3>
-            <div class="plan-card__price">
-              <span class="plan-card__amount">{{ plan.price }}</span>
-              <span class="plan-card__period">/ {{ plan.period }}</span>
+          <article v-for="plan in plans" :key="plan.key" class="plan">
+            <h2 class="plan__name">{{ plan.name }}</h2>
+            <div class="plan__price">
+              <span class="plan__amount">{{ plan.price }}</span>
+              <span class="plan__period">/ {{ plan.period }}</span>
             </div>
-            <p class="plan-card__desc">{{ plan.description }}</p>
-            <ul class="plan-card__features">
-              <li v-for="(feat, i) in plan.features" :key="i">
-                {{ feat }}
+            <p class="plan__desc">{{ plan.description }}</p>
+            <ul class="plan__features">
+              <li v-for="(feature, index) in plan.features" :key="index">
+                {{ feature }}
               </li>
             </ul>
-            <Button
-              variant="primary"
+            <a
+              class="marketing-button marketing-button--primary plan__cta"
               :href="dashboardUrl"
               target="_blank"
-              size="large"
-              class="plan-card__cta"
+              rel="noopener"
             >
               {{ plan.cta }}
-            </Button>
-          </Card>
+            </a>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
     <section class="section">
       <div class="section__wrap">
         <header class="section__header section__header--center">
@@ -90,16 +82,16 @@ function toggleFaq(index: number) {
         </header>
         <div class="faq">
           <div
-            v-for="(item, i) in faqItems"
-            :key="i"
+            v-for="(item, index) in faqItems"
+            :key="index"
             class="faq__item"
-            :class="{ 'faq__item--open': openFaq === i }"
+            :class="{ 'faq__item--open': openFaq === index }"
           >
-            <button class="faq__question" @click="toggleFaq(i)">
+            <button class="faq__question" type="button" @click="toggleFaq(index)">
               <span>{{ item.q }}</span>
-              <span class="faq__toggle">{{ openFaq === i ? '−' : '+' }}</span>
+              <span class="faq__toggle">{{ openFaq === index ? '-' : '+' }}</span>
             </button>
-            <div v-if="openFaq === i" class="faq__answer">
+            <div v-if="openFaq === index" class="faq__answer">
               <p>{{ item.a }}</p>
             </div>
           </div>
@@ -107,162 +99,174 @@ function toggleFaq(index: number) {
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="section section--primary">
+    <section class="section section--alt">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title">
-          {{ $t('pricing.cta.heading') }}
-        </h2>
-        <Button
-          variant="primary"
-          :href="dashboardUrl"
-          target="_blank"
-          size="large"
-          :color="Colors.DARK"
-        >
-          {{ $t('pricing.cta.button') }}
-        </Button>
+        <h2 class="section__title">{{ $t('pricing.cta.heading') }}</h2>
+        <div class="button-row">
+          <a
+            class="marketing-button marketing-button--dark"
+            :href="dashboardUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ $t('pricing.cta.button') }}
+          </a>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
-<style lang="scss" scoped>
-/* ── plans grid ── */
+<style lang="scss">
+.pricing-page .section:first-child {
+  padding-top: 5.25rem;
+}
+
 .plans-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  max-width: 48rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 44rem;
   margin-inline: auto;
 }
 
-.plan-card {
+.plan {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 2rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--marketing-radius);
+  background: #ffffff;
+  padding: 1.35rem;
 
   &__name {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--marketing-ink-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
     margin: 0 0 0.75rem;
+    color: var(--color-primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1.3;
+    text-transform: uppercase;
   }
 
   &__price {
-    margin-bottom: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: baseline;
+    margin-bottom: 0.65rem;
   }
 
   &__amount {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-    font-weight: 700;
-    color: var(--marketing-ink);
+    color: var(--color-text);
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1;
   }
 
   &__period {
-    font-size: 0.95rem;
-    color: var(--marketing-ink-soft);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
   }
 
   &__desc {
-    color: var(--marketing-ink-soft);
-    line-height: 1.55;
-    font-size: 0.95rem;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.7;
   }
 
   &__features {
-    list-style: none;
+    display: grid;
+    gap: 0.45rem;
+    margin: 0 0 1.25rem;
     padding: 0;
-    margin: 0 0 2rem;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    list-style: none;
 
     li {
-      font-size: 0.9rem;
-      color: var(--marketing-ink-soft);
-      padding-left: 1.5rem;
       position: relative;
+      padding-left: 1rem;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      line-height: 1.55;
 
       &::before {
-        content: '';
         position: absolute;
+        top: 0.56em;
         left: 0;
-        top: 0.5em;
-        width: 6px;
-        height: 6px;
+        width: 0.35rem;
+        height: 0.35rem;
         border-radius: 50%;
-        background: var(--marketing-primary);
+        background: var(--color-primary);
+        content: '';
       }
     }
   }
+
+  &__cta {
+    width: fit-content;
+    margin-top: auto;
+  }
 }
 
-/* ── FAQ ── */
 .faq {
-  max-width: 40rem;
+  display: grid;
+  max-width: 44rem;
+  gap: 0.55rem;
   margin-inline: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 
   &__item {
-    border: 1px solid var(--marketing-border);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: border-color 0.2s;
+    border: 1px solid var(--color-border);
+    border-radius: var(--marketing-radius);
+    background: #ffffff;
 
     &--open {
-      border-color: var(--marketing-primary);
+      border-color: var(--color-primary);
     }
   }
 
   &__question {
-    width: 100%;
     display: flex;
-    justify-content: space-between;
+    width: 100%;
     align-items: center;
-    padding: 1rem 1.25rem;
-    background: none;
-    border: none;
-    color: var(--marketing-ink);
-    font-size: 1rem;
-    font-weight: 500;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 0;
+    background: transparent;
+    padding: 0.9rem 1rem;
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
     text-align: left;
     cursor: pointer;
   }
 
   &__toggle {
-    flex-shrink: 0;
-    font-size: 1.25rem;
-    color: var(--marketing-ink-soft);
-    width: 1.5rem;
-    text-align: center;
+    color: var(--color-primary);
+    font-size: 1rem;
+    font-weight: 700;
   }
 
   &__answer {
-    padding: 0 1.25rem 1rem;
+    padding: 0 1rem 0.95rem;
 
     p {
       margin: 0;
-      color: var(--marketing-ink-soft);
-      line-height: 1.6;
-      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
     }
   }
 }
 
-/* ── responsive ── */
-@media (max-width: 48em) {
+@media (max-width: 44em) {
+  .pricing-page .section:first-child {
+    padding-top: 4rem;
+  }
+
   .plans-grid {
     grid-template-columns: 1fr;
-    max-width: 24rem;
   }
 }
 </style>

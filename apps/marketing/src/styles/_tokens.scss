@@ -1,150 +1,194 @@
-// Marketing token layer — bridges @sil/ui theme vars to semantic marketing tokens.
-// All values derive from @sil/ui CSS custom properties so dark/light mode works automatically.
-
 :root {
-  // Semantic ink (text)
-  --marketing-ink: var(--color-foreground);
-  --marketing-ink-soft: color-mix(in srgb, var(--color-foreground), transparent 40%);
-  --marketing-ink-faint: color-mix(in srgb, var(--color-foreground), transparent 60%);
+  --color-background: #ffffff;
+  --color-foreground: #101522;
+  --color-primary: #34bf70;
+  --color-text: #101522;
+  --color-text-muted: #697386;
+  --color-border: #e8edf0;
 
-  // Surfaces (cards, sections)
-  --marketing-surface: color-mix(in srgb, var(--color-foreground), var(--color-background) 96%);
-  --marketing-surface-accent: color-mix(in srgb, var(--color-primary), var(--color-background) 10%);
-  --marketing-surface-hover: color-mix(in srgb, var(--color-foreground), var(--color-background) 90%);
-
-  // Borders
-  --marketing-border: color-mix(in srgb, var(--color-foreground), transparent 85%);
-  --marketing-border-strong: color-mix(in srgb, var(--color-foreground), transparent 70%);
-
-  // Brand colors
-  --marketing-primary: var(--color-primary);
-  --marketing-primary-ink: var(--color-dark);
-  --marketing-secondary: var(--color-secondary);
-
-  // Shadows
-  --marketing-shadow: 0 1px 3px color-mix(in srgb, var(--color-foreground), transparent 90%);
-  --marketing-shadow-md: 0 4px 12px color-mix(in srgb, var(--color-foreground), transparent 85%);
+  --marketing-alt: #f7f8fa;
+  --marketing-dark: #07132d;
+  --marketing-primary-soft: #e8f8ee;
+  --marketing-radius: 5px;
+  --marketing-wrap: 62rem;
 }
 
-body,
-html {
+html,
+body {
   background: var(--color-background);
-  color: var(--marketing-ink);
+  color: var(--color-text);
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-// Shared section layout
-.page {
+body {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+.page,
+.home {
   width: 100%;
+  background: var(--color-background);
 }
 
 .section {
   width: 100%;
-  padding: 5rem 0;
+  padding: 4.25rem 0;
+  background: var(--color-background);
 
-  &--surface {
-    background: var(--marketing-surface);
-  }
-
-  &--surface-accent {
-    background: var(--marketing-surface-accent);
+  &--alt,
+  &--surface,
+  &--surface-accent,
+  &--primary-soft,
+  &--secondary-soft {
+    background: var(--marketing-alt);
   }
 
   &--primary {
-    background: var(--marketing-primary);
-    color: var(--marketing-primary-ink);
-  }
-
-  &--primary-soft {
-    background: color-mix(in srgb, var(--marketing-primary), var(--color-background) 6%);
-  }
-
-  &--secondary-soft {
-    background: color-mix(in srgb, var(--marketing-secondary), var(--color-background) 6%);
+    background: var(--marketing-alt);
+    color: var(--color-text);
   }
 
   &--secondary {
-    background: var(--marketing-secondary);
-    color: var(--marketing-primary-ink);
+    background: var(--color-background);
+    color: var(--color-text);
   }
 }
 
 .section__wrap {
-  max-width: 64rem;
+  width: min(100% - 2rem, var(--marketing-wrap));
   margin-inline: auto;
-  padding-inline: clamp(1rem, 6vw, 4rem);
 }
 
-.section__wrap--center {
+.section__wrap--center,
+.section__header--center {
   text-align: center;
 }
 
 .section__header {
-  margin-bottom: 2.5rem;
+  max-width: 42rem;
+  margin: 0 0 2.25rem;
+}
+
+.section__wrap--center .section__header,
+.section__header--center {
+  margin-inline: auto;
 }
 
 .section__eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
+  margin: 0 0 0.75rem;
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.3;
   text-transform: uppercase;
-  color: var(--marketing-ink-soft);
-  margin-bottom: 0.75rem;
 }
 
 .section__title {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--marketing-ink);
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(1.25rem, 2.2vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.22;
+}
+
+.section__title--hero {
+  font-size: clamp(1.75rem, 4vw, 2rem);
+  font-weight: 800;
 }
 
 .section__subtitle {
-  color: var(--marketing-ink-soft);
-  max-width: 40rem;
-  line-height: 1.6;
-  margin-top: 0.75rem;
+  max-width: 38rem;
+  margin: 0.875rem auto 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.7;
 }
 
-// Cards
-.card {
-  background: var(--marketing-surface);
-  border: 1px solid var(--marketing-border);
-  border-radius: var(--border-radius, 1em);
-  padding: 1.5rem;
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.75rem;
+}
 
-  &--interactive {
-    transition: border-color 0.2s, box-shadow 0.2s;
-    cursor: default;
+.marketing-button {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--marketing-radius);
+  padding: 0.62rem 0.95rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 
-    &:hover {
-      border-color: var(--marketing-border-strong);
-      box-shadow: var(--marketing-shadow);
-    }
+  &--primary {
+    background: var(--color-primary);
+    color: #ffffff;
+  }
+
+  &--dark {
+    background: var(--marketing-dark);
+    color: #ffffff;
+  }
+
+  &--ghost {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  &:hover {
+    border-color: var(--color-primary);
   }
 }
 
-// Feature icon container
 .feature-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.75rem;
-  display: flex;
+  width: 2.35rem;
+  height: 2.35rem;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--marketing-surface);
-  border: 1px solid var(--marketing-border);
-  color: var(--marketing-primary);
-  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--marketing-radius);
+  background: #ffffff;
+  color: var(--color-primary);
 }
 
-// Grid helpers
-.grid {
-  display: grid;
-  gap: 1.5rem;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+  margin: -1px;
+}
 
-  &--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
-  &--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
-  &--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+@media (max-width: 48em) {
+  .section {
+    padding: 3.25rem 0;
+  }
 }

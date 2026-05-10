@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'lezu-i18n/vue'
 import { RouterLink } from 'vue-router'
-import { Button, Icon, Icons, Colors } from '@sil/ui'
+import { Icon, Icons } from '@sil/ui'
 
 const { t, i18n } = useI18n()
 
@@ -34,179 +34,172 @@ const features = featureKeys.map((key) => {
 </script>
 
 <template>
-  <div class="page">
-    <!-- Hero -->
-    <section class="section section--primary-soft">
+  <div class="page features-page">
+    <section class="section">
       <div class="section__wrap section__wrap--center">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('features.eyebrow') }}</div>
-          <h1 class="section__title">{{ $t('features.heroTitle') }}</h1>
+          <h1 class="section__title section__title--hero">
+            {{ $t('features.heroTitle') }}
+          </h1>
           <p class="section__subtitle">{{ $t('features.heroSummary') }}</p>
         </header>
-        <nav class="toc">
+        <nav class="toc" aria-label="Feature sections">
           <RouterLink
-            v-for="f in features"
-            :key="f.key"
-            :to="{ hash: `#${f.key}` }"
-            class="toc__pill"
+            v-for="feature in features"
+            :key="feature.key"
+            :to="{ hash: `#${feature.key}` }"
+            class="toc__link"
           >
-            {{ f.title }}
+            {{ feature.title }}
           </RouterLink>
         </nav>
       </div>
     </section>
 
-    <!-- Feature detail sections -->
     <section
-      v-for="(feature, i) in features"
+      v-for="(feature, index) in features"
       :id="feature.key"
       :key="feature.key"
       class="section feature-section"
-      :class="i % 2 === 0 ? 'section--surface' : ''"
+      :class="{ 'section--alt': index % 2 === 0 }"
     >
       <div class="section__wrap">
-        <div class="feature-detail">
-          <div class="feature-detail__icon">
-            <Icon :name="feature.icon" size="xl" color="primary" />
+        <article class="feature-detail">
+          <div class="feature-icon feature-detail__icon">
+            <Icon :name="feature.icon" size="medium" color="primary" />
           </div>
           <div class="feature-detail__body">
             <h2 class="feature-detail__title">{{ feature.title }}</h2>
             <p class="feature-detail__summary">{{ feature.summary }}</p>
             <p class="feature-detail__detail">{{ feature.detail }}</p>
             <ul class="feature-detail__list">
-              <li v-for="(item, j) in feature.quickRef" :key="j">
+              <li v-for="(item, itemIndex) in feature.quickRef" :key="itemIndex">
                 {{ item }}
               </li>
             </ul>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="section section--primary">
+    <section class="section section--alt">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title">
-          {{ $t('features.ctaTitle') }}
-        </h2>
-        <Button
-          variant="primary"
-          :href="dashboardUrl"
-          target="_blank"
-          size="large"
-          :color="Colors.DARK"
-        >
-          {{ $t('features.ctaLink') }}
-        </Button>
+        <h2 class="section__title">{{ $t('features.ctaTitle') }}</h2>
+        <div class="button-row">
+          <a
+            class="marketing-button marketing-button--dark"
+            :href="dashboardUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ $t('features.ctaLink') }}
+          </a>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
-<style lang="scss" scoped>
-/* ── table of contents pills ── */
+<style lang="scss">
+.features-page .section:first-child {
+  padding-top: 5.25rem;
+}
+
 .toc {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.55rem;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 1.75rem;
 
-  &__pill {
-    padding: 0.4rem 1rem;
-    border-radius: 9999px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--marketing-ink-soft);
-    border: 1px solid var(--marketing-border);
+  &__link {
+    border: 1px solid var(--color-border);
+    border-radius: var(--marketing-radius);
+    padding: 0.5rem 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
     text-decoration: none;
-    transition: all 0.2s;
 
     &:hover {
-      color: var(--marketing-ink);
-      border-color: var(--marketing-primary);
+      border-color: var(--color-primary);
+      color: var(--color-text);
     }
   }
 }
 
-/* ── feature detail sections ── */
 .feature-detail {
-  display: flex;
-  gap: 2.5rem;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  max-width: 46rem;
 
   &__icon {
-    flex-shrink: 0;
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 12px;
-    background: var(--marketing-surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--marketing-border);
+    margin-top: 0.15rem;
   }
 
   &__title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--marketing-ink);
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.45rem;
+    color: var(--color-text);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  &__summary,
+  &__detail {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.7;
   }
 
   &__summary {
-    font-size: 1.05rem;
-    color: var(--marketing-ink);
-    opacity: 0.9;
-    margin: 0 0 0.75rem;
-    line-height: 1.5;
+    color: var(--color-text);
   }
 
   &__detail {
-    color: var(--marketing-ink-soft);
-    line-height: 1.6;
-    margin: 0 0 1.25rem;
-    max-width: 40rem;
+    margin-top: 0.55rem;
   }
 
   &__list {
-    list-style: none;
+    display: grid;
+    gap: 0.45rem;
+    margin: 1rem 0 0;
     padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
+    list-style: none;
 
     li {
-      font-size: 0.9rem;
-      color: var(--marketing-ink-soft);
-      padding-left: 1.25rem;
       position: relative;
+      padding-left: 1rem;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      line-height: 1.6;
 
       &::before {
-        content: '';
         position: absolute;
+        top: 0.58em;
         left: 0;
-        top: 0.55em;
-        width: 6px;
-        height: 6px;
+        width: 0.35rem;
+        height: 0.35rem;
         border-radius: 50%;
-        background: var(--marketing-primary);
+        background: var(--color-primary);
+        content: '';
       }
     }
   }
 }
 
-/* ── responsive ── */
-@media (max-width: 48em) {
-  .feature-detail {
-    flex-direction: column;
-    gap: 1.25rem;
+@media (max-width: 40em) {
+  .features-page .section:first-child {
+    padding-top: 4rem;
+  }
 
-    &__icon {
-      width: 3rem;
-      height: 3rem;
-    }
+  .feature-detail {
+    grid-template-columns: 1fr;
   }
 }
 </style>
