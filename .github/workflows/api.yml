@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx tsc -p packages/providers/tsconfig.json
+      - run: npm run build:packages
       - run: npx vitest run apps/api packages
 
   deploy:
@@ -37,7 +37,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx tsc -p packages/providers/tsconfig.json
+      - run: npm run build:packages
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
