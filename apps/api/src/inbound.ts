@@ -1,6 +1,7 @@
 import { generateId, parseInboundAddress } from '@pietru/core';
 import { MESSAGE_STATUSES } from '@pietru/core';
 import type { Env } from '../env';
+import { extractEmailBody } from './email-parser';
 
 const INBOUND_DOMAIN = 'pietru.dev';
 const TEST_DOMAIN = 'test.pietru.dev';
@@ -17,11 +18,9 @@ export async function handleInboundEmail(
 
   console.log(`[email] Received email: ${fromAddress} → ${toAddress}`);
 
-  // Store raw email in R2
-  const rawStorageKey = `${messageId}/raw.eml`;
+  // Read the raw email stream and parse the body
   const chunks: Uint8Array[] = [];
-  const readable = message.raw;
-  const reader = readable.getReader();
+  const reader = message.raw.getReader();
 
   try {
     while (true) {
@@ -41,28 +40,27 @@ export async function handleInboundEmail(
     offset += chunk.length;
   }
 
-  await env.STORAGE.put(rawStorageKey, rawEmail, {
-    httpMetadata: { contentType: 'message/rfc822' },
-  });
+  // Parse HTML/text body from raw MIME
+  const rawText = new TextDecoder('utf-8', { fatal: false }).decode(rawEmail);
+  const { html, text } = extractEmailBody(rawText);
 
-  console.log(`[email] Stored raw email in R2: ${rawStorageKey} (${totalLength} bytes)`);
+  console.log(`[email] Parsed body: ${totalLength} bytes raw, html=${html ? html.length + 'b' : 'null'}, text=${text ? text.length + 'b' : 'null'}`);
 
   // Extract headers
   const subject = message.headers.get('subject') ?? '(no subject)';
   const ccHeader = message.headers.get('cc');
   const replyToHeader = message.headers.get('reply-to');
 
-  // Extract local part from the to address (before the @)
+  // Extract local part and domain from the to address
   const atIdx = toAddress.lastIndexOf('@');
   const localPart = atIdx !== -1 ? toAddress.slice(0, atIdx).toLowerCase().trim() : '';
+  const toDomain = atIdx !== -1 ? toAddress.slice(atIdx + 1).toLowerCase().trim() : '';
 
   let projectId: string | null = null;
   let tags: Record<string, string | null> | null = null;
   let parsed: ReturnType<typeof parseInboundAddress> = null;
 
   // ── Reserved address routing ──────────────────────────────────
-  // Check if this is a reserved address (info@, finance@, accounts@, etc.)
-  // These always route to the admin project regardless of format.
   if (localPart) {
     try {
       const reserved = await env.DB.prepare(
@@ -82,9 +80,6 @@ export async function handleInboundEmail(
   }
 
   // ── Test alias routing (test.pietru.dev) ─────────────────────────
-  // If the email is to @test.pietru.dev, look up the alias by local_part
-  const toDomain = atIdx !== -1 ? toAddress.slice(atIdx + 1).toLowerCase().trim() : '';
-
   if (toDomain === TEST_DOMAIN && localPart) {
     try {
       const alias = await env.DB.prepare(
@@ -106,8 +101,6 @@ export async function handleInboundEmail(
   }
 
   // ── Project/user slug routing ─────────────────────────────────
-  // Only try slug parsing if not already matched (reserved or test alias)
-  // and only for the main pietru.dev domain
   if (!projectId && toDomain === INBOUND_DOMAIN) {
     parsed = parseInboundAddress(toAddress, INBOUND_DOMAIN);
 
@@ -115,7 +108,6 @@ export async function handleInboundEmail(
       const { projectSlug, userSlug, tag } = parsed;
       console.log(`[email] Parsed address: project=${projectSlug} user=${userSlug} tag=${tag}`);
 
-      // Look up project by slug
       try {
         const project = await env.DB.prepare(
           'SELECT p.id, p.user_id FROM projects p WHERE p.slug = ?',
@@ -124,7 +116,6 @@ export async function handleInboundEmail(
           .first<{ id: string; user_id: string }>();
 
         if (project) {
-          // Look up active inbound address
           const inboundAddress = await env.DB.prepare(
             'SELECT id FROM inbound_addresses WHERE project_id = ? AND user_slug = ? AND is_active = 1',
           )
@@ -149,7 +140,7 @@ export async function handleInboundEmail(
     }
   }
 
-  // Store the message — always store, even if no project match
+  // Store the message in D1 with body content
   try {
     const result = await env.DB.prepare(
       `INSERT INTO messages (
@@ -157,26 +148,26 @@ export async function handleInboundEmail(
         reply_to, cc_json, bcc_json, subject, html, text, status, provider,
         provider_message_id, error, tags_json, raw_storage_key, html_storage_key,
         text_storage_key, idempotency_key_hash, created_at, queued_at, sent_at, failed_at
-      ) VALUES (?, ?, NULL, 'production', ?, ?, ?, ?, NULL, ?, NULL, NULL, ?, 'cloudflare_email_routing',
-      NULL, NULL, ?, ?, NULL, NULL, NULL, ?, NULL, NULL, NULL)`,
+      ) VALUES (?, ?, NULL, 'production', ?, ?, ?, ?, NULL, ?, ?, ?, ?, 'cloudflare_email_routing',
+      NULL, NULL, ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL)`,
     ).bind(
-    messageId,
-    projectId,
-    toAddress,
-    fromAddress,
-    replyToHeader ?? null,
-    ccHeader ? JSON.stringify([ccHeader]) : null,
-    subject,
-    MESSAGE_STATUSES.received,
-    tags ? JSON.stringify(tags) : null,
-    rawStorageKey,
-    now,
-  ).run();
+      messageId,
+      projectId,
+      toAddress,
+      fromAddress,
+      replyToHeader ?? null,
+      ccHeader ? JSON.stringify([ccHeader]) : null,
+      subject,
+      html,
+      text,
+      MESSAGE_STATUSES.received,
+      tags ? JSON.stringify(tags) : null,
+      now,
+    ).run();
 
-    console.log(`[email] Message stored in D1: ${messageId} (success=${result.success}, meta=${JSON.stringify(result.meta)})`);
+    console.log(`[email] Message stored in D1: ${messageId} (success=${result.success})`);
   } catch (err) {
     console.error(`[email] FAILED to insert message into D1:`, err);
-    // Don't rethrow — we still want to reject the email
   }
 
   // Create received event
@@ -192,8 +183,6 @@ export async function handleInboundEmail(
       JSON.stringify({ to: toAddress, from: fromAddress, parsed: !!parsed }),
       now,
     ).run();
-
-    console.log(`[email] Event stored in D1`);
   } catch (err) {
     console.error(`[email] FAILED to insert event into D1:`, err);
   }
@@ -264,7 +253,6 @@ export async function handleInboundEmail(
               'Content-Type': 'application/json',
             };
 
-            // HMAC-SHA256 signature
             if (hook.webhook_secret) {
               const encoder = new TextEncoder();
               const key = await crypto.subtle.importKey(
@@ -285,7 +273,6 @@ export async function handleInboundEmail(
               headers['X-Pietru-Signature'] = `sha256=${hex}`;
             }
 
-            // Custom headers
             if (hook.webhook_headers_json) {
               try {
                 const customHeaders = JSON.parse(hook.webhook_headers_json);
