@@ -16,6 +16,7 @@ import { statsRoutes } from './routes/stats';
 import { inboxRoutes } from './routes/inbox';
 import { replyRoutes } from './routes/reply';
 import { reservedRoutes } from './routes/reserved-addresses';
+import { testAliasRoutes } from './routes/test-aliases';
 
 const app = new Hono<{ Bindings: Env; Variables: AppVariables }>();
 
@@ -72,6 +73,7 @@ app.route('/v1', statsRoutes);
 app.route('/v1', inboxRoutes);
 app.route('/v1', replyRoutes);
 app.route('/v1', reservedRoutes);
+app.route('/v1', testAliasRoutes);
 
 import { handleInboundEmail } from './inbound';
 

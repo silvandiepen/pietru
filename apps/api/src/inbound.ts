@@ -3,6 +3,7 @@ import { MESSAGE_STATUSES } from '@pietru/core';
 import type { Env } from '../env';
 
 const INBOUND_DOMAIN = 'pietru.dev';
+const TEST_DOMAIN = 'test.pietru.dev';
 
 export async function handleInboundEmail(
   message: ForwardableEmailMessage,
@@ -80,9 +81,34 @@ export async function handleInboundEmail(
     }
   }
 
+  // ── Test alias routing (test.pietru.dev) ─────────────────────────
+  // If the email is to @test.pietru.dev, look up the alias by local_part
+  const toDomain = atIdx !== -1 ? toAddress.slice(atIdx + 1).toLowerCase().trim() : '';
+
+  if (toDomain === TEST_DOMAIN && localPart) {
+    try {
+      const alias = await env.DB.prepare(
+        'SELECT id, user_id, project_id, local_part FROM test_aliases WHERE local_part = ? AND is_active = 1',
+      )
+        .bind(localPart)
+        .first<{ id: string; user_id: string; project_id: string | null; local_part: string }>();
+
+      if (alias) {
+        projectId = alias.project_id;
+        tags = { test_alias: alias.local_part, user_id: alias.user_id };
+        console.log(`[email] Matched test alias: ${localPart}@${TEST_DOMAIN} → user=${alias.user_id} project=${alias.project_id ?? 'none'}`);
+      } else {
+        console.log(`[email] No test alias found for: ${localPart}@${TEST_DOMAIN}`);
+      }
+    } catch (err) {
+      console.error(`[email] Error looking up test alias:`, err);
+    }
+  }
+
   // ── Project/user slug routing ─────────────────────────────────
-  // Only try slug parsing if not already matched as reserved address
-  if (!projectId) {
+  // Only try slug parsing if not already matched (reserved or test alias)
+  // and only for the main pietru.dev domain
+  if (!projectId && toDomain === INBOUND_DOMAIN) {
     parsed = parseInboundAddress(toAddress, INBOUND_DOMAIN);
 
     if (parsed) {
