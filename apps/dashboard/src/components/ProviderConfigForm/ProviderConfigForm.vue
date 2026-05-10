@@ -4,12 +4,39 @@
       <span>{{ $t('providerConfig.labelProvider') }}</span>
       <select v-model="form.providerType">
         <option value="resend">{{ $t('providerConfig.optionResend') }}</option>
+        <option value="ses">{{ $t('providerConfig.optionSes') }}</option>
       </select>
     </label>
-    <label>
-      <span>{{ $t('providerConfig.labelApiKey') }}</span>
-      <input v-model="apiKey" type="password" :placeholder="$t('providerConfig.placeholderApiKey')" />
-    </label>
+
+    <!-- Resend fields -->
+    <template v-if="form.providerType === 'resend'">
+      <label>
+        <span>{{ $t('providerConfig.labelApiKey') }}</span>
+        <input v-model="apiKey" type="password" :placeholder="$t('providerConfig.placeholderResendKey')" />
+      </label>
+    </template>
+
+    <!-- SES fields -->
+    <template v-if="form.providerType === 'ses'">
+      <label>
+        <span>{{ $t('providerConfig.labelRegion') }}</span>
+        <select v-model="sesRegion">
+          <option value="">Select region</option>
+          <option v-for="region in sesRegions" :key="region.value" :value="region.value">
+            {{ region.label }}
+          </option>
+        </select>
+      </label>
+      <label>
+        <span>{{ $t('providerConfig.labelAccessKeyId') }}</span>
+        <input v-model="sesAccessKeyId" type="text" :placeholder="$t('providerConfig.placeholderAccessKeyId')" />
+      </label>
+      <label>
+        <span>{{ $t('providerConfig.labelSecretAccessKey') }}</span>
+        <input v-model="sesSecretAccessKey" type="password" :placeholder="$t('providerConfig.placeholderSecretAccessKey')" />
+      </label>
+    </template>
+
     <label>
       <span>{{ $t('providerConfig.labelDefaultFrom') }}</span>
       <input v-model="form.defaultFrom" type="email" :placeholder="$t('providerConfig.placeholderDefaultFrom')" />
@@ -60,15 +87,43 @@ const form = reactive<ProviderConfigPayload>({
   allowedDomains: props.initialValue?.allowedDomains || [],
 })
 
+// Resend
 const apiKey = ref('')
+
+// SES
+const sesRegion = ref('')
+const sesAccessKeyId = ref('')
+const sesSecretAccessKey = ref('')
+
 const allowedDomainsInput = ref((props.initialValue?.allowedDomains || []).join(', '))
 
+const sesRegions = [
+  { value: 'us-east-1', label: 'US East (N. Virginia)' },
+  { value: 'us-east-2', label: 'US East (Ohio)' },
+  { value: 'us-west-2', label: 'US West (Oregon)' },
+  { value: 'eu-west-1', label: 'EU (Ireland)' },
+  { value: 'eu-west-2', label: 'EU (London)' },
+  { value: 'eu-central-1', label: 'EU (Frankfurt)' },
+  { value: 'ap-southeast-1', label: 'Asia Pacific (Singapore)' },
+  { value: 'ap-northeast-1', label: 'Asia Pacific (Tokyo)' },
+]
+
 function submit() {
+  let config: Record<string, unknown>
+
+  if (form.providerType === 'ses') {
+    config = {
+      region: sesRegion.value,
+      accessKeyId: sesAccessKeyId.value,
+      secretAccessKey: sesSecretAccessKey.value,
+    }
+  } else {
+    config = { apiKey: apiKey.value }
+  }
+
   emit('submit', {
     ...form,
-    config: {
-      apiKey: apiKey.value,
-    },
+    config,
     allowedDomains: allowedDomainsInput.value
       .split(',')
       .map((item) => item.trim())
