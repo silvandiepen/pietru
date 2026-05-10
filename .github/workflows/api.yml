@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build:packages
+      - run: npm run build --workspaces=packages/auth --workspaces=packages/core --workspaces=packages/db --workspaces=packages/providers --workspaces=packages/validation
       - run: npx vitest run apps/api packages
 
   deploy:
@@ -37,7 +37,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build:packages
+      - run: npm run build --workspaces=packages/auth --workspaces=packages/core --workspaces=packages/db --workspaces=packages/providers --workspaces=packages/validation
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
