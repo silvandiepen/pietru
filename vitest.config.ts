@@ -1,14 +1,16 @@
-import { resolve } from 'path';
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vitest/config';
+
+const root = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@pietru/auth': resolve(__dirname, 'packages/auth/dist/index.js'),
-      '@pietru/core': resolve(__dirname, 'packages/core/dist/index.js'),
-      '@pietru/db': resolve(__dirname, 'packages/db/dist/index.js'),
-      '@pietru/providers': resolve(__dirname, 'packages/providers/dist/index.js'),
-      '@pietru/validation': resolve(__dirname, 'packages/validation/dist/index.js'),
+      '@pietru/auth': `${root}/packages/auth/dist/index.js`,
+      '@pietru/core': `${root}/packages/core/dist/index.js`,
+      '@pietru/db': `${root}/packages/db/dist/index.js`,
+      '@pietru/providers': `${root}/packages/providers/dist/index.js`,
+      '@pietru/validation': `${root}/packages/validation/dist/index.js`,
     },
   },
   test: {
