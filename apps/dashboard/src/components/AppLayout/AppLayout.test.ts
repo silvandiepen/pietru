@@ -1,17 +1,17 @@
 import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 import { mount } from '@vue/test-utils'
-import { createI18n } from 'vue-i18n'
+import { createI18n, fromObject } from 'lezu-i18n'
+import { createLezuI18nVue } from 'lezu-i18n/vue'
 
 import AppLayout from './AppLayout.vue'
 import en from '@/i18n/locales/en.json'
 
 const pinia = createPinia()
 const i18n = createI18n({
-  legacy: false,
   locale: 'en',
   fallbackLocale: 'en',
-  messages: { en },
+  loaders: { messages: fromObject({ en }) },
 })
 
 const router = createRouter({
@@ -29,7 +29,7 @@ describe('AppLayout', () => {
 
     const wrapper = mount(AppLayout, {
       global: {
-        plugins: [pinia, router, i18n],
+        plugins: [pinia, router, createLezuI18nVue(i18n)],
       },
       props: {
         projectName: 'Alpha',

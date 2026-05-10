@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 import { RouterLink } from 'vue-router'
 import { Button, Icon, Icons, Colors } from '@sil/ui'
 
-const { t, tm, rt } = useI18n()
+const { t, i18n } = useI18n()
 
 const dashboardUrl =
   import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
@@ -20,10 +20,8 @@ const featureIcons: Record<string, string> = {
 }
 
 const features = featureKeys.map((key) => {
-  const messages = tm(`features.list.${key}.quickRef`)
-  const quickRef = Array.isArray(messages)
-    ? messages.map((m) => rt(m as string))
-    : []
+  const quickRefRaw = i18n.raw(`features.list.${key}.quickRef`) as string[] | undefined
+  const quickRef = Array.isArray(quickRefRaw) ? quickRefRaw : []
   return {
     key,
     title: t(`features.list.${key}.title`),
@@ -38,7 +36,7 @@ const features = featureKeys.map((key) => {
 <template>
   <div class="page">
     <!-- Hero -->
-    <section class="section section--dark">
+    <section class="section section--primary-soft">
       <div class="section__wrap section__wrap--center">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('features.eyebrow') }}</div>
@@ -64,7 +62,7 @@ const features = featureKeys.map((key) => {
       :id="feature.key"
       :key="feature.key"
       class="section feature-section"
-      :class="i % 2 === 0 ? 'section--accent-soft' : 'section--accent-alt'"
+      :class="i % 2 === 0 ? 'section--surface' : ''"
     >
       <div class="section__wrap">
         <div class="feature-detail">
@@ -86,9 +84,9 @@ const features = featureKeys.map((key) => {
     </section>
 
     <!-- CTA -->
-    <section class="section section--accent">
+    <section class="section section--primary">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title section__title--accent">
+        <h2 class="section__title">
           {{ $t('features.ctaTitle') }}
         </h2>
         <Button
@@ -106,71 +104,6 @@ const features = featureKeys.map((key) => {
 </template>
 
 <style lang="scss" scoped>
-/* ── sections ── */
-.section {
-  width: 100%;
-  padding: 6rem 0;
-
-  &--dark {
-    background: #020b22;
-  }
-
-  &--accent {
-    background: var(--color-accent, #55c267);
-    color: #0d1a0f;
-    padding: 5rem 0;
-  }
-
-  &--accent-soft {
-    background: color-mix(in srgb, var(--color-accent, #55c267) 6%, #020b22);
-  }
-
-  &--accent-alt {
-    background: color-mix(in srgb, var(--color-accent, #55c267) 3%, #0a1628);
-  }
-}
-
-.section__wrap {
-  max-width: 64rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 6vw, 4rem);
-
-  &--center {
-    text-align: center;
-  }
-}
-
-.section__header {
-  margin-bottom: 2rem;
-}
-
-.section__eyebrow {
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted, #8888a0);
-  margin-bottom: 1rem;
-}
-
-.section__title {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-  color: var(--color-text, #fff);
-
-  &--accent {
-    color: #0d1a0f;
-  }
-}
-
-.section__subtitle {
-  color: var(--color-text-muted, #8888a0);
-  max-width: 40rem;
-  line-height: 1.6;
-  margin: 1rem auto 0;
-}
-
 /* ── table of contents pills ── */
 .toc {
   display: flex;
@@ -184,14 +117,14 @@ const features = featureKeys.map((key) => {
     border-radius: 9999px;
     font-size: 0.85rem;
     font-weight: 500;
-    color: var(--color-text-muted, #8888a0);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--marketing-ink-soft);
+    border: 1px solid var(--marketing-border);
     text-decoration: none;
     transition: all 0.2s;
 
     &:hover {
-      color: var(--color-text, #fff);
-      border-color: var(--color-accent, #55c267);
+      color: var(--marketing-ink);
+      border-color: var(--marketing-primary);
     }
   }
 }
@@ -207,30 +140,30 @@ const features = featureKeys.map((key) => {
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--marketing-surface);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--marketing-border);
   }
 
   &__title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
     margin: 0 0 0.5rem;
   }
 
   &__summary {
     font-size: 1.05rem;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
     opacity: 0.9;
     margin: 0 0 0.75rem;
     line-height: 1.5;
   }
 
   &__detail {
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     line-height: 1.6;
     margin: 0 0 1.25rem;
     max-width: 40rem;
@@ -246,7 +179,7 @@ const features = featureKeys.map((key) => {
 
     li {
       font-size: 0.9rem;
-      color: var(--color-text-muted, #8888a0);
+      color: var(--marketing-ink-soft);
       padding-left: 1.25rem;
       position: relative;
 
@@ -258,7 +191,7 @@ const features = featureKeys.map((key) => {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: var(--color-accent, #55c267);
+        background: var(--marketing-primary);
       }
     }
   }

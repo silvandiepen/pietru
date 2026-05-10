@@ -24,7 +24,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 
 const authStore = useAuthStore()
 const route = useRoute()

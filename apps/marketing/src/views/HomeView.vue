@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 import { RouterLink } from 'vue-router'
 import { Button, Card, Icon, Icons, Colors } from '@sil/ui'
 
@@ -41,7 +41,7 @@ const steps = [0, 1, 2].map((i) => ({
 <template>
   <div class="home">
     <!-- Hero -->
-    <section class="section section--dark">
+    <section class="section section--primary-soft">
       <div class="section__wrap">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('home.eyebrow') }}</div>
@@ -69,7 +69,7 @@ const steps = [0, 1, 2].map((i) => ({
     </section>
 
     <!-- Problem -->
-    <section class="section section--dark-alt">
+    <section class="section section--surface">
       <div class="section__wrap">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('home.problem.eyebrow') }}</div>
@@ -85,7 +85,7 @@ const steps = [0, 1, 2].map((i) => ({
     </section>
 
     <!-- How It Works -->
-    <section class="section section--accent-soft">
+    <section class="section">
       <div class="section__wrap">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('home.howItWorks.eyebrow') }}</div>
@@ -104,7 +104,7 @@ const steps = [0, 1, 2].map((i) => ({
     </section>
 
     <!-- Features -->
-    <section class="section section--dark-alt">
+    <section class="section section--surface-accent">
       <div class="section__wrap">
         <header class="section__header">
           <h2 class="section__title">{{ $t('home.features.sectionHeading') }}</h2>
@@ -126,13 +126,13 @@ const steps = [0, 1, 2].map((i) => ({
       </div>
     </section>
 
-    <!-- Social proof / CTA -->
-    <section class="section section--accent">
+    <!-- CTA -->
+    <section class="section section--primary">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title section__title--accent">
+        <h2 class="section__title">
           {{ $t('home.cta.heading') }}
         </h2>
-        <p class="section__subtitle section__subtitle--accent">
+        <p class="section__subtitle section__subtitle--on-primary">
           {{ $t('home.cta.summary') }}
         </p>
         <Button
@@ -148,9 +148,9 @@ const steps = [0, 1, 2].map((i) => ({
     </section>
 
     <!-- Final CTA -->
-    <section class="section section--warm">
+    <section class="section section--secondary">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title section__title--warm">{{ $t('home.finalCta.heading') }}</h2>
+        <h2 class="section__title">{{ $t('home.finalCta.heading') }}</h2>
         <Button
           variant="primary"
           :href="dashboardUrl"
@@ -166,99 +166,21 @@ const steps = [0, 1, 2].map((i) => ({
 </template>
 
 <style lang="scss" scoped>
-/* ── sections ── */
-.section {
-  width: 100%;
-  padding: 6rem 0;
-
-  &--dark {
-    background: #020b22;
-  }
-
-  &--dark-alt {
-    background: #0a1628;
-  }
-
-  &--accent {
-    background: var(--color-accent, #55c267);
-    color: #0d1a0f;
-    padding: 5rem 0;
-  }
-
-  &--accent-soft {
-    background: color-mix(in srgb, var(--color-accent, #55c267) 6%, #020b22);
-  }
-
-  &--warm {
-    background: color-mix(in srgb, #f97316 8%, #020b22);
-    color: #fff;
-    padding: 4.5rem 0;
-  }
+/* ── hero ── */
+.hero__actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
-.section__wrap {
-  max-width: 64rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 6vw, 4rem);
-
-  &--center {
-    text-align: center;
-  }
+.section__title--hero {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  margin-bottom: 1.5rem;
 }
 
-.section__header {
-  margin-bottom: 3rem;
-}
-
-.section__eyebrow {
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted, #8888a0);
-  margin-bottom: 1rem;
-}
-
-.section__title {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-  color: var(--color-text, #fff);
-
-  &--hero {
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
-    margin-bottom: 1.5rem;
-  }
-
-  &--accent {
-    color: #0d1a0f;
-  }
-
-  &--warm {
-    color: #fff;
-  }
-}
-
-.section__subtitle {
-  color: var(--color-text-muted, #8888a0);
-  max-width: 40rem;
-  line-height: 1.6;
-  margin-top: 1rem;
-
-  &--accent {
-    color: #0d1a0f;
-    opacity: 0.85;
-  }
-}
-
-/* ── hero actions ── */
-.hero {
-  &__actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 2rem;
-  }
+.section__subtitle--on-primary {
+  opacity: 0.85;
 }
 
 /* ── card grid (problem section) ── */
@@ -272,11 +194,11 @@ const steps = [0, 1, 2].map((i) => ({
   font-size: 1.15rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--color-text, #fff);
+  color: var(--marketing-ink);
 }
 
 .card__desc {
-  color: var(--color-text-muted, #8888a0);
+  color: var(--marketing-ink-soft);
   line-height: 1.55;
   font-size: 0.95rem;
 }
@@ -299,8 +221,8 @@ const steps = [0, 1, 2].map((i) => ({
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background: var(--color-accent, #55c267);
-    color: #0d1a0f;
+    background: var(--marketing-primary);
+    color: var(--marketing-primary-ink);
     font-weight: 700;
     font-size: 1rem;
     display: flex;
@@ -312,11 +234,11 @@ const steps = [0, 1, 2].map((i) => ({
     font-size: 1.15rem;
     font-weight: 600;
     margin-bottom: 0.35rem;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
   }
 
   &__desc {
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     line-height: 1.55;
     font-size: 0.95rem;
     margin: 0;
@@ -339,11 +261,11 @@ const steps = [0, 1, 2].map((i) => ({
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
   }
 
   &__desc {
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     line-height: 1.55;
     font-size: 0.9rem;
   }
@@ -361,10 +283,6 @@ const steps = [0, 1, 2].map((i) => ({
   .card-grid,
   .feature-grid {
     grid-template-columns: 1fr;
-  }
-
-  .section {
-    padding: 4rem 0;
   }
 }
 </style>

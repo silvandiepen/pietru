@@ -10,7 +10,7 @@ import {
   renderTemplate,
   safeJsonParse,
 } from '@pietru/core';
-import { ResendProvider, SesProvider } from '@pietru/providers';
+import { MailgunProvider, ResendProvider, SesProvider } from '@pietru/providers';
 import type { MailProvider, ProviderConfig } from '@pietru/providers';
 import { sendMessageSchema } from '@pietru/validation';
 import { getCookie } from 'hono/cookie';
@@ -74,6 +74,9 @@ function getMailProvider(providerType: string): MailProvider {
   }
   if (providerType === 'ses') {
     return new SesProvider();
+  }
+  if (providerType === 'mailgun') {
+    return new MailgunProvider();
   }
   throw new Error(`Unsupported provider type: ${providerType}`);
 }
@@ -242,6 +245,7 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
           secretAccessKey: providerSecrets.secretAccessKey as string | undefined,
           configurationSetName: providerSecrets.configurationSetName as string | null | undefined,
           defaultMailFromDomain: providerSecrets.defaultMailFromDomain as string | null | undefined,
+          domain: providerSecrets.domain as string | undefined,
         };
       }
 

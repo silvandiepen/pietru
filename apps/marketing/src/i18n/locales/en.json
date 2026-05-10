@@ -100,7 +100,7 @@
         "summary": "One dashboard for outgoing email across all your products, regardless of which provider each one uses.",
         "detail": "Each product connects its own SMTP provider. Pietru routes the mail and gives you a unified view of everything that went out. Welcome emails, receipts, notifications — see them all in one place without logging into three different dashboards.",
         "quickRef": [
-          "Works with Resend (more providers coming)",
+          "Works with Resend, Amazon SES, Mailgun, and Pietru SMTP",
           "Per-project provider configuration",
           "Consistent view across all products",
           "Built-in rate limiting and retry logic"

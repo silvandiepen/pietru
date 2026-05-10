@@ -2,20 +2,20 @@
   <PillHeader
     brandTo="/"
     :brandSuffix="$t('app.brand')"
-    colorMode="dark"
+    :colorMode="colorMode"
     :navItems="[
       { id: 'features', label: $t('app.navFeatures'), to: '/features' },
       { id: 'pricing', label: $t('app.navPricing'), to: '/pricing' },
       { id: 'about', label: $t('app.navAbout'), to: '/about' }
     ]"
-    :actions="[{ label: $t('app.openDashboard'), variant: 'primary', handler: openDashboard }]"
+    :actions="headerActions"
   />
 
   <main>
     <RouterView />
   </main>
 
-  <PlatformFooter colorMode="dark">
+  <PlatformFooter :colorMode="colorMode === 'dark' ? 'dark' : 'light'">
     <template #brand>
       {{ $t('app.brand') }}
     </template>
@@ -29,19 +29,34 @@
 </template>
 
 <script lang="ts" setup>
-import { PillHeader, PlatformFooter } from '@sil/ui'
+import { computed } from 'vue'
+import { PillHeader, PlatformFooter, Icons } from '@sil/ui'
+import { useColorMode } from '@/composables/useColorMode'
+
+const { colorMode, toggleColorMode } = useColorMode()
 
 const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
 
-function openDashboard() {
-  window.open(dashboardUrl, '_blank')
-}
+const headerActions = computed(() => [
+  {
+    id: 'theme',
+    label: colorMode.value === 'dark' ? 'Light mode' : 'Dark mode',
+    icon: colorMode.value === 'dark' ? Icons.WEATHER_SUN : Icons.WEATHER_MOON,
+    iconOnly: true,
+    handler: toggleColorMode,
+  },
+  {
+    id: 'dashboard',
+    label: 'Open Dashboard',
+    variant: 'primary' as const,
+    handler: () => window.open(dashboardUrl, '_blank'),
+  },
+])
 </script>
 
 <style lang="scss" scoped>
 main {
   min-height: 100vh;
-  background: #020b22;
   padding-top: 5rem;
 }
 </style>

@@ -1,6 +1,6 @@
 import { decrypt, encrypt } from '@pietru/auth';
 import { generateId } from '@pietru/core';
-import { ResendProvider, SesProvider } from '@pietru/providers';
+import { MailgunProvider, ResendProvider, SesProvider } from '@pietru/providers';
 import type { MailProvider } from '@pietru/providers';
 import { createProviderConfigSchema } from '@pietru/validation';
 import { z } from 'zod';
@@ -18,6 +18,9 @@ function getProvider(providerType: string): MailProvider {
   }
   if (providerType === 'ses') {
     return new SesProvider();
+  }
+  if (providerType === 'mailgun') {
+    return new MailgunProvider();
   }
   throw new Error(`Unsupported provider: ${providerType}`);
 }

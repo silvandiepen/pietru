@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@sil/ui": "^1.23.6",
+    "lezu-i18n": "^1.0.0",
     "pinia": "3.0.4",
     "vue": "3.5.34",
-    "vue-i18n": "^11.4.2",
     "vue-router": "5.0.6"
   },
   "devDependencies": {

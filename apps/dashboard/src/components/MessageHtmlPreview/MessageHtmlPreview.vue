@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 
 import type { MessageHtmlPreviewProps } from './MessageHtmlPreview.model'
 

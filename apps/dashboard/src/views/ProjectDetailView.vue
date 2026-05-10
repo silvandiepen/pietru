@@ -180,7 +180,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 
 import ApiKeyCreateDialog from '@/components/ApiKeyCreateDialog'
 import AppLayout from '@/components/AppLayout'

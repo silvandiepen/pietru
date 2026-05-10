@@ -11,7 +11,7 @@ export interface OutgoingEmail {
   tags?: Record<string, string>;
 }
 
-export type ProviderType = 'resend' | 'ses';
+export type ProviderType = 'resend' | 'ses' | 'mailgun';
 
 export interface SesProviderConfig {
   region: string;
@@ -29,6 +29,9 @@ export interface ProviderConfig {
   environment?: 'development' | 'preview' | 'production';
   defaultFrom?: string | null;
   allowedDomains?: string[] | null;
+
+  // Mailgun fields
+  domain?: string;
 
   // SES fields
   region?: string;

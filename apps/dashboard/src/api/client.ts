@@ -32,8 +32,14 @@ function parseMessage(payload: unknown, fallback: string) {
     return payload
   }
 
-  if (payload && typeof payload === 'object' && 'message' in payload && typeof payload.message === 'string') {
-    return payload.message
+  if (payload && typeof payload === 'object') {
+    const obj = payload as Record<string, unknown>
+    if (typeof obj.message === 'string') return obj.message
+    // Handle API's { error: { code, message } } envelope
+    if (obj.error && typeof obj.error === 'object') {
+      const err = obj.error as Record<string, unknown>
+      if (typeof err.message === 'string') return err.message
+    }
   }
 
   return fallback

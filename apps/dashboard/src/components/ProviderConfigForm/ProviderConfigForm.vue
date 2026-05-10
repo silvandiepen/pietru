@@ -5,6 +5,7 @@
       <select v-model="form.providerType">
         <option value="resend">{{ $t('providerConfig.optionResend') }}</option>
         <option value="ses">{{ $t('providerConfig.optionSes') }}</option>
+        <option value="mailgun">{{ $t('providerConfig.optionMailgun') }}</option>
         <option value="pietru">{{ $t('providerConfig.optionPietru') }}</option>
       </select>
     </label>
@@ -42,6 +43,18 @@
       <label>
         <span>{{ $t('providerConfig.labelSecretAccessKey') }}</span>
         <input v-model="sesSecretAccessKey" type="password" :placeholder="$t('providerConfig.placeholderSecretAccessKey')" />
+      </label>
+    </template>
+
+    <!-- Mailgun fields -->
+    <template v-if="form.providerType === 'mailgun'">
+      <label>
+        <span>{{ $t('providerConfig.labelMailgunDomain') }}</span>
+        <input v-model="mailgunDomain" type="text" placeholder="mg.example.com" />
+      </label>
+      <label>
+        <span>{{ $t('providerConfig.labelApiKey') }}</span>
+        <input v-model="mailgunApiKey" type="password" :placeholder="$t('providerConfig.placeholderMailgunKey')" />
       </label>
     </template>
 
@@ -103,6 +116,10 @@ const sesRegion = ref('')
 const sesAccessKeyId = ref('')
 const sesSecretAccessKey = ref('')
 
+// Mailgun
+const mailgunDomain = ref('')
+const mailgunApiKey = ref('')
+
 const allowedDomainsInput = ref((props.initialValue?.allowedDomains || []).join(', '))
 
 const sesRegions = [
@@ -124,6 +141,11 @@ function submit() {
       region: sesRegion.value,
       accessKeyId: sesAccessKeyId.value,
       secretAccessKey: sesSecretAccessKey.value,
+    }
+  } else if (form.providerType === 'mailgun') {
+    config = {
+      domain: mailgunDomain.value,
+      apiKey: mailgunApiKey.value,
     }
   } else if (form.providerType === 'pietru') {
     config = {}

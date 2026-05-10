@@ -24,8 +24,8 @@ describe('FeaturesView', () => {
     })
 
     expect(wrapper.text()).toContain('Open Dashboard')
-    expect(wrapper.text()).toContain('One API to send all your transactional email')
-    expect(wrapper.text()).toContain('Built for teams that ship')
+    expect(wrapper.text()).toContain('One dashboard for outgoing email')
+    expect(wrapper.text()).toContain('Pietru solves two problems')
     expect(wrapper.text()).toContain('Start using Pietru today')
   })
 

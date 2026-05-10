@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'lezu-i18n/vue'
 import { ref } from 'vue'
 import { Button, Card, Colors } from '@sil/ui'
 
-const { t, tm, rt } = useI18n()
+const { t, i18n } = useI18n()
 
 const dashboardUrl =
   import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
@@ -11,10 +11,8 @@ const dashboardUrl =
 const planKeys = ['free', 'pro'] as const
 
 const plans = planKeys.map((key) => {
-  const featureMessages = tm(`pricing.plans.${key}.features`)
-  const features = Array.isArray(featureMessages)
-    ? featureMessages.map((m) => rt(m as string))
-    : []
+  const featureRaw = i18n.raw(`pricing.plans.${key}.features`) as string[] | undefined
+  const features = Array.isArray(featureRaw) ? featureRaw : []
   return {
     key,
     name: t(`pricing.plans.${key}.name`),
@@ -26,10 +24,8 @@ const plans = planKeys.map((key) => {
   }
 })
 
-const faqItems = [0, 1, 2, 3, 4].map((i) => ({
-  q: t(`pricing.faq.items.${i}.q`),
-  a: t(`pricing.faq.items.${i}.a`),
-}))
+const faqRaw = i18n.raw('pricing.faq.items') as Array<{ q: string; a: string }> | undefined
+const faqItems = Array.isArray(faqRaw) ? faqRaw : []
 
 const openFaq = ref<number | null>(null)
 
@@ -41,7 +37,7 @@ function toggleFaq(index: number) {
 <template>
   <div class="page">
     <!-- Hero -->
-    <section class="section section--dark">
+    <section class="section section--primary-soft">
       <div class="section__wrap section__wrap--center">
         <header class="section__header">
           <div class="section__eyebrow">{{ $t('pricing.eyebrow') }}</div>
@@ -52,7 +48,7 @@ function toggleFaq(index: number) {
     </section>
 
     <!-- Plans -->
-    <section class="section section--dark-alt">
+    <section class="section section--surface">
       <div class="section__wrap">
         <div class="plans-grid">
           <Card
@@ -87,7 +83,7 @@ function toggleFaq(index: number) {
     </section>
 
     <!-- FAQ -->
-    <section class="section section--accent-soft">
+    <section class="section">
       <div class="section__wrap">
         <header class="section__header section__header--center">
           <h2 class="section__title">{{ $t('pricing.faq.title') }}</h2>
@@ -112,9 +108,9 @@ function toggleFaq(index: number) {
     </section>
 
     <!-- CTA -->
-    <section class="section section--accent">
+    <section class="section section--primary">
       <div class="section__wrap section__wrap--center">
-        <h2 class="section__title section__title--accent">
+        <h2 class="section__title">
           {{ $t('pricing.cta.heading') }}
         </h2>
         <Button
@@ -132,74 +128,6 @@ function toggleFaq(index: number) {
 </template>
 
 <style lang="scss" scoped>
-.section {
-  width: 100%;
-  padding: 6rem 0;
-
-  &--dark {
-    background: #020b22;
-  }
-
-  &--dark-alt {
-    background: #0a1628;
-  }
-
-  &--accent {
-    background: var(--color-accent, #55c267);
-    color: #0d1a0f;
-    padding: 5rem 0;
-  }
-
-  &--accent-soft {
-    background: color-mix(in srgb, var(--color-accent, #55c267) 6%, #020b22);
-  }
-}
-
-.section__wrap {
-  max-width: 64rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 6vw, 4rem);
-
-  &--center {
-    text-align: center;
-  }
-}
-
-.section__header {
-  margin-bottom: 3rem;
-
-  &--center {
-    text-align: center;
-  }
-}
-
-.section__eyebrow {
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-text-muted, #8888a0);
-  margin-bottom: 1rem;
-}
-
-.section__title {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-  color: var(--color-text, #fff);
-
-  &--accent {
-    color: #0d1a0f;
-  }
-}
-
-.section__subtitle {
-  color: var(--color-text-muted, #8888a0);
-  max-width: 40rem;
-  line-height: 1.6;
-  margin: 1rem auto 0;
-}
-
 /* ── plans grid ── */
 .plans-grid {
   display: grid;
@@ -219,7 +147,7 @@ function toggleFaq(index: number) {
   &__name {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin: 0 0 0.75rem;
@@ -232,16 +160,16 @@ function toggleFaq(index: number) {
   &__amount {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 700;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
   }
 
   &__period {
     font-size: 0.95rem;
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
   }
 
   &__desc {
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     line-height: 1.55;
     font-size: 0.95rem;
     margin: 0 0 1.5rem;
@@ -258,7 +186,7 @@ function toggleFaq(index: number) {
 
     li {
       font-size: 0.9rem;
-      color: var(--color-text-muted, #8888a0);
+      color: var(--marketing-ink-soft);
       padding-left: 1.5rem;
       position: relative;
 
@@ -270,7 +198,7 @@ function toggleFaq(index: number) {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: var(--color-accent, #55c267);
+        background: var(--marketing-primary);
       }
     }
   }
@@ -285,13 +213,13 @@ function toggleFaq(index: number) {
   gap: 0.5rem;
 
   &__item {
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--marketing-border);
     border-radius: 8px;
     overflow: hidden;
     transition: border-color 0.2s;
 
     &--open {
-      border-color: var(--color-accent, #55c267);
+      border-color: var(--marketing-primary);
     }
   }
 
@@ -303,7 +231,7 @@ function toggleFaq(index: number) {
     padding: 1rem 1.25rem;
     background: none;
     border: none;
-    color: var(--color-text, #fff);
+    color: var(--marketing-ink);
     font-size: 1rem;
     font-weight: 500;
     text-align: left;
@@ -313,7 +241,7 @@ function toggleFaq(index: number) {
   &__toggle {
     flex-shrink: 0;
     font-size: 1.25rem;
-    color: var(--color-text-muted, #8888a0);
+    color: var(--marketing-ink-soft);
     width: 1.5rem;
     text-align: center;
   }
@@ -323,7 +251,7 @@ function toggleFaq(index: number) {
 
     p {
       margin: 0;
-      color: var(--color-text-muted, #8888a0);
+      color: var(--marketing-ink-soft);
       line-height: 1.6;
       font-size: 0.95rem;
     }

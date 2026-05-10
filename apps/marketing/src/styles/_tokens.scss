@@ -1,0 +1,150 @@
+// Marketing token layer — bridges @sil/ui theme vars to semantic marketing tokens.
+// All values derive from @sil/ui CSS custom properties so dark/light mode works automatically.
+
+:root {
+  // Semantic ink (text)
+  --marketing-ink: var(--color-foreground);
+  --marketing-ink-soft: color-mix(in srgb, var(--color-foreground), transparent 40%);
+  --marketing-ink-faint: color-mix(in srgb, var(--color-foreground), transparent 60%);
+
+  // Surfaces (cards, sections)
+  --marketing-surface: color-mix(in srgb, var(--color-foreground), var(--color-background) 96%);
+  --marketing-surface-accent: color-mix(in srgb, var(--color-primary), var(--color-background) 10%);
+  --marketing-surface-hover: color-mix(in srgb, var(--color-foreground), var(--color-background) 90%);
+
+  // Borders
+  --marketing-border: color-mix(in srgb, var(--color-foreground), transparent 85%);
+  --marketing-border-strong: color-mix(in srgb, var(--color-foreground), transparent 70%);
+
+  // Brand colors
+  --marketing-primary: var(--color-primary);
+  --marketing-primary-ink: var(--color-dark);
+  --marketing-secondary: var(--color-secondary);
+
+  // Shadows
+  --marketing-shadow: 0 1px 3px color-mix(in srgb, var(--color-foreground), transparent 90%);
+  --marketing-shadow-md: 0 4px 12px color-mix(in srgb, var(--color-foreground), transparent 85%);
+}
+
+body,
+html {
+  background: var(--color-background);
+  color: var(--marketing-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Shared section layout
+.page {
+  width: 100%;
+}
+
+.section {
+  width: 100%;
+  padding: 5rem 0;
+
+  &--surface {
+    background: var(--marketing-surface);
+  }
+
+  &--surface-accent {
+    background: var(--marketing-surface-accent);
+  }
+
+  &--primary {
+    background: var(--marketing-primary);
+    color: var(--marketing-primary-ink);
+  }
+
+  &--primary-soft {
+    background: color-mix(in srgb, var(--marketing-primary), var(--color-background) 6%);
+  }
+
+  &--secondary-soft {
+    background: color-mix(in srgb, var(--marketing-secondary), var(--color-background) 6%);
+  }
+
+  &--secondary {
+    background: var(--marketing-secondary);
+    color: var(--marketing-primary-ink);
+  }
+}
+
+.section__wrap {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 6vw, 4rem);
+}
+
+.section__wrap--center {
+  text-align: center;
+}
+
+.section__header {
+  margin-bottom: 2.5rem;
+}
+
+.section__eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--marketing-ink-soft);
+  margin-bottom: 0.75rem;
+}
+
+.section__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--marketing-ink);
+}
+
+.section__subtitle {
+  color: var(--marketing-ink-soft);
+  max-width: 40rem;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+// Cards
+.card {
+  background: var(--marketing-surface);
+  border: 1px solid var(--marketing-border);
+  border-radius: var(--border-radius, 1em);
+  padding: 1.5rem;
+
+  &--interactive {
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: default;
+
+    &:hover {
+      border-color: var(--marketing-border-strong);
+      box-shadow: var(--marketing-shadow);
+    }
+  }
+}
+
+// Feature icon container
+.feature-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--marketing-surface);
+  border: 1px solid var(--marketing-border);
+  color: var(--marketing-primary);
+  flex-shrink: 0;
+}
+
+// Grid helpers
+.grid {
+  display: grid;
+  gap: 1.5rem;
+
+  &--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+  &--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+  &--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+}
