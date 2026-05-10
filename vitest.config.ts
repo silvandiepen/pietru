@@ -6,11 +6,11 @@ const root = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      '@pietru/auth': `${root}/packages/auth/dist/index.js`,
-      '@pietru/core': `${root}/packages/core/dist/index.js`,
-      '@pietru/db': `${root}/packages/db/dist/index.js`,
-      '@pietru/providers': `${root}/packages/providers/dist/index.js`,
-      '@pietru/validation': `${root}/packages/validation/dist/index.js`,
+      '@pietru/auth': `${root}/packages/auth/src/index.ts`,
+      '@pietru/core': `${root}/packages/core/src/index.ts`,
+      '@pietru/db': `${root}/packages/db/src/index.ts`,
+      '@pietru/providers': `${root}/packages/providers/src/index.ts`,
+      '@pietru/validation': `${root}/packages/validation/src/index.ts`,
     },
   },
   test: {
