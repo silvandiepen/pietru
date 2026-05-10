@@ -1,10 +1,15 @@
 import { mount } from '@vue/test-utils'
 
 import ProviderConfigForm from './ProviderConfigForm.vue'
+import i18n from '@/i18n'
 
 describe('ProviderConfigForm', () => {
   it('normalizes provider payload on submit', async () => {
-    const wrapper = mount(ProviderConfigForm)
+    const wrapper = mount(ProviderConfigForm, {
+      global: {
+        plugins: [i18n],
+      },
+    })
 
     const inputs = wrapper.findAll('input')
     await inputs[0].setValue('re_test')

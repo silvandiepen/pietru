@@ -1,15 +1,15 @@
 <template>
   <section class="auth-view">
     <form class="auth-view__card" @submit.prevent="submit">
-      <h1>Reset password</h1>
-      <p>We will send you a reset link if the account exists.</p>
+      <h1>{{ $t('auth.forgotPassword.title') }}</h1>
+      <p>{{ $t('auth.forgotPassword.description') }}</p>
       <label>
-        <span>Email</span>
+        <span>{{ $t('auth.forgotPassword.labelEmail') }}</span>
         <input v-model="email" type="email" required />
       </label>
-      <p v-if="submitted">Check your inbox for a reset link.</p>
-      <button type="submit">Send reset link</button>
-      <RouterLink to="/login">Back to login</RouterLink>
+      <p v-if="submitted">{{ $t('auth.forgotPassword.success') }}</p>
+      <button type="submit">{{ $t('auth.forgotPassword.buttonSubmit') }}</button>
+      <RouterLink to="/login">{{ $t('auth.forgotPassword.linkBackToLogin') }}</RouterLink>
     </form>
   </section>
 </template>

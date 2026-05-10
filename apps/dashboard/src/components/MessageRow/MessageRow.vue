@@ -4,10 +4,10 @@
       <span class="message-row__dot" :data-status="message.status"></span>
       {{ message.status }}
     </td>
-    <td>{{ message.toAddress }}</td>
-    <td>{{ message.fromAddress }}</td>
+    <td>{{ message.to_address }}</td>
+    <td>{{ message.from_address }}</td>
     <td>{{ message.subject }}</td>
-    <td>{{ formatTimestamp(message.sentAt || message.createdAt) }}</td>
+    <td>{{ formatTimestamp(message.sent_at || message.created_at) }}</td>
   </tr>
 </template>
 

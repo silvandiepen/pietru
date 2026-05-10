@@ -1,6 +1,6 @@
 <template>
   <AppLayout
-    :project-name="project?.name"
+    :project-name="project?.name || t('projectDetail.fallbackTitle')"
     :environment="project?.environment || 'dev'"
     :projects="projectsStore.items"
     :active-project-id="projectsStore.activeProjectId"
@@ -9,26 +9,26 @@
     <section class="project-detail-view">
       <header class="project-detail-view__header">
         <div>
-          <h2>{{ project?.name || 'Project' }}</h2>
+          <h2>{{ project?.name || t('projectDetail.fallbackTitle') }}</h2>
           <p>{{ project?.slug }}</p>
         </div>
-        <button type="button" @click="dialogOpen = true">Create API key</button>
+        <button type="button" @click="dialogOpen = true">{{ $t('projectDetail.buttonCreateApiKey') }}</button>
       </header>
 
       <div class="project-detail-view__tabs">
         <button
           v-for="tabOption in tabs"
-          :key="tabOption"
+          :key="tabOption.key"
           type="button"
-          :data-active="tab === tabOption"
-          @click="tab = tabOption"
+          :data-active="tab === tabOption.key"
+          @click="tab = tabOption.key"
         >
-          {{ tabOption }}
+          {{ tabOption.label }}
         </button>
       </div>
 
       <section v-if="tab === 'environments'" class="project-detail-view__panel">
-        <h3>Environments</h3>
+        <h3>{{ $t('projectDetail.headingEnvironments') }}</h3>
         <div class="project-detail-view__environments">
           <EnvironmentBadge environment="dev" />
           <EnvironmentBadge environment="preview" />
@@ -37,31 +37,78 @@
       </section>
 
       <section v-if="tab === 'api keys'" class="project-detail-view__panel">
-        <h3>API keys</h3>
+        <h3>{{ $t('projectDetail.headingApiKeys') }}</h3>
         <ul class="project-detail-view__list">
           <li v-for="apiKey in apiKeys" :key="apiKey.id">
             <div>
-              <strong>{{ apiKey.name || apiKey.keyPrefix }}</strong>
-              <p>{{ apiKey.environment }} · {{ apiKey.keyPrefix }}</p>
+              <strong>{{ apiKey.name || apiKey.key_prefix }}</strong>
+              <p>{{ apiKey.environment }} · {{ apiKey.key_prefix }}</p>
             </div>
-            <button type="button" @click="revokeApiKey(apiKey.id)">Revoke</button>
+            <button type="button" @click="revokeApiKey(apiKey.id)">{{ $t('projectDetail.buttonRevoke') }}</button>
           </li>
         </ul>
       </section>
 
       <section v-if="tab === 'provider config'" class="project-detail-view__panel">
-        <h3>Provider config</h3>
+        <h3>{{ $t('projectDetail.headingProviderConfig') }}</h3>
         <ProviderConfigForm @submit="createProviderConfig" />
         <ul class="project-detail-view__list">
           <li v-for="config in providerConfigs" :key="config.id">
             <div>
-              <strong>{{ config.providerType }}</strong>
-              <p>{{ config.environment }} · {{ config.mode }} · {{ config.defaultFrom }}</p>
+              <strong>{{ config.provider_type }}</strong>
+              <p>{{ config.environment }} · {{ config.mode }} · {{ config.default_from }}</p>
             </div>
-            <button type="button" @click="validateProviderConfig(config.id)">Validate</button>
+            <button type="button" @click="validateProviderConfig(config.id)">{{ $t('projectDetail.buttonValidate') }}</button>
           </li>
         </ul>
         <p v-if="providerValidationMessage">{{ providerValidationMessage }}</p>
+      </section>
+
+      <section v-if="tab === 'hooks'" class="project-detail-view__panel">
+        <h3>Email Hooks</h3>
+        <form class="project-detail-view__hook-form" @submit.prevent="createHook">
+          <input v-model="hookForm.name" type="text" placeholder="Hook name" required />
+          <select v-model="hookForm.filter_type" required>
+            <option value="any">Any</option>
+            <option value="tag">Tag</option>
+            <option value="from_domain">From domain</option>
+            <option value="subject_regex">Subject regex</option>
+          </select>
+          <input
+            v-model="hookForm.filter_value"
+            type="text"
+            placeholder="Filter value"
+            :disabled="hookForm.filter_type === 'any'"
+          />
+          <input v-model="hookForm.webhook_url" type="url" placeholder="Webhook URL" required />
+          <label class="project-detail-view__hook-active">
+            <input v-model="hookForm.is_active" type="checkbox" />
+            Active
+          </label>
+          <button type="submit">Create Hook</button>
+        </form>
+
+        <ul class="project-detail-view__list">
+          <li v-for="hook in emailHooks" :key="hook.id">
+            <div>
+              <strong>{{ hook.name }}</strong>
+              <p>
+                {{ hook.filter_type }}{{ hook.filter_value ? `: ${hook.filter_value}` : '' }}
+                · {{ hook.webhook_url }}
+              </p>
+            </div>
+            <div class="project-detail-view__hook-actions">
+              <button
+                type="button"
+                :data-active="hook.is_active"
+                @click="toggleHook(hook.id)"
+              >
+                {{ hook.is_active ? 'Enabled' : 'Disabled' }}
+              </button>
+              <button type="button" @click="deleteHook(hook.id)">Delete</button>
+            </div>
+          </li>
+        </ul>
       </section>
 
       <ApiKeyCreateDialog
@@ -75,14 +122,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import ApiKeyCreateDialog from '@/components/ApiKeyCreateDialog'
 import AppLayout from '@/components/AppLayout'
 import EnvironmentBadge from '@/components/EnvironmentBadge'
 import ProviderConfigForm from '@/components/ProviderConfigForm'
 import { useApiKeysStore } from '@/stores/apiKeys'
+import { useEmailHooksStore } from '@/stores/emailHooks'
 import { useProjectsStore } from '@/stores/projects'
 import { useProvidersStore } from '@/stores/providers'
 import type { ApiKeyCreateDialogSubmitPayload } from '@/components/ApiKeyCreateDialog/ApiKeyCreateDialog.model'
@@ -93,16 +142,32 @@ const router = useRouter()
 const projectsStore = useProjectsStore()
 const apiKeysStore = useApiKeysStore()
 const providersStore = useProvidersStore()
+const emailHooksStore = useEmailHooksStore()
+const { t } = useI18n()
 
-const tabs = ['environments', 'api keys', 'provider config'] as const
-const tab = ref<(typeof tabs)[number]>('environments')
+const tabs = [
+  { key: 'environments' as const, label: computed(() => t('projectDetail.tabEnvironments')) },
+  { key: 'api keys' as const, label: computed(() => t('projectDetail.tabApiKeys')) },
+  { key: 'provider config' as const, label: computed(() => t('projectDetail.tabProviderConfig')) },
+  { key: 'hooks' as const, label: computed(() => 'Hooks') },
+]
+const tab = ref<(typeof tabs)[number]['key']>('environments')
 const dialogOpen = ref(false)
 const providerValidationMessage = ref('')
+
+const hookForm = reactive({
+  name: '',
+  filter_type: 'any' as 'tag' | 'from_domain' | 'subject_regex' | 'any',
+  filter_value: '',
+  webhook_url: '',
+  is_active: true,
+})
 
 const projectId = computed(() => route.params.id as string)
 const project = computed(() => projectsStore.items.find((item) => item.id === projectId.value) || null)
 const apiKeys = computed(() => apiKeysStore.items[projectId.value] || [])
 const providerConfigs = computed(() => providersStore.items[projectId.value] || [])
+const emailHooks = computed(() => emailHooksStore.items[projectId.value] || [])
 
 onMounted(async () => {
   await Promise.all([
@@ -110,6 +175,7 @@ onMounted(async () => {
     projectsStore.get(projectId.value),
     apiKeysStore.list(projectId.value),
     providersStore.list(projectId.value),
+    emailHooksStore.list(projectId.value),
   ])
   projectsStore.setActiveProject(projectId.value)
 })
@@ -133,7 +199,30 @@ async function createProviderConfig(payload: ProviderConfigPayload) {
 
 async function validateProviderConfig(configId: string) {
   const result = await providersStore.validate(projectId.value, configId)
-  providerValidationMessage.value = result.valid ? 'Provider config is valid.' : result.message || 'Validation failed.'
+  providerValidationMessage.value = result.valid ? t('projectDetail.validationValid') : result.message || t('projectDetail.validationFailed')
+}
+
+async function createHook() {
+  await emailHooksStore.create(projectId.value, {
+    name: hookForm.name,
+    filter_type: hookForm.filter_type,
+    filter_value: hookForm.filter_type === 'any' ? null : hookForm.filter_value || null,
+    webhook_url: hookForm.webhook_url,
+    is_active: hookForm.is_active,
+  })
+  hookForm.name = ''
+  hookForm.filter_type = 'any'
+  hookForm.filter_value = ''
+  hookForm.webhook_url = ''
+  hookForm.is_active = true
+}
+
+async function toggleHook(hookId: string) {
+  await emailHooksStore.toggle(projectId.value, hookId)
+}
+
+async function deleteHook(hookId: string) {
+  await emailHooksStore.delete(projectId.value, hookId)
 }
 
 function closeDialog() {
@@ -200,6 +289,55 @@ function closeDialog() {
     }
   }
 
+  &__hook-form {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: center;
+
+    input[type="text"],
+    input[type="url"],
+    select {
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--pietru-color-border);
+      border-radius: var(--pietru-radius-sm);
+      background: var(--pietru-color-surface-sidebar);
+      color: var(--pietru-color-text);
+
+      &:focus {
+        outline: none;
+        border-color: var(--pietru-color-accent);
+      }
+    }
+
+    button {
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--pietru-color-accent);
+      border-radius: var(--pietru-radius-sm);
+      background: var(--pietru-color-accent);
+      color: var(--pietru-color-background);
+      font-weight: 500;
+    }
+  }
+
+  &__hook-active {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--pietru-color-text);
+    font-size: 0.9rem;
+  }
+
+  &__hook-actions {
+    display: flex;
+    gap: 0.5rem;
+
+    button[data-active="true"] {
+      border-color: var(--pietru-color-accent);
+      color: var(--pietru-color-accent);
+    }
+  }
+
   p {
     color: var(--pietru-color-text-muted);
   }
@@ -210,6 +348,18 @@ function closeDialog() {
     border-radius: var(--pietru-radius-sm);
     background: var(--pietru-color-surface-sidebar);
     color: var(--pietru-color-text);
+  }
+}
+
+@media (max-width: 960px) {
+  .project-detail-view__hook-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .project-detail-view__hook-form {
+    grid-template-columns: 1fr;
   }
 }
 </style>

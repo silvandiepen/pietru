@@ -1,188 +1,278 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
+import { Button, Icon, Icons, Colors } from '@sil/ui'
+
+const { t, tm, rt } = useI18n()
+
 const dashboardUrl =
   import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app-pietru.hakobs.com'
 
-const features = [
-  {
-    num: '01',
-    title: 'Send',
-    desc: 'Ship transactional email through a stable, versioned project API. Generate environment-specific keys for production, staging, and development.',
-  },
-  {
-    num: '02',
-    title: 'Capture',
-    desc: 'Intercept non-production mail and route it into private test inboxes. Never accidentally send test emails to real users again.',
-  },
-  {
-    num: '03',
-    title: 'Debug',
-    desc: 'Inspect full payloads, provider responses, rendered HTML, and error details for every message. Built-in search and filtering.',
-  },
-  {
-    num: '04',
-    title: 'Track',
-    desc: 'Follow every message through the delivery lifecycle. See accepted, delivered, bounced, and complained events in a unified timeline.',
-  },
-  {
-    num: '05',
-    title: 'Route',
-    desc: 'Swap provider modes, configure sender policies, and manage routing rules — all from the dashboard without touching application code.',
-  },
-]
+const featureKeys = ['send', 'capture', 'receive', 'track', 'debug', 'switch'] as const
+
+const featureIcons: Record<string, string> = {
+  send: Icons.MEDIA_MAIL,
+  capture: Icons.UI_CIRCLED_VISIBLE,
+  receive: Icons.ARROWS_ARROW_HEADED_DOWNLOAD,
+  track: Icons.UI_ON_TARGET,
+  debug: Icons.UI_CODE_BRACKETS,
+  switch: Icons.ARROWS_ARROW_TRANSFER_LEFT_RIGHT,
+}
+
+const features = featureKeys.map((key) => {
+  const messages = tm(`features.list.${key}.quickRef`)
+  const quickRef = Array.isArray(messages)
+    ? messages.map((m) => rt(m as string))
+    : []
+  return {
+    key,
+    title: t(`features.list.${key}.title`),
+    summary: t(`features.list.${key}.summary`),
+    detail: t(`features.list.${key}.detail`),
+    quickRef,
+    icon: featureIcons[key],
+  }
+})
 </script>
 
 <template>
   <div class="page">
     <!-- Hero -->
-    <section class="hero">
-      <div class="container hero__inner">
-        <span class="eyebrow">Features</span>
-        <h1 class="hero__title">
-          Everything you need to control email at scale
-        </h1>
-        <p class="hero__summary">
-          From sending and capturing to debugging and routing — Pietru gives you
-          one unified gateway for all your mail.
-        </p>
+    <section class="section section--dark">
+      <div class="section__wrap section__wrap--center">
+        <header class="section__header">
+          <div class="section__eyebrow">{{ $t('features.eyebrow') }}</div>
+          <h1 class="section__title">{{ $t('features.heroTitle') }}</h1>
+          <p class="section__subtitle">{{ $t('features.heroSummary') }}</p>
+        </header>
+        <nav class="toc">
+          <RouterLink
+            v-for="f in features"
+            :key="f.key"
+            :to="{ hash: `#${f.key}` }"
+            class="toc__pill"
+          >
+            {{ f.title }}
+          </RouterLink>
+        </nav>
       </div>
     </section>
 
     <!-- Feature detail sections -->
     <section
       v-for="(feature, i) in features"
-      :key="feature.num"
-      class="detail"
-      :class="i % 2 === 0 ? 'detail--dark' : 'detail--light'"
+      :id="feature.key"
+      :key="feature.key"
+      class="section feature-section"
+      :class="i % 2 === 0 ? 'section--accent-soft' : 'section--accent-alt'"
     >
-      <div class="container detail__inner">
-        <span class="detail__num">{{ feature.num }}</span>
-        <h2 class="detail__title">{{ feature.title }}</h2>
-        <p class="detail__desc">{{ feature.desc }}</p>
+      <div class="section__wrap">
+        <div class="feature-detail">
+          <div class="feature-detail__icon">
+            <Icon :name="feature.icon" size="xl" color="primary" />
+          </div>
+          <div class="feature-detail__body">
+            <h2 class="feature-detail__title">{{ feature.title }}</h2>
+            <p class="feature-detail__summary">{{ feature.summary }}</p>
+            <p class="feature-detail__detail">{{ feature.detail }}</p>
+            <ul class="feature-detail__list">
+              <li v-for="(item, j) in feature.quickRef" :key="j">
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="cta">
-      <div class="container cta__inner">
-        <h2 class="cta__title">Get started in minutes</h2>
-        <a :href="dashboardUrl" class="cta__link">Open Dashboard</a>
+    <section class="section section--accent">
+      <div class="section__wrap section__wrap--center">
+        <h2 class="section__title section__title--accent">
+          {{ $t('features.ctaTitle') }}
+        </h2>
+        <Button
+          variant="primary"
+          :href="dashboardUrl"
+          target="_blank"
+          size="large"
+          :color="Colors.DARK"
+        >
+          {{ $t('features.ctaLink') }}
+        </Button>
       </div>
     </section>
   </div>
 </template>
 
 <style lang="scss" scoped>
-/* ---------- variables ---------- */
-$bg-dark: #020b22;
-$bg-light: #0a1628;
-$text-muted: #8888a0;
-$accent: #55c267;
+/* ── sections ── */
+.section {
+  width: 100%;
+  padding: 6rem 0;
 
-/* ---------- shared ---------- */
-.container {
+  &--dark {
+    background: #020b22;
+  }
+
+  &--accent {
+    background: var(--color-accent, #55c267);
+    color: #0d1a0f;
+    padding: 5rem 0;
+  }
+
+  &--accent-soft {
+    background: color-mix(in srgb, var(--color-accent, #55c267) 6%, #020b22);
+  }
+
+  &--accent-alt {
+    background: color-mix(in srgb, var(--color-accent, #55c267) 3%, #0a1628);
+  }
+}
+
+.section__wrap {
   max-width: 64rem;
   margin-inline: auto;
   padding-inline: clamp(1rem, 6vw, 4rem);
-}
 
-/* ---------- hero ---------- */
-.hero {
-  padding: 6rem 0 4rem;
-
-  &__inner {
+  &--center {
     text-align: center;
-  }
-
-  .eyebrow {
-    display: block;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    color: $text-muted;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.5rem;
-  }
-
-  &__title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 600;
-    color: #fff;
-    margin: 0;
-  }
-
-  &__summary {
-    color: $text-muted;
-    max-width: 36rem;
-    margin: 1.25rem auto 0;
-    line-height: 1.6;
   }
 }
 
-/* ---------- feature detail ---------- */
-.detail {
-  padding: 5rem 0;
+.section__header {
+  margin-bottom: 2rem;
+}
 
-  &--dark {
-    background-color: $bg-dark;
+.section__eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted, #8888a0);
+  margin-bottom: 1rem;
+}
+
+.section__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--color-text, #fff);
+
+  &--accent {
+    color: #0d1a0f;
   }
+}
 
-  &--light {
-    background-color: $bg-light;
-  }
+.section__subtitle {
+  color: var(--color-text-muted, #8888a0);
+  max-width: 40rem;
+  line-height: 1.6;
+  margin: 1rem auto 0;
+}
 
-  &__inner {
-    text-align: center;
-  }
+/* ── table of contents pills ── */
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 2rem;
 
-  &__num {
-    display: block;
+  &__pill {
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
     font-size: 0.85rem;
-    color: $text-muted;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted, #8888a0);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    transition: all 0.2s;
+
+    &:hover {
+      color: var(--color-text, #fff);
+      border-color: var(--color-accent, #55c267);
+    }
+  }
+}
+
+/* ── feature detail sections ── */
+.feature-detail {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+
+  &__icon {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   &__title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #fff;
-    margin: 0 0 1rem;
+    color: var(--color-text, #fff);
+    margin: 0 0 0.5rem;
   }
 
-  &__desc {
-    color: $text-muted;
-    max-width: 32rem;
-    margin: 0 auto;
+  &__summary {
+    font-size: 1.05rem;
+    color: var(--color-text, #fff);
+    opacity: 0.9;
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
+  }
+
+  &__detail {
+    color: var(--color-text-muted, #8888a0);
     line-height: 1.6;
+    margin: 0 0 1.25rem;
+    max-width: 40rem;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    li {
+      font-size: 0.9rem;
+      color: var(--color-text-muted, #8888a0);
+      padding-left: 1.25rem;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.55em;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--color-accent, #55c267);
+      }
+    }
   }
 }
 
-/* ---------- cta ---------- */
-.cta {
-  padding: 5rem 0;
+/* ── responsive ── */
+@media (max-width: 48em) {
+  .feature-detail {
+    flex-direction: column;
+    gap: 1.25rem;
 
-  &__inner {
-    text-align: center;
-  }
-
-  &__title {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 600;
-    color: #fff;
-    margin: 0 0 2rem;
-  }
-
-  &__link {
-    display: inline-block;
-    background-color: $accent;
-    color: #fff;
-    padding: 0.75rem 2rem;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
-
-    &:hover {
-      opacity: 0.85;
+    &__icon {
+      width: 3rem;
+      height: 3rem;
     }
   }
 }

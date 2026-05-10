@@ -1,20 +1,20 @@
 <template>
   <section class="auth-view">
     <form class="auth-view__card" @submit.prevent="submit">
-      <h1>Log in</h1>
-      <p>Access your projects, mail events, and provider configuration.</p>
+      <h1>{{ $t('auth.login.title') }}</h1>
+      <p>{{ $t('auth.login.description') }}</p>
       <label>
-        <span>Email</span>
+        <span>{{ $t('auth.login.labelEmail') }}</span>
         <input v-model="form.email" type="email" required />
       </label>
       <label>
-        <span>Password</span>
+        <span>{{ $t('auth.login.labelPassword') }}</span>
         <input v-model="form.password" type="password" required />
       </label>
       <p v-if="authStore.error" class="auth-view__error">{{ authStore.error }}</p>
-      <button type="submit" :disabled="authStore.loading">Log in</button>
-      <RouterLink to="/forgot-password">Forgot password?</RouterLink>
-      <RouterLink to="/register">Create account</RouterLink>
+      <button type="submit" :disabled="authStore.loading">{{ $t('auth.login.buttonSubmit') }}</button>
+      <RouterLink to="/forgot-password">{{ $t('auth.login.linkForgotPassword') }}</RouterLink>
+      <RouterLink to="/register">{{ $t('auth.login.linkCreateAccount') }}</RouterLink>
     </form>
   </section>
 </template>

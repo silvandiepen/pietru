@@ -9,28 +9,28 @@
     <section class="messages-view">
       <form class="messages-view__filters" @submit.prevent="loadMessages">
         <select v-model="filters.status">
-          <option value="">All statuses</option>
-          <option value="queued">queued</option>
-          <option value="sent">sent</option>
-          <option value="delivered">delivered</option>
-          <option value="failed">failed</option>
+          <option value="">{{ $t('messages.filterAllStatuses') }}</option>
+          <option value="queued">{{ $t('messages.statusQueued') }}</option>
+          <option value="sent">{{ $t('messages.statusSent') }}</option>
+          <option value="delivered">{{ $t('messages.statusDelivered') }}</option>
+          <option value="failed">{{ $t('messages.statusFailed') }}</option>
         </select>
-        <input v-model="filters.to" type="text" placeholder="To" />
-        <input v-model="filters.from" type="text" placeholder="From" />
+        <input v-model="filters.to" type="text" :placeholder="$t('messages.placeholderTo')" />
+        <input v-model="filters.from" type="text" :placeholder="$t('messages.placeholderFrom')" />
         <input v-model="filters.dateFrom" type="date" />
         <input v-model="filters.dateTo" type="date" />
-        <button type="submit">Apply filters</button>
+        <button type="submit">{{ $t('messages.buttonApplyFilters') }}</button>
       </form>
 
       <div class="messages-view__table-wrapper">
         <table class="messages-view__table">
           <thead>
             <tr>
-              <th>Status</th>
-              <th>To</th>
-              <th>From</th>
-              <th>Subject</th>
-              <th>Time</th>
+              <th>{{ $t('messages.headerStatus') }}</th>
+              <th>{{ $t('messages.headerTo') }}</th>
+              <th>{{ $t('messages.headerFrom') }}</th>
+              <th>{{ $t('messages.headerSubject') }}</th>
+              <th>{{ $t('messages.headerTime') }}</th>
             </tr>
           </thead>
           <tbody>

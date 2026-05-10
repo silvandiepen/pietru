@@ -1,6 +1,6 @@
 <template>
   <AppLayout
-    project-name="Settings"
+    :project-name="$t('settings.title')"
     environment="dev"
     :projects="projectsStore.items"
     :active-project-id="projectsStore.activeProjectId"
@@ -8,21 +8,21 @@
   >
     <section class="settings-view">
       <article class="settings-view__panel">
-        <h2>Profile</h2>
+        <h2>{{ $t('settings.profile') }}</h2>
         <p>{{ authStore.user?.email }}</p>
       </article>
 
       <article class="settings-view__panel">
-        <h2>Change password</h2>
+        <h2>{{ $t('settings.changePassword') }}</h2>
         <form class="settings-view__form" @submit.prevent="submitPasswordChange">
-          <input v-model="passwordForm.currentPassword" type="password" placeholder="Current password" />
-          <input v-model="passwordForm.newPassword" type="password" placeholder="New password" />
-          <button type="submit">Update password</button>
+          <input v-model="passwordForm.currentPassword" type="password" :placeholder="$t('settings.placeholderCurrentPassword')" />
+          <input v-model="passwordForm.newPassword" type="password" :placeholder="$t('settings.placeholderNewPassword')" />
+          <button type="submit">{{ $t('settings.buttonUpdatePassword') }}</button>
         </form>
       </article>
 
       <article class="settings-view__panel">
-        <h2>Active sessions</h2>
+        <h2>{{ $t('settings.activeSessions') }}</h2>
         <ul class="settings-view__sessions">
           <SessionRow
             v-for="session in authStore.sessions"

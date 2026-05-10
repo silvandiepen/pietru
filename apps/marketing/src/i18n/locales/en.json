@@ -1,0 +1,264 @@
+{
+  "app": {
+    "brand": "Pietru",
+    "navFeatures": "Features",
+    "navPricing": "Pricing",
+    "navAbout": "About",
+    "openDashboard": "Open Dashboard",
+    "github": "GitHub"
+  },
+  "home": {
+    "eyebrow": "Email gateway for developers with multiple products",
+    "heroHeading": "One dashboard for all your product emails",
+    "heroSummary": "Run 3 SaaS products, each on a different email provider? Pietru gives you a single place to send, track, and test emails across all of them. Plus, capture inbound emails into API-based projects for end-to-end testing — no throwaway inboxes needed.",
+    "getStarted": "Get Started",
+    "seeHowItWorks": "See How It Works",
+    "problem": {
+      "eyebrow": "The Problem",
+      "title": "You have more products than email dashboards",
+      "points": [
+        {
+          "title": "A different login for every product",
+          "desc": "Product A uses Resend, Product B uses Mailgun, Product C uses Amazon SES. You're constantly switching tabs to check if emails went out."
+        },
+        {
+          "title": "No easy way to test emails end-to-end",
+          "desc": "Your API sends a welcome email — but how do you verify it actually arrived? You're creating throwaway Gmail accounts and checking them manually."
+        },
+        {
+          "title": "Delivery issues surface days later",
+          "desc": "A customer says they never got their receipt. You dig through three different provider dashboards trying to figure out what happened."
+        }
+      ]
+    },
+    "howItWorks": {
+      "eyebrow": "How It Works",
+      "title": "Set up once, see everything",
+      "steps": [
+        {
+          "num": "1",
+          "title": "Create a project per product",
+          "desc": "Each of your products gets its own project in Pietru. Connect the SMTP provider you already use — credentials stay in one place."
+        },
+        {
+          "num": "2",
+          "title": "Send emails through one dashboard",
+          "desc": "All outgoing mail from all your products appears in a single overview. See what was sent, to whom, and whether it arrived."
+        },
+        {
+          "num": "3",
+          "title": "Capture emails for testing",
+          "desc": "Point your test environment to Pietru and receive emails directly into your project. Verify sign-up flows, password resets, and notifications without real inboxes."
+        }
+      ]
+    },
+    "features": {
+      "sectionHeading": "Two problems, one dashboard",
+      "send": {
+        "title": "Send",
+        "desc": "Route outgoing email from any number of products through your existing providers. One view, all your mail."
+      },
+      "capture": {
+        "title": "Capture",
+        "desc": "Receive test emails directly into your project during development. No throwaway accounts, no manual inbox checking."
+      },
+      "receive": {
+        "title": "Receive",
+        "desc": "Accept inbound email into API-based projects. Perfect for end-to-end tests that need to verify an email was actually delivered."
+      },
+      "track": {
+        "title": "Track",
+        "desc": "See delivery status across all your products in one place. Know when emails land — and when they don't."
+      },
+      "debug": {
+        "title": "Debug",
+        "desc": "Inspect every email's full history: what was sent, how it rendered, and what the provider responded."
+      },
+      "switch": {
+        "title": "Switch",
+        "desc": "Change email providers for any product from the dashboard. Your app code doesn't need to change."
+      }
+    },
+    "cta": {
+      "heading": "Stop juggling email dashboards",
+      "summary": "Set up in minutes. Connect your providers, see everything in one place.",
+      "button": "Open Dashboard"
+    },
+    "finalCta": {
+      "heading": "Get started for free"
+    }
+  },
+  "features": {
+    "eyebrow": "Features",
+    "heroTitle": "Built for developers with more than one product",
+    "heroSummary": "Pietru solves two problems: managing outgoing email across multiple products with different providers, and capturing inbound email for end-to-end testing. Here's how each piece works.",
+    "ctaTitle": "Start using Pietru today",
+    "ctaLink": "Open Dashboard",
+    "list": {
+      "send": {
+        "title": "Send",
+        "summary": "One dashboard for outgoing email across all your products, regardless of which provider each one uses.",
+        "detail": "Each product connects its own SMTP provider. Pietru routes the mail and gives you a unified view of everything that went out. Welcome emails, receipts, notifications — see them all in one place without logging into three different dashboards.",
+        "quickRef": [
+          "Works with Resend (more providers coming)",
+          "Per-project provider configuration",
+          "Consistent view across all products",
+          "Built-in rate limiting and retry logic"
+        ]
+      },
+      "capture": {
+        "title": "Capture",
+        "summary": "Receive test emails directly into your project. No more creating throwaway Gmail accounts to check if your app sent something.",
+        "detail": "During development and testing, your app needs to send real emails and you need to verify they arrived. Pietru captures those emails into your project so your tests can inspect them programmatically. No manual inbox checking, no flaky test setups.",
+        "quickRef": [
+          "Automatic capture in test environments",
+          "API access to received emails",
+          "Full HTML and text preview",
+          "Share test emails with your team"
+        ]
+      },
+      "receive": {
+        "title": "Receive",
+        "summary": "Accept inbound emails into your project for end-to-end testing. Your API tests can verify email delivery without real mailboxes.",
+        "detail": "Pietru gives your project a real email address. When your app sends a welcome email during a test, Pietru receives it and makes it available via API. Your test suite can assert on subject, body, and attachments — fully automated, no human checking needed.",
+        "quickRef": [
+          "Per-project inbox addresses",
+          "API access to received messages",
+          "Perfect for CI/CD test pipelines",
+          "SPF/DKIM/DMARC validation"
+        ]
+      },
+      "track": {
+        "title": "Track",
+        "summary": "See delivery status across all your products in one timeline. Stop guessing whether emails arrived.",
+        "detail": "Every email sent through Pietru generates a delivery event. See when it was accepted, delivered, opened, or bounced — filtered by product, recipient, or time range. One timeline for all your products.",
+        "quickRef": [
+          "Delivery, bounce, and complaint events",
+          "Open and click tracking",
+          "Filter by product or project",
+          "Webhook notifications for key events"
+        ]
+      },
+      "debug": {
+        "title": "Debug",
+        "summary": "Full message history for every email across every product. Find and fix issues fast.",
+        "detail": "When an email doesn't arrive or renders wrong, Pietru shows you the full picture: the original payload, the provider's response, rendered HTML, and error details — all in one place, organized by product.",
+        "quickRef": [
+          "Complete message payload inspection",
+          "Provider response logs",
+          "Rendered HTML preview",
+          "Searchable message history"
+        ]
+      },
+      "switch": {
+        "title": "Switch",
+        "summary": "Swap email providers for any product from the dashboard. Your app code doesn't change.",
+        "detail": "Need to move Product A from Resend to a different provider? Change it in the Pietru dashboard. Your app keeps sending to the same endpoint — we handle the routing. No code deploys, no downtime.",
+        "quickRef": [
+          "Provider-agnostic API design",
+          "Dashboard-based provider switching",
+          "No code changes required",
+          "Per-product routing"
+        ]
+      }
+    }
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "heroTitle": "Simple, transparent pricing",
+    "heroSummary": "Start free, scale when you're ready. No surprise fees, no credit card required to get started.",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "price": "$0",
+        "period": "forever",
+        "description": "For side projects and experimentation. Send up to 1,000 emails per month.",
+        "features": [
+          "1,000 emails/month",
+          "1 project",
+          "2 test inboxes",
+          "Email capture in dev",
+          "Basic delivery tracking",
+          "Community support"
+        ],
+        "cta": "Get Started Free"
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$19",
+        "period": "per month",
+        "description": "For growing products that need reliability and insights. Send up to 50,000 emails per month.",
+        "features": [
+          "50,000 emails/month",
+          "Unlimited projects",
+          "Unlimited test inboxes",
+          "Full delivery tracking",
+          "Open & click analytics",
+          "Email debugging tools",
+          "Webhook integrations",
+          "Priority support"
+        ],
+        "cta": "Start Pro Trial"
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "q": "Can I switch plans later?",
+          "a": "Yes. Upgrade or downgrade anytime from your dashboard. Changes take effect immediately."
+        },
+        {
+          "q": "Do I need a credit card to start?",
+          "a": "No. The Free plan requires no payment info. You only enter billing details when upgrading to Pro."
+        },
+        {
+          "q": "What counts as an email?",
+          "a": "Every sent email counts as one. Inbound emails and test captures are free and don't count toward your limit."
+        },
+        {
+          "q": "Can I use my own email provider?",
+          "a": "Yes. Pietru works with your existing provider. Connect Resend today — more providers are on the way."
+        },
+        {
+          "q": "What happens if I exceed my limit?",
+          "a": "We'll notify you when you're approaching your limit. On the Free plan, emails are paused until the next cycle. Pro plans can purchase additional capacity."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Start free, no credit card required",
+      "button": "Open Dashboard"
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Built by Hakobs",
+    "summary": "Pietru is made by Sil van Diepen at Hakobs — a small studio focused on building thoughtful, well-crafted tools for developers.",
+    "principles": {
+      "title": "Our principles",
+      "items": [
+        {
+          "title": "Simplicity first",
+          "desc": "Developer tools should be simple, clear, and honest. No buzzwords, no over-engineering. We build what we'd want to use ourselves."
+        },
+        {
+          "title": "Reliability matters",
+          "desc": "Email is critical infrastructure for your app. We take uptime, delivery accuracy, and data privacy seriously."
+        },
+        {
+          "title": "Transparent pricing",
+          "desc": "No hidden fees, no surprise charges. You should always know exactly what you're paying for."
+        },
+        {
+          "title": "Built for real workflows",
+          "desc": "Pietru exists because managing email across multiple products shouldn't mean juggling dashboards. We built the tool we wished existed."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Want to get in touch?",
+      "link": "Visit hakobs.com"
+    }
+  }
+}

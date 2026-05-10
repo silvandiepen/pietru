@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 
 import ProjectSwitcher from './ProjectSwitcher.vue'
+import i18n from '@/i18n'
 
 describe('ProjectSwitcher', () => {
   it('emits updates on selection', async () => {
@@ -11,6 +12,9 @@ describe('ProjectSwitcher', () => {
           { id: '1', name: 'Alpha', slug: 'alpha' },
           { id: '2', name: 'Beta', slug: 'beta' },
         ],
+      },
+      global: {
+        plugins: [i18n],
       },
     })
 

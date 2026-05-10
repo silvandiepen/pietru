@@ -5,7 +5,8 @@ import { defineConfig, loadEnv } from 'vite'
 import { defineTheme, ui } from '@sil/ui/vite'
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const envDir = fileURLToPath(new URL('.', import.meta.url))
+  const env = loadEnv(mode, envDir, '')
   const apiTarget = env.VITE_PIETRU_API_URL || 'http://localhost:8787'
 
   return {
@@ -38,7 +39,7 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       include: ['apps/dashboard/src/**/*.test.ts'],
-      plugins: [vue()],
+      setupFiles: ['apps/dashboard/src/test-setup.ts'],
       environment: 'jsdom',
       globals: true,
     },

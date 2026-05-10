@@ -1,0 +1,40 @@
+name: Marketing CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/marketing/**'
+      - 'packages/**'
+      - '.github/workflows/marketing.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/marketing/**'
+      - 'packages/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: bash -c 'cd apps/marketing && npx vite build'
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: pietru-marketing
+          directory: apps/marketing/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

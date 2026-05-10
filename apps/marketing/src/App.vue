@@ -1,10 +1,14 @@
 <template>
   <PillHeader
     brandTo="/"
-    brandSuffix="Pietru"
+    :brandSuffix="$t('app.brand')"
     colorMode="dark"
-    :navItems="[{ id: 'features', label: 'Features', to: '/features' }]"
-    :actions="[{ label: 'Open Dashboard', variant: 'primary', handler: openDashboard }]"
+    :navItems="[
+      { id: 'features', label: $t('app.navFeatures'), to: '/features' },
+      { id: 'pricing', label: $t('app.navPricing'), to: '/pricing' },
+      { id: 'about', label: $t('app.navAbout'), to: '/about' }
+    ]"
+    :actions="[{ label: $t('app.openDashboard'), variant: 'primary', handler: openDashboard }]"
   />
 
   <main>
@@ -13,11 +17,13 @@
 
   <PlatformFooter colorMode="dark">
     <template #brand>
-      Pietru
+      {{ $t('app.brand') }}
     </template>
     <template #nav>
-      <RouterLink to="/features">Features</RouterLink>
-      <a href="https://github.com/silvandiepen/pietru" target="_blank" rel="noopener">GitHub</a>
+      <RouterLink to="/features">{{ $t('app.navFeatures') }}</RouterLink>
+      <RouterLink to="/pricing">{{ $t('app.navPricing') }}</RouterLink>
+      <RouterLink to="/about">{{ $t('app.navAbout') }}</RouterLink>
+      <a href="https://github.com/silvandiepen/pietru" target="_blank" rel="noopener">{{ $t('app.github') }}</a>
     </template>
   </PlatformFooter>
 </template>

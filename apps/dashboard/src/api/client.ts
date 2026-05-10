@@ -23,7 +23,8 @@ function normalizeUrl(path: string) {
     return path
   }
 
-  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`
+  const versioned = path.startsWith('/') ? `/v1${path}` : `/v1/${path}`
+  return `${API_BASE_URL}${versioned}`
 }
 
 function parseMessage(payload: unknown, fallback: string) {
@@ -58,6 +59,11 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
       status: response.status,
       details: payload,
     })
+  }
+
+  // Auto-unwrap the { data: ... } envelope that every API endpoint returns
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return payload.data as T
   }
 
   return payload as T

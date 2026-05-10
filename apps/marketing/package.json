@@ -12,6 +12,7 @@
     "@sil/ui": "^1.23.6",
     "bemm": "^1.4.0",
     "vue": "3.5.34",
+    "vue-i18n": "^11.4.2",
     "vue-router": "5.0.6"
   },
   "devDependencies": {

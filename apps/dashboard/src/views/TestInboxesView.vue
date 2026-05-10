@@ -8,8 +8,8 @@
   >
     <section class="test-inboxes-view">
       <header>
-        <h2>Test inboxes</h2>
-        <p>Open a captured inbox to inspect messages sent through non-live environments.</p>
+        <h2>{{ $t('testInboxes.title') }}</h2>
+        <p>{{ $t('testInboxes.description') }}</p>
       </header>
 
       <ul>

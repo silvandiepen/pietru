@@ -10,7 +10,8 @@ import {
   renderTemplate,
   safeJsonParse,
 } from '@pietru/core';
-import { ResendProvider } from '@pietru/providers';
+import { ResendProvider, SesProvider } from '@pietru/providers';
+import type { MailProvider, ProviderConfig } from '@pietru/providers';
 import { sendMessageSchema } from '@pietru/validation';
 import { getCookie } from 'hono/cookie';
 import { Hono } from 'hono';
@@ -65,6 +66,16 @@ async function resolveProviderConfig(c: { env: Env }, projectId: string, environ
   )
     .bind(projectId, environment)
     .first<ProviderConfigRecord>();
+}
+
+function getMailProvider(providerType: string): MailProvider {
+  if (providerType === 'resend') {
+    return new ResendProvider();
+  }
+  if (providerType === 'ses') {
+    return new SesProvider();
+  }
+  throw new Error(`Unsupported provider type: ${providerType}`);
 }
 
 async function verifyProjectOwnership(db: D1Database, projectId: string, userId: string) {
@@ -186,12 +197,23 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
     }
 
     try {
-      const providerSecrets = JSON.parse(await decrypt(providerConfig.config_encrypted, c.env.ENCRYPTION_KEY)) as {
-        apiKey: string;
-        webhookSecret?: string;
+      const providerSecrets = JSON.parse(await decrypt(providerConfig.config_encrypted, c.env.ENCRYPTION_KEY)) as Record<string, unknown>;
+      const provider = getMailProvider(providerConfig.provider_type);
+      const providerConfigObj: ProviderConfig = {
+        providerType: providerConfig.provider_type,
+        apiKey: (providerSecrets.apiKey as string) ?? '',
+        webhookSecret: providerSecrets.webhookSecret as string | undefined,
+        mode: providerConfig.mode,
+        environment: providerConfig.environment,
+        defaultFrom: providerConfig.default_from,
+        allowedDomains,
+        region: providerSecrets.region as string | undefined,
+        accessKeyId: providerSecrets.accessKeyId as string | undefined,
+        secretAccessKey: providerSecrets.secretAccessKey as string | undefined,
+        configurationSetName: providerSecrets.configurationSetName as string | null | undefined,
+        defaultMailFromDomain: providerSecrets.defaultMailFromDomain as string | null | undefined,
       };
-      const resend = new ResendProvider();
-      const sendResult = await resend.sendEmail(
+      const sendResult = await provider.sendEmail(
         {
           id: messageId,
           to: body.data.to,
@@ -204,15 +226,7 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
           replyTo: body.data.replyTo,
           tags: body.data.tags,
         },
-        {
-          providerType: providerConfig.provider_type,
-          apiKey: providerSecrets.apiKey,
-          webhookSecret: providerSecrets.webhookSecret,
-          mode: providerConfig.mode,
-          environment: providerConfig.environment,
-          defaultFrom: providerConfig.default_from,
-          allowedDomains,
-        },
+        providerConfigObj,
       );
 
       providerMessageId = sendResult.id;
@@ -233,7 +247,6 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
       projectId,
       providerConfig?.id ?? null,
       environment,
-      body.data.to,
       Array.isArray(body.data.to) ? body.data.to.join(', ') : body.data.to,
       fromAddress,
       body.data.replyTo ?? null,
@@ -305,7 +318,7 @@ messageRoutes.get('/messages', async (c) => {
     }
 
     const filters: unknown[] = [authResult.userId];
-    let where = ' FROM messages m INNER JOIN projects p ON p.id = m.project_id WHERE p.user_id = ?';
+    let where = ' FROM messages m LEFT JOIN projects p ON p.id = m.project_id WHERE (p.user_id = ? OR m.project_id IS NULL)';
 
     if (queryProjectId) {
       where += ' AND m.project_id = ?';
@@ -427,6 +440,42 @@ messageRoutes.get('/messages/:id', async (c) => {
     .all();
 
   return c.json({ data: { ...message, events: events.results } });
+});
+
+// Fetch raw email content (from R2) for a received message
+messageRoutes.get('/messages/:id/raw', async (c) => {
+  const messageId = c.req.param('id');
+  if (!messageId) {
+    return c.json({ error: { code: 'validation_error', message: 'Message id is required' } }, 400);
+  }
+
+  const authResult = await authenticateAccess(c);
+  if (authResult instanceof Response) {
+    return authResult;
+  }
+
+  const message =
+    'userId' in authResult
+      ? await c.env.DB.prepare(
+          'SELECT m.raw_storage_key, m.project_id FROM messages m INNER JOIN projects p ON p.id = m.project_id WHERE m.id = ? AND p.user_id = ?',
+        )
+          .bind(messageId, authResult.userId)
+          .first<{ raw_storage_key: string | null; project_id: string }>()
+      : await c.env.DB.prepare('SELECT raw_storage_key, project_id FROM messages WHERE id = ? AND project_id = ? AND environment = ?')
+          .bind(messageId, authResult.projectId, authResult.environment)
+          .first<{ raw_storage_key: string | null; project_id: string }>();
+
+  if (!message || !message.raw_storage_key) {
+    return c.json({ error: { code: 'not_found', message: 'Raw email not found' } }, 404);
+  }
+
+  const raw = await c.env.STORAGE.get(message.raw_storage_key);
+  if (!raw) {
+    return c.json({ error: { code: 'not_found', message: 'Raw email content not found in storage' } }, 404);
+  }
+
+  const body = await raw.text();
+  return c.text(body, 200, { 'Content-Type': 'message/rfc822' });
 });
 
 // Test inbox: list captured messages for a project+environment combo

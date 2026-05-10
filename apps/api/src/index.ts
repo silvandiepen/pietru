@@ -10,6 +10,12 @@ import { projectRoutes } from './routes/projects';
 import { providerConfigRoutes } from './routes/provider-configs';
 import { templateRoutes } from './routes/templates';
 import { webhookRoutes } from './routes/webhooks';
+import { inboundRoutes } from './routes/inbound-addresses';
+import { emailHookRoutes } from './routes/email-hooks';
+import { statsRoutes } from './routes/stats';
+import { inboxRoutes } from './routes/inbox';
+import { replyRoutes } from './routes/reply';
+import { reservedRoutes } from './routes/reserved-addresses';
 
 const app = new Hono<{ Bindings: Env; Variables: AppVariables }>();
 
@@ -19,8 +25,9 @@ app.use(
     origin: async (origin) => {
       if (!origin) return '*';
       const allowed = [
-        'https://app-pietru.hakobs.com',
-        'https://pietru.hakobs.com',
+        'https://pietru.dev',
+        'https://app.pietru.dev',
+        'https://api.pietru.dev',
         'http://localhost:5173',
         'http://localhost:5174',
       ];
@@ -49,14 +56,26 @@ app.onError((error, c) => {
 });
 
 app.get('/', (c) => c.json({ data: { ok: true } }));
-app.route('/auth', authRoutes);
-app.route('/', projectRoutes);
-app.route('/', accountApiKeysRoutes);
-app.route('/', apiKeyRoutes);
-app.route('/', providerConfigRoutes);
-app.route('/', messageRoutes);
-app.route('/', templateRoutes);
-app.route('/', webhookRoutes);
-app.route('/', apiProjectsRoutes);
+app.route('/v1/auth', authRoutes);
+app.route('/v1/projects', projectRoutes);
+// Routes with .use('*') removed — requireUserSession applied per-handler to avoid intercepting other /v1/* routes
+app.route('/v1', accountApiKeysRoutes);
+app.route('/v1', apiKeyRoutes);
+app.route('/v1', providerConfigRoutes);
+app.route('/v1', messageRoutes);
+app.route('/v1', templateRoutes);
+app.route('/v1', webhookRoutes);
+app.route('/v1', apiProjectsRoutes);
+app.route('/v1', inboundRoutes);
+app.route('/v1', emailHookRoutes);
+app.route('/v1', statsRoutes);
+app.route('/v1', inboxRoutes);
+app.route('/v1', replyRoutes);
+app.route('/v1', reservedRoutes);
 
-export default app;
+import { handleInboundEmail } from './inbound';
+
+export default {
+  fetch: app.fetch,
+  email: handleInboundEmail,
+};

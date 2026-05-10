@@ -1,33 +1,33 @@
 export interface Message {
   id: string
-  projectId: string
+  project_id: string
   environment: string
-  toAddress: string
-  fromAddress: string
+  to_address: string
+  from_address: string
   subject: string
   status: string
   provider?: string | null
   error?: string | null
-  createdAt: string
-  sentAt?: string | null
+  created_at: string
+  sent_at?: string | null
 }
 
 export interface MessageEvent {
   id: string
   type: string
   provider?: string | null
-  payloadJson?: unknown
-  createdAt: string
+  payload_json?: string | null
+  created_at: string
 }
 
 export interface MessageDetail extends Message {
-  replyTo?: string | null
+  reply_to?: string | null
   html?: string | null
   text?: string | null
-  ccJson?: string[] | null
-  bccJson?: string[] | null
-  providerMessageId?: string | null
-  tagsJson?: string[] | null
+  cc_json?: string[] | null
+  bcc_json?: string[] | null
+  provider_message_id?: string | null
+  tags_json?: string[] | null
   events?: MessageEvent[]
 }
 
@@ -45,7 +45,7 @@ export interface MessageFilters {
 export interface InboxMessage {
   id: string
   subject: string
-  fromAddress: string
-  toAddress: string
-  createdAt: string
+  from_address: string
+  to_address: string
+  created_at: string
 }

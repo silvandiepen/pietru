@@ -52,3 +52,43 @@ export function safeJsonParse<T>(value: string | null | undefined, fallback: T):
 export function bytesToHexString(bytes: Uint8Array): string {
   return bytesToHex(bytes);
 }
+
+/**
+ * Parse an inbound email address like `project-slug/user-slug+tag@domain`
+ * into { projectSlug, userSlug, tag }.
+ * Also handles `project-slug/user-slug@domain` (no tag).
+ */
+export function parseInboundAddress(address: string, domain: string): {
+  projectSlug: string;
+  userSlug: string;
+  tag: string | null;
+} | null {
+  const normalized = address.toLowerCase().trim();
+  const suffix = `@${domain}`;
+  if (!normalized.endsWith(suffix)) {
+    return null;
+  }
+  const local = normalized.slice(0, -suffix.length);
+  if (!local) {
+    return null;
+  }
+
+  // Format: project-slug/user-slug+tag  or  project-slug/user-slug
+  const slashIdx = local.indexOf('/');
+  if (slashIdx === -1) {
+    return null;
+  }
+
+  const projectSlug = local.slice(0, slashIdx);
+  const rest = local.slice(slashIdx + 1);
+
+  const plusIdx = rest.indexOf('+');
+  const userSlug = plusIdx === -1 ? rest : rest.slice(0, plusIdx);
+  const tag = plusIdx === -1 ? null : rest.slice(plusIdx + 1);
+
+  if (!projectSlug || !userSlug) {
+    return null;
+  }
+
+  return { projectSlug, userSlug, tag };
+}

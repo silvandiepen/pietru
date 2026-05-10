@@ -1,0 +1,40 @@
+name: Dashboard CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/dashboard/**'
+      - 'packages/**'
+      - '.github/workflows/dashboard.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/dashboard/**'
+      - 'packages/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: bash -c 'cd apps/dashboard && npx vite build'
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: pietru-dashboard
+          directory: apps/dashboard/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

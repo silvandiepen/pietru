@@ -12,9 +12,8 @@ const createAccountKeySchema = z.object({
 });
 
 const accountApiKeysRoutes = new Hono<App>();
-accountApiKeysRoutes.use('*', requireUserSession);
 
-accountApiKeysRoutes.get('/account/api-keys', async (c) => {
+accountApiKeysRoutes.get('/account/api-keys', requireUserSession, async (c) => {
   const userId = c.get('userId');
   if (!userId) {
     return c.json({ error: { code: 'unauthorized', message: 'Missing user session' } }, 401);
@@ -29,7 +28,7 @@ accountApiKeysRoutes.get('/account/api-keys', async (c) => {
   return c.json({ data: result.results });
 });
 
-accountApiKeysRoutes.post('/account/api-keys', async (c) => {
+accountApiKeysRoutes.post('/account/api-keys', requireUserSession, async (c) => {
   const userId = c.get('userId');
   if (!userId) {
     return c.json({ error: { code: 'unauthorized', message: 'Missing user session' } }, 401);
@@ -62,7 +61,7 @@ accountApiKeysRoutes.post('/account/api-keys', async (c) => {
   );
 });
 
-accountApiKeysRoutes.delete('/account/api-keys/:keyId', async (c) => {
+accountApiKeysRoutes.delete('/account/api-keys/:keyId', requireUserSession, async (c) => {
   const userId = c.get('userId');
   const keyId = c.req.param('keyId');
   if (!userId) {

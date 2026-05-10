@@ -1,6 +1,6 @@
 # Pietru API Reference
 
-Base URL: `https://kodapi.hakobs.com`
+Base URL: `https://api.pietru.dev`
 
 All responses use JSON. Successful responses follow the envelope format `{ "data": ... }`. Errors follow `{ "error": { "code": "...", "message": "..." } }`.
 

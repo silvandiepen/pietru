@@ -16,7 +16,17 @@ const router = createRouter({
     { path: '/projects/:id/messages/:messageId', component: () => import('@/views/MessageDetailView.vue') },
     { path: '/projects/:id/test-inboxes', component: () => import('@/views/TestInboxesView.vue') },
     { path: '/projects/:id/test-inboxes/:inbox', component: () => import('@/views/TestInboxDetailView.vue') },
+    { path: '/inbox', component: () => import('@/views/InboxView.vue') },
+    { path: '/inbox/:id', component: () => import('@/views/InboxDetailView.vue') },
     { path: '/settings', component: () => import('@/views/SettingsView.vue') },
+    {
+      path: '/admin',
+      component: () => import('@/views/AdminView.vue'),
+      beforeEnter: () => {
+        const authStore = useAuthStore()
+        if (!authStore.isAdmin) return '/'
+      },
+    },
   ],
 })
 

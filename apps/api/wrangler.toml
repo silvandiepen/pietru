@@ -16,3 +16,8 @@ id = "ccf2e217b60d44e4bd6aeff05aaa52b6"
 [[r2_buckets]]
 binding = "STORAGE"
 bucket_name = "pietru-storage"
+
+[vars]
+INBOUND_EMAIL_ADDRESS = "inbound@pietru.dev"
+OUTBOUND_EMAIL_ADDRESS = "no-reply@pietru.dev"
+OUTBOUND_EMAIL_NAME = "Pietru"

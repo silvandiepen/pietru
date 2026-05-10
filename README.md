@@ -2,9 +2,9 @@
 
 Cloudflare-native centralized mail gateway. Send, capture, and track transactional emails across all your projects through a single API.
 
-**API:** `https://kodapi.hakobs.com`
-**Dashboard:** `https://app-pietru.hakobs.com`
-**Marketing:** `https://pietru.hakobs.com`
+**API:** `https://api.pietru.dev`
+**Dashboard:** `https://app.pietru.dev`
+**Marketing:** `https://pietru.dev`
 
 ---
 

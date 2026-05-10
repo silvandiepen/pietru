@@ -12,9 +12,11 @@
     "@sil/ui": "^1.23.6",
     "pinia": "3.0.4",
     "vue": "3.5.34",
+    "vue-i18n": "^11.4.2",
     "vue-router": "5.0.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@vitejs/plugin-vue": "6.0.6",
     "@vue/test-utils": "2.4.10",
     "jsdom": "29.1.1",

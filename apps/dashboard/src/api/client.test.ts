@@ -20,7 +20,7 @@ describe('apiRequest', () => {
 
     await expect(apiRequest('/auth/me')).resolves.toEqual({ ok: true })
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:8787/auth/me',
+      'http://localhost:8787/v1/auth/me',
       expect.objectContaining({ credentials: 'include' }),
     )
   })

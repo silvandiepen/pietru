@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 
 import SessionRow from './SessionRow.vue'
+import i18n from '@/i18n'
 
 describe('SessionRow', () => {
   it('emits revoke with the session id', async () => {
@@ -12,6 +13,9 @@ describe('SessionRow', () => {
           expiresAt: '2026-05-09T10:00:00.000Z',
           userAgent: 'Safari',
         },
+      },
+      global: {
+        plugins: [i18n],
       },
     })
 

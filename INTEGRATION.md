@@ -2,7 +2,7 @@
 
 This guide explains how external projects integrate with Pietru to send transactional emails.
 
-**API Base URL:** `https://kodapi.hakobs.com`
+**API Base URL:** `https://api.pietru.dev`
 
 ---
 
@@ -34,7 +34,7 @@ Pietru provides a centralized mail gateway: instead of each project managing its
 The account holder creates this in the dashboard or via the API (while logged in):
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/account/api-keys \
+curl -X POST https://api.pietru.dev/account/api-keys \
   -H "Content-Type: application/json" \
   -H "Cookie: session=<session-cookie>" \
   -d '{"name": "kod-integration"}'
@@ -65,7 +65,7 @@ If no default Resend key is set, projects can still be created, but a provider c
 The external project uses the account API key to create a project:
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/api/projects \
+curl -X POST https://api.pietru.dev/api/projects \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_ak_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   -d '{"name": "kod", "environment": "production"}'
@@ -114,7 +114,7 @@ If the account holder has a default Resend API key configured, a provider config
 ### Direct Email (no template)
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/messages \
+curl -X POST https://api.pietru.dev/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_pk_live_yyyyyyyyyyyyyyyyyyyyyyyy" \
   -d '{
@@ -131,7 +131,7 @@ curl -X POST https://kodapi.hakobs.com/messages \
 First, create a template (via dashboard or API):
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/projects/proj_xyz789/templates \
+curl -X POST https://api.pietru.dev/projects/proj_xyz789/templates \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_pk_live_yyyyyyyyyyyyyyyyyyyyyyyy" \
   -d '{
@@ -145,7 +145,7 @@ curl -X POST https://kodapi.hakobs.com/projects/proj_xyz789/templates \
 Then send using the template:
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/messages \
+curl -X POST https://api.pietru.dev/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_pk_live_yyyyyyyyyyyyyyyyyyyyyyyy" \
   -d '{
@@ -168,7 +168,7 @@ curl -X POST https://kodapi.hakobs.com/messages \
 To prevent duplicate messages on retries, use the `Idempotency-Key` header:
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/messages \
+curl -X POST https://api.pietru.dev/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_pk_live_yyyyyyyyyyyyyyyyyyyyyyyy" \
   -H "Idempotency-Key: unique-transaction-id-12345" \
@@ -180,7 +180,7 @@ If the same key is used within 24 hours, the original message is returned withou
 ### Multiple Recipients
 
 ```bash
-curl -X POST https://kodapi.hakobs.com/messages \
+curl -X POST https://api.pietru.dev/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer mg_pk_live_yyyyyyyyyyyyyyyyyyyyyyyy" \
   -d '{
@@ -282,7 +282,7 @@ Captured messages (in development/preview) can be retrieved via test inboxes:
 
 ```bash
 # List captured messages for project slug "kod" in development
-curl https://kodapi.hakobs.com/test-inboxes/kod-development/messages \
+curl https://api.pietru.dev/test-inboxes/kod-development/messages \
   -H "Authorization: Bearer mg_pk_test_yyyyyyyyyyyyyyyyyyyyyyyy"
 ```
 
@@ -331,7 +331,7 @@ All errors follow a consistent format:
 ## Complete Integration Example (JavaScript)
 
 ```javascript
-const PIETRU_API = 'https://kodapi.hakobs.com';
+const PIETRU_API = 'https://api.pietru.dev';
 const ACCOUNT_KEY = process.env.PIETRU_ACCOUNT_KEY;
 
 // Step 1: Create a project (do this once during setup)

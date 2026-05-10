@@ -1,40 +1,40 @@
 <template>
   <form class="provider-config-form" @submit.prevent="submit">
     <label>
-      <span>Provider</span>
+      <span>{{ $t('providerConfig.labelProvider') }}</span>
       <select v-model="form.providerType">
-        <option value="resend">Resend</option>
+        <option value="resend">{{ $t('providerConfig.optionResend') }}</option>
       </select>
     </label>
     <label>
-      <span>API key</span>
-      <input v-model="apiKey" type="password" placeholder="re_xxx" />
+      <span>{{ $t('providerConfig.labelApiKey') }}</span>
+      <input v-model="apiKey" type="password" :placeholder="$t('providerConfig.placeholderApiKey')" />
     </label>
     <label>
-      <span>Default from</span>
-      <input v-model="form.defaultFrom" type="email" placeholder="noreply@example.com" />
+      <span>{{ $t('providerConfig.labelDefaultFrom') }}</span>
+      <input v-model="form.defaultFrom" type="email" :placeholder="$t('providerConfig.placeholderDefaultFrom')" />
     </label>
     <label>
-      <span>Allowed domains</span>
-      <input v-model="allowedDomainsInput" type="text" placeholder="example.com, app.example.com" />
+      <span>{{ $t('providerConfig.labelAllowedDomains') }}</span>
+      <input v-model="allowedDomainsInput" type="text" :placeholder="$t('providerConfig.placeholderAllowedDomains')" />
     </label>
     <label>
-      <span>Mode</span>
+      <span>{{ $t('providerConfig.labelMode') }}</span>
       <select v-model="form.mode">
-        <option value="send">Send</option>
-        <option value="capture">Capture</option>
-        <option value="send_and_capture">Send & Capture</option>
+        <option value="send">{{ $t('providerConfig.modeSend') }}</option>
+        <option value="capture">{{ $t('providerConfig.modeCapture') }}</option>
+        <option value="send_and_capture">{{ $t('providerConfig.modeSendAndCapture') }}</option>
       </select>
     </label>
     <label>
-      <span>Environment</span>
+      <span>{{ $t('providerConfig.labelEnvironment') }}</span>
       <select v-model="form.environment">
-        <option value="development">Development</option>
-        <option value="preview">Preview</option>
-        <option value="production">Production</option>
+        <option value="development">{{ $t('providerConfig.optionDevelopment') }}</option>
+        <option value="preview">{{ $t('providerConfig.optionPreview') }}</option>
+        <option value="production">{{ $t('providerConfig.optionProduction') }}</option>
       </select>
     </label>
-    <button type="submit" :disabled="pending">Save provider config</button>
+    <button type="submit" :disabled="pending">{{ $t('providerConfig.buttonSave') }}</button>
   </form>
 </template>
 

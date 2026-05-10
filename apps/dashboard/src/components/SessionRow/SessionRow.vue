@@ -1,10 +1,10 @@
 <template>
   <li class="session-row">
     <div>
-      <strong>{{ session.userAgent || 'Unknown session' }}</strong>
-      <p>{{ formatTimestamp(session.createdAt) }} to {{ formatTimestamp(session.expiresAt) }}</p>
+      <strong>{{ session.user_agent || $t('sessionRow.unknownSession') }}</strong>
+      <p>{{ formatTimestamp(session.created_at) }} {{ $t('sessionRow.to') }} {{ formatTimestamp(session.expires_at) }}</p>
     </div>
-    <button type="button" @click="$emit('revoke', session.id)">Revoke</button>
+    <button type="button" @click="$emit('revoke', session.id)">{{ $t('sessionRow.buttonRevoke') }}</button>
   </li>
 </template>
 

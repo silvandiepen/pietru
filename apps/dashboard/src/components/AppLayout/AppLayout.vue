@@ -2,8 +2,8 @@
   <div class="app-layout">
     <aside class="app-layout__sidebar">
       <div class="app-layout__brand">
-        <strong>Pietru</strong>
-        <span>Mail gateway</span>
+        <strong>{{ $t('app.brand') }}</strong>
+        <span>{{ $t('app.tagline') }}</span>
       </div>
 
       <ProjectSwitcher
@@ -13,37 +13,44 @@
       />
 
       <nav class="app-layout__nav">
-        <RouterLink class="app-layout__nav-link" to="/">Projects</RouterLink>
+        <RouterLink class="app-layout__nav-link" to="/">{{ $t('layout.navProjects') }}</RouterLink>
         <RouterLink
           v-if="activeProjectId"
           class="app-layout__nav-link"
           :to="`/projects/${activeProjectId}`"
         >
-          Project detail
+          {{ $t('layout.navProjectDetail') }}
         </RouterLink>
         <RouterLink
           v-if="activeProjectId"
           class="app-layout__nav-link"
           :to="`/projects/${activeProjectId}/messages`"
         >
-          Messages
+          {{ $t('layout.navMessages') }}
         </RouterLink>
         <RouterLink
           v-if="activeProjectId"
           class="app-layout__nav-link"
           :to="`/projects/${activeProjectId}/test-inboxes`"
         >
-          Test inboxes
+          {{ $t('layout.navTestInboxes') }}
         </RouterLink>
-        <RouterLink class="app-layout__nav-link" to="/settings">Settings</RouterLink>
+        <RouterLink class="app-layout__nav-link" to="/settings">{{ $t('layout.navSettings') }}</RouterLink>
+        <RouterLink
+          v-if="authStore.isAdmin"
+          class="app-layout__nav-link"
+          to="/admin"
+        >
+          {{ $t('layout.navAdmin') }}
+        </RouterLink>
       </nav>
     </aside>
 
     <div class="app-layout__content">
       <header class="app-layout__topbar">
         <div>
-          <h1>{{ projectName || 'Dashboard' }}</h1>
-          <p>Authenticated mail gateway dashboard</p>
+          <h1>{{ projectName || $t('layout.topbarFallback') }}</h1>
+          <p>{{ $t('layout.topbarSubtitle') }}</p>
         </div>
         <EnvironmentBadge :environment="environment" />
       </header>
@@ -58,6 +65,7 @@
 <script lang="ts" setup>
 import EnvironmentBadge from '@/components/EnvironmentBadge'
 import ProjectSwitcher from '@/components/ProjectSwitcher'
+import { useAuthStore } from '@/stores/auth'
 
 import type { AppLayoutProps } from './AppLayout.model'
 
@@ -66,6 +74,8 @@ defineProps<AppLayoutProps>()
 defineEmits<{
   'project-change': [projectId: string]
 }>()
+
+const authStore = useAuthStore()
 </script>
 
 <style lang="scss" scoped>

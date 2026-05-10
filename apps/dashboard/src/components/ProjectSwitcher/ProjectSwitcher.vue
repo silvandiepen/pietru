@@ -1,8 +1,8 @@
 <template>
   <label class="project-switcher">
-    <span class="project-switcher__label">Project</span>
+    <span class="project-switcher__label">{{ $t('projectSwitcher.label') }}</span>
     <select class="project-switcher__control" :value="modelValue || ''" @change="onChange">
-      <option disabled value="">Select a project</option>
+      <option disabled value="">{{ $t('projectSwitcher.placeholder') }}</option>
       <option v-for="project in projects" :key="project.id" :value="project.id">
         {{ project.name }}
       </option>

@@ -3,22 +3,27 @@
     class="message-html-preview"
     sandbox="allow-same-origin"
     :srcdoc="html || emptyState"
-    title="Email HTML preview"
+    :title="$t('messageDetail.htmlPreviewTitle')"
   />
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import type { MessageHtmlPreviewProps } from './MessageHtmlPreview.model'
 
-defineProps<MessageHtmlPreviewProps>()
+const props = defineProps<MessageHtmlPreviewProps>()
 
-const emptyState = `
+const { t } = useI18n()
+
+const emptyState = computed(() => `
   <html>
     <body style="font-family: Inter, system-ui, sans-serif; color: #8888a0; background: #020b22; padding: 24px;">
-      No HTML content available for this message.
+      ${t('messageDetail.noHtmlContent')}
     </body>
   </html>
-`
+`)
 </script>
 
 <style lang="scss" scoped>

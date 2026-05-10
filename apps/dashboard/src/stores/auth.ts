@@ -6,9 +6,23 @@ import type {
   AuthCredentials,
   AuthSession,
   AuthUser,
+  AuthUserResponse,
   ChangePasswordPayload,
   ResetPasswordPayload,
 } from './auth.model'
+
+/** Normalize a user object from either camelCase (login/register) or snake_case (/me) to a consistent shape */
+function normalizeUser(raw: AuthUserResponse | AuthUser): AuthUser {
+  const r = raw as unknown as Record<string, unknown>
+  return {
+    id: r.id as string,
+    email: r.email as string,
+    is_admin: (r.is_admin ?? r.isAdmin ?? false) as boolean,
+    email_verified_at: (r.email_verified_at ?? r.emailVerifiedAt ?? null) as string | null,
+    created_at: (r.created_at ?? r.createdAt ?? undefined) as string | undefined,
+    updated_at: (r.updated_at ?? r.updatedAt ?? undefined) as string | undefined,
+  }
+}
 
 interface AuthState {
   user: AuthUser | null
@@ -28,6 +42,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (state) => Boolean(state.user),
+    isAdmin: (state) => state.user?.is_admin === true,
   },
   actions: {
     setError(error: unknown) {
@@ -41,11 +56,11 @@ export const useAuthStore = defineStore('auth', {
       this.clearError()
 
       try {
-        const response = await apiRequest<{ data: { user: AuthUser } }>('/auth/login', {
+        const response = await apiRequest<{ user: AuthUserResponse }>('/auth/login', {
           method: 'POST',
           body: JSON.stringify(payload),
         })
-        this.user = response.data.user
+        this.user = normalizeUser(response.user)
         this.initialized = true
         return this.user
       } catch (error) {
@@ -60,11 +75,11 @@ export const useAuthStore = defineStore('auth', {
       this.clearError()
 
       try {
-        const response = await apiRequest<{ data: { user: AuthUser } }>('/auth/register', {
+        const response = await apiRequest<{ user: AuthUserResponse }>('/auth/register', {
           method: 'POST',
           body: JSON.stringify(payload),
         })
-        this.user = response.data.user
+        this.user = normalizeUser(response.user)
         this.initialized = true
         return this.user
       } catch (error) {
@@ -82,8 +97,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async me() {
       try {
-        const response = await apiRequest<{ data: AuthUser }>('/auth/me')
-        this.user = response.data
+        this.user = normalizeUser(await apiRequest<AuthUser>('/auth/me'))
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) {
           this.user = null
@@ -121,8 +135,7 @@ export const useAuthStore = defineStore('auth', {
       })
     },
     async loadSessions() {
-      const response = await apiRequest<{ data: AuthSession[] }>('/auth/sessions')
-      this.sessions = response.data
+      this.sessions = await apiRequest<AuthSession[]>('/auth/sessions')
       return this.sessions
     },
     async revokeSession(id: string) {

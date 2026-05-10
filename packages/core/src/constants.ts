@@ -3,6 +3,7 @@ export const MESSAGE_STATUSES = {
   sent: 'sent',
   failed: 'failed',
   captured: 'captured',
+  received: 'received',
 } as const;
 
 export const MESSAGE_EVENT_TYPES = {

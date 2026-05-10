@@ -6,6 +6,9 @@ export interface Env {
   STORAGE: R2Bucket;
   JWT_SECRET: string;
   ENCRYPTION_KEY: string;
+  SYSTEM_EMAIL_API_KEY: string;
+  SYSTEM_EMAIL_FROM: string;
+  DASHBOARD_URL: string;
 }
 
 export interface AppVariables {

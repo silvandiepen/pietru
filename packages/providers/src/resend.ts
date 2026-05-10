@@ -79,7 +79,12 @@ export class ResendProvider implements MailProvider {
 
     if (!response.ok) {
       const payload = (await response.json().catch(() => null)) as { message?: string } | null;
-      throw new Error(payload?.message ?? 'Invalid Resend configuration');
+      const message = payload?.message ?? 'Invalid Resend configuration';
+      // Send-only keys can't access /domains but are still valid for sending
+      if (message.includes('restricted to only send emails')) {
+        return;
+      }
+      throw new Error(message);
     }
   }
 

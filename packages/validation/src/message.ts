@@ -42,3 +42,25 @@ export const sendMessageSchema = z
       });
     }
   });
+
+export const replyMessageSchema = z
+  .object({
+    to: z.union([z.string().email(), z.array(z.string().email())]).optional(),
+    subject: z.string().min(1).optional(),
+    html: z.string().optional(),
+    text: z.string().optional(),
+    cc: z.array(z.string().email()).optional(),
+    bcc: z.array(z.string().email()).optional(),
+    replyTo: z.string().email().optional(),
+  })
+  .superRefine((value, ctx) => {
+    const hasContent = Boolean(value.html || value.text);
+
+    if (!hasContent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Either html or text must be provided',
+        path: ['html'],
+      });
+    }
+  });

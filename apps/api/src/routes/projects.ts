@@ -6,12 +6,25 @@ import { requireUserSession } from '../middleware/auth';
 
 type App = { Bindings: Env; Variables: AppVariables };
 
+async function isReservedSlug(db: D1Database, slug: string): Promise<boolean> {
+  // Check both reserved_addresses table AND a hardcoded list of system names
+  const hardcoded = ['admin', 'api', 'app', 'www', 'mail', 'email', 'pietru', 'root', 'support', 'help', 'noreply', 'no-reply', 'postmaster', 'abuse', 'webmaster', 'localhost'];
+  if (hardcoded.includes(slug)) return true;
+
+  const reserved = await db.prepare('SELECT id FROM reserved_addresses WHERE local_part = ?')
+    .bind(slug)
+    .first<{ id: string }>();
+  return !!reserved;
+}
+
 async function ensureUniqueSlug(db: D1Database, baseSlug: string): Promise<string> {
   let slug = baseSlug;
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const existing = await db.prepare('SELECT id FROM projects WHERE slug = ?').bind(slug).first<{ id: string }>();
-    if (!existing) {
-      return slug;
+    if (!await isReservedSlug(db, slug)) {
+      const existing = await db.prepare('SELECT id FROM projects WHERE slug = ?').bind(slug).first<{ id: string }>();
+      if (!existing) {
+        return slug;
+      }
     }
     slug = `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`;
   }
@@ -97,18 +110,31 @@ projectRoutes.patch('/:id', async (c) => {
   return c.json({ data: { ...project, name: body.data.name ?? project.name, slug, updated_at: updatedAt } });
 });
 
-projectRoutes.delete('/:id', async (c) => {
+projectRoutes.delete('/:id', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   if (!projectId) {
     return c.json({ error: { code: 'validation_error', message: 'Project id is required' } }, 400);
   }
-  const result = await c.env.DB.prepare('DELETE FROM projects WHERE id = ? AND user_id = ?')
-    .bind(projectId, c.get('userId'))
-    .run();
+  const userId = c.get('userId');
 
-  if ((result.meta.changes ?? 0) === 0) {
+  const project = await c.env.DB.prepare('SELECT id FROM projects WHERE id = ? AND user_id = ?')
+    .bind(projectId, userId)
+    .first<{ id: string }>();
+
+  if (!project) {
     return c.json({ error: { code: 'not_found', message: 'Project not found' } }, 404);
   }
+
+  // Delete related records first (FK constraints — order matters)
+  await c.env.DB.batch([
+    c.env.DB.prepare('DELETE FROM message_events WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM messages WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM email_templates WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM provider_configs WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM project_api_keys WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM inbound_addresses WHERE project_id = ?').bind(projectId),
+    c.env.DB.prepare('DELETE FROM projects WHERE id = ? AND user_id = ?').bind(projectId, userId),
+  ]);
 
   return c.json({ data: { ok: true } });
 });

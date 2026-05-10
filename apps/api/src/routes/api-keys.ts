@@ -13,13 +13,12 @@ const createApiKeySchema = z.object({
 });
 
 const apiKeyRoutes = new Hono<App>();
-apiKeyRoutes.use('*', requireUserSession);
 
 async function ensureOwnedProject(db: D1Database, projectId: string, userId: string) {
   return db.prepare('SELECT id FROM projects WHERE id = ? AND user_id = ?').bind(projectId, userId).first<{ id: string }>();
 }
 
-apiKeyRoutes.get('/projects/:id/api-keys', async (c) => {
+apiKeyRoutes.get('/projects/:id/api-keys', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const userId = c.get('userId');
   if (!projectId) {
@@ -42,7 +41,7 @@ apiKeyRoutes.get('/projects/:id/api-keys', async (c) => {
   return c.json({ data: result.results });
 });
 
-apiKeyRoutes.post('/projects/:id/api-keys', async (c) => {
+apiKeyRoutes.post('/projects/:id/api-keys', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const userId = c.get('userId');
   if (!projectId) {
@@ -84,7 +83,7 @@ apiKeyRoutes.post('/projects/:id/api-keys', async (c) => {
   );
 });
 
-apiKeyRoutes.delete('/projects/:id/api-keys/:keyId', async (c) => {
+apiKeyRoutes.delete('/projects/:id/api-keys/:keyId', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const keyId = c.req.param('keyId');
   const userId = c.get('userId');

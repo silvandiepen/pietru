@@ -1,5 +1,5 @@
 import { hashPassword, hashToken, verifyPassword, generateToken } from '@pietru/auth';
-import { generateId } from '@pietru/core';
+import { generateId, sendVerificationEmail, sendPasswordResetEmail } from '@pietru/core';
 import {
   changePasswordSchema,
   forgotPasswordSchema,
@@ -100,6 +100,20 @@ authRoutes.post('/register', async (c) => {
 
   const session = await createSessionToken(c, userId);
   setCookie(c, 'session', session, sessionCookieOptions());
+
+  // Send verification email (non-blocking — don't fail registration if email fails)
+  const emailConfig = {
+    apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+    from: c.env.SYSTEM_EMAIL_FROM,
+  };
+  const dashboardUrl = c.env.DASHBOARD_URL;
+  sendVerificationEmail(emailConfig, {
+    to: body.data.email.toLowerCase(),
+    token: verifyToken,
+    dashboardUrl,
+  }).catch((err) => {
+    console.error('Failed to send verification email:', err);
+  });
 
   return c.json(
     success({
@@ -221,6 +235,20 @@ authRoutes.post('/forgot-password', async (c) => {
     )
     .run();
 
+  // Send password reset email (non-blocking)
+  const emailConfig = {
+    apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+    from: c.env.SYSTEM_EMAIL_FROM,
+  };
+  const dashboardUrl = c.env.DASHBOARD_URL;
+  sendPasswordResetEmail(emailConfig, {
+    to: body.data.email.toLowerCase(),
+    token,
+    dashboardUrl,
+  }).catch((err) => {
+    console.error('Failed to send password reset email:', err);
+  });
+
   return c.json(success({ ok: true }));
 });
 
@@ -277,7 +305,7 @@ authRoutes.post('/change-password', requireUserSession, async (c) => {
 
 authRoutes.get('/me', requireUserSession, async (c) => {
   const user = await c.env.DB.prepare(
-    'SELECT id, email, email_verified_at, created_at, updated_at FROM users WHERE id = ?',
+    'SELECT id, email, is_admin, email_verified_at, created_at, updated_at FROM users WHERE id = ?',
   )
     .bind(c.get('userId'))
     .first();

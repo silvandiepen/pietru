@@ -9,13 +9,13 @@
     <section class="test-inbox-detail-view">
       <header>
         <h2>{{ inbox }}</h2>
-        <p>Captured messages for this inbox.</p>
+        <p>{{ $t('testInboxDetail.description') }}</p>
       </header>
 
       <ul>
         <li v-for="message in inboxMessages" :key="message.id">
           <strong>{{ message.subject }}</strong>
-          <span>{{ message.fromAddress }} → {{ message.toAddress }}</span>
+          <span>{{ message.from_address }} → {{ message.to_address }}</span>
         </li>
       </ul>
     </section>

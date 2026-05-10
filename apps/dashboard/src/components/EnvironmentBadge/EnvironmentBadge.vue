@@ -6,12 +6,14 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import type { EnvironmentBadgeProps } from './EnvironmentBadge.model'
 
 const props = defineProps<EnvironmentBadgeProps>()
+const { t } = useI18n()
 
-const normalizedEnvironment = computed(() => props.environment || 'development')
+const normalizedEnvironment = computed(() => props.environment || t('environmentBadge.fallback'))
 </script>
 
 <style lang="scss" scoped>

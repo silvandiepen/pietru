@@ -3,29 +3,29 @@
     <div class="api-key-dialog__backdrop" @click="$emit('close')"></div>
     <div class="api-key-dialog__panel">
       <header class="api-key-dialog__header">
-        <h3>Create API key</h3>
-        <button type="button" @click="$emit('close')">Close</button>
+        <h3>{{ $t('apiKeyDialog.title') }}</h3>
+        <button type="button" @click="$emit('close')">{{ $t('apiKeyDialog.buttonClose') }}</button>
       </header>
 
       <div v-if="revealedKey" class="api-key-dialog__revealed">
-        <p>Copy this key now. It will only be shown once.</p>
+        <p>{{ $t('apiKeyDialog.copyWarning') }}</p>
         <code>{{ revealedKey }}</code>
       </div>
 
       <form v-else class="api-key-dialog__form" @submit.prevent="submit">
         <label>
-          <span>Name</span>
-          <input v-model="form.name" type="text" placeholder="Backend worker" />
+          <span>{{ $t('apiKeyDialog.labelName') }}</span>
+          <input v-model="form.name" type="text" :placeholder="$t('apiKeyDialog.placeholderName')" />
         </label>
         <label>
-          <span>Environment</span>
+          <span>{{ $t('apiKeyDialog.labelEnvironment') }}</span>
           <select v-model="form.environment">
-            <option value="development">Development</option>
-            <option value="preview">Preview</option>
-            <option value="production">Production</option>
+            <option value="development">{{ $t('apiKeyDialog.optionDevelopment') }}</option>
+            <option value="preview">{{ $t('apiKeyDialog.optionPreview') }}</option>
+            <option value="production">{{ $t('apiKeyDialog.optionProduction') }}</option>
           </select>
         </label>
-        <button type="submit" :disabled="pending">Create key</button>
+        <button type="submit" :disabled="pending">{{ $t('apiKeyDialog.buttonCreateKey') }}</button>
       </form>
     </div>
   </div>

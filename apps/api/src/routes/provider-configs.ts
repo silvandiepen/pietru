@@ -1,6 +1,7 @@
 import { decrypt, encrypt } from '@pietru/auth';
 import { generateId } from '@pietru/core';
-import { ResendProvider } from '@pietru/providers';
+import { ResendProvider, SesProvider } from '@pietru/providers';
+import type { MailProvider } from '@pietru/providers';
 import { createProviderConfigSchema } from '@pietru/validation';
 import { z } from 'zod';
 import { Hono } from 'hono';
@@ -11,9 +12,12 @@ type App = { Bindings: Env; Variables: AppVariables };
 
 const updateProviderConfigSchema = createProviderConfigSchema.partial();
 
-function getProvider(providerType: string) {
+function getProvider(providerType: string): MailProvider {
   if (providerType === 'resend') {
     return new ResendProvider();
+  }
+  if (providerType === 'ses') {
+    return new SesProvider();
   }
   throw new Error(`Unsupported provider: ${providerType}`);
 }
@@ -23,9 +27,8 @@ async function ensureOwnedProject(db: D1Database, projectId: string, userId: str
 }
 
 const providerConfigRoutes = new Hono<App>();
-providerConfigRoutes.use('*', requireUserSession);
 
-providerConfigRoutes.get('/projects/:id/provider-configs', async (c) => {
+providerConfigRoutes.get('/projects/:id/provider-configs', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const userId = c.get('userId');
   if (!projectId) {
@@ -48,7 +51,7 @@ providerConfigRoutes.get('/projects/:id/provider-configs', async (c) => {
   return c.json({ data: result.results });
 });
 
-providerConfigRoutes.post('/projects/:id/provider-configs', async (c) => {
+providerConfigRoutes.post('/projects/:id/provider-configs', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const userId = c.get('userId');
   if (!projectId) {
@@ -94,7 +97,7 @@ providerConfigRoutes.post('/projects/:id/provider-configs', async (c) => {
   return c.json({ data: { id, ...body.data, config: undefined, createdAt: now, updatedAt: now } }, 201);
 });
 
-providerConfigRoutes.patch('/projects/:id/provider-configs/:configId', async (c) => {
+providerConfigRoutes.patch('/projects/:id/provider-configs/:configId', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const configId = c.req.param('configId');
   const userId = c.get('userId');
@@ -163,7 +166,7 @@ providerConfigRoutes.patch('/projects/:id/provider-configs/:configId', async (c)
   return c.json({ data: { id: configId, ...merged, config: undefined, updatedAt } });
 });
 
-providerConfigRoutes.post('/projects/:id/provider-configs/:configId/validate', async (c) => {
+providerConfigRoutes.post('/projects/:id/provider-configs/:configId/validate', requireUserSession, async (c) => {
   const projectId = c.req.param('id');
   const configId = c.req.param('configId');
   const userId = c.get('userId');

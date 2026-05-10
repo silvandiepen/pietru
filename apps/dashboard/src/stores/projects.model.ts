@@ -1,10 +1,10 @@
 export interface Project {
   id: string
+  user_id?: string
   name: string
   slug: string
-  environment?: string
-  createdAt?: string
-  updatedAt?: string
+  created_at?: string
+  updated_at?: string
 }
 
 export interface CreateProjectPayload {

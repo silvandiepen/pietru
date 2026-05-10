@@ -11,33 +11,33 @@
         <h2>{{ message.subject }}</h2>
         <dl>
           <div>
-            <dt>Status</dt>
+            <dt>{{ $t('messageDetail.labelStatus') }}</dt>
             <dd>{{ message.status }}</dd>
           </div>
           <div>
-            <dt>To</dt>
-            <dd>{{ message.toAddress }}</dd>
+            <dt>{{ $t('messageDetail.labelTo') }}</dt>
+            <dd>{{ message.to_address }}</dd>
           </div>
           <div>
-            <dt>From</dt>
-            <dd>{{ message.fromAddress }}</dd>
+            <dt>{{ $t('messageDetail.labelFrom') }}</dt>
+            <dd>{{ message.from_address }}</dd>
           </div>
           <div>
-            <dt>Provider</dt>
-            <dd>{{ message.provider || 'n/a' }}</dd>
+            <dt>{{ $t('messageDetail.labelProvider') }}</dt>
+            <dd>{{ message.provider || $t('messageDetail.fallbackProvider') }}</dd>
           </div>
           <div v-if="message.error">
-            <dt>Error</dt>
+            <dt>{{ $t('messageDetail.labelError') }}</dt>
             <dd class="message-detail-view__error">{{ message.error }}</dd>
           </div>
         </dl>
 
         <section class="message-detail-view__timeline">
-          <h3>Events</h3>
+          <h3>{{ $t('messageDetail.events') }}</h3>
           <ol>
             <li v-for="event in message.events || []" :key="event.id">
               <strong>{{ event.type }}</strong>
-              <span>{{ formatTimestamp(event.createdAt) }}</span>
+              <span>{{ formatTimestamp(event.created_at) }}</span>
             </li>
           </ol>
         </section>
@@ -46,8 +46,8 @@
       <div class="message-detail-view__content">
         <MessageHtmlPreview :html="message.html" />
         <section class="message-detail-view__text">
-          <h3>Text body</h3>
-          <pre>{{ message.text || 'No text body available.' }}</pre>
+          <h3>{{ $t('messageDetail.textBody') }}</h3>
+          <pre>{{ message.text || $t('messageDetail.noTextBody') }}</pre>
         </section>
       </div>
     </section>

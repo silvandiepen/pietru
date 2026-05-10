@@ -1,19 +1,19 @@
 <template>
   <section class="auth-view">
     <form class="auth-view__card" @submit.prevent="submit">
-      <h1>Create account</h1>
-      <p>Start a project and centralize email sending across your apps.</p>
+      <h1>{{ $t('auth.register.title') }}</h1>
+      <p>{{ $t('auth.register.description') }}</p>
       <label>
-        <span>Email</span>
+        <span>{{ $t('auth.register.labelEmail') }}</span>
         <input v-model="form.email" type="email" required />
       </label>
       <label>
-        <span>Password</span>
+        <span>{{ $t('auth.register.labelPassword') }}</span>
         <input v-model="form.password" type="password" required />
       </label>
       <p v-if="authStore.error" class="auth-view__error">{{ authStore.error }}</p>
-      <button type="submit" :disabled="authStore.loading">Create account</button>
-      <RouterLink to="/login">Already have an account?</RouterLink>
+      <button type="submit" :disabled="authStore.loading">{{ $t('auth.register.buttonSubmit') }}</button>
+      <RouterLink to="/login">{{ $t('auth.register.linkAlreadyHaveAccount') }}</RouterLink>
     </form>
   </section>
 </template>

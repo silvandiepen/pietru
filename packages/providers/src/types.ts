@@ -11,14 +11,31 @@ export interface OutgoingEmail {
   tags?: Record<string, string>;
 }
 
+export type ProviderType = 'resend' | 'ses';
+
+export interface SesProviderConfig {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  configurationSetName?: string | null;
+  defaultMailFromDomain?: string | null;
+}
+
 export interface ProviderConfig {
   providerType: string;
-  apiKey: string;
+  apiKey?: string;
   webhookSecret?: string;
   mode?: 'send' | 'capture' | 'send_and_capture';
   environment?: 'development' | 'preview' | 'production';
   defaultFrom?: string | null;
   allowedDomains?: string[] | null;
+
+  // SES fields
+  region?: string;
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  configurationSetName?: string | null;
+  defaultMailFromDomain?: string | null;
 }
 
 export interface ProviderSendResult {

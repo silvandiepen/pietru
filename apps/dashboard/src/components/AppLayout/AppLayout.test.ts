@@ -1,7 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 
 import AppLayout from './AppLayout.vue'
+import en from '@/i18n/locales/en.json'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: { en },
+})
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,7 +27,7 @@ describe('AppLayout', () => {
 
     const wrapper = mount(AppLayout, {
       global: {
-        plugins: [router],
+        plugins: [router, i18n],
       },
       props: {
         projectName: 'Alpha',
