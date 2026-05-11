@@ -11,7 +11,7 @@ export default defineConfig({
       colors: {
         dark: '#020b22',
         light: '#ffffff',
-        primary: '#55c267',
+        primary: '#0d9488',
       },
       fonts: {
         body: 'Inter, system-ui, sans-serif',

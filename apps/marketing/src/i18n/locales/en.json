@@ -34,23 +34,21 @@
     "howItWorks": {
       "eyebrow": "How It Works",
       "title": "Set up once, see everything",
-      "steps": [
-        {
-          "num": "1",
-          "title": "Create a project per product",
-          "desc": "Each of your products gets its own project in Pietru. Connect the SMTP provider you already use — credentials stay in one place."
-        },
-        {
-          "num": "2",
-          "title": "Send emails through one dashboard",
-          "desc": "All outgoing mail from all your products appears in a single overview. See what was sent, to whom, and whether it arrived."
-        },
-        {
-          "num": "3",
-          "title": "Capture emails for testing",
-          "desc": "Point your test environment to Pietru and receive emails directly into your project. Verify sign-up flows, password resets, and notifications without real inboxes."
-        }
-      ]
+      "step1": {
+        "num": "1",
+        "title": "Create a project per product",
+        "desc": "Each of your products gets its own project in Pietru. Connect the SMTP provider you already use — credentials stay in one place."
+      },
+      "step2": {
+        "num": "2",
+        "title": "Send emails through one dashboard",
+        "desc": "All outgoing mail from all your products appears in a single overview. See what was sent, to whom, and whether it arrived."
+      },
+      "step3": {
+        "num": "3",
+        "title": "Capture emails for testing",
+        "desc": "Point your test environment to Pietru and receive emails directly into your project. Verify sign-up flows, password resets, and notifications without real inboxes."
+      }
     },
     "features": {
       "sectionHeading": "Two problems, one dashboard",
