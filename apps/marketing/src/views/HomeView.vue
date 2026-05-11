@@ -65,7 +65,6 @@ const environments = envKeys.map((key) => ({
         <div class="hero__panel" />
 
         <div class="hero__content">
-          <Badge variant="primary" size="small">{{ $t('home.eyebrow') }}</Badge>
           <h1 class="marketing-title marketing-title--hero">
             {{ $t('home.heroHeading') }}
           </h1>
