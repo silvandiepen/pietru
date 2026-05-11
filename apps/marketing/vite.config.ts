@@ -10,9 +10,10 @@ export default defineConfig({
     ui({
       theme: defineTheme({
         colors: {
-          dark: '#020b22',
-          light: '#ffffff',
-          primary: '#0d9488',
+          dark: '#021823',
+          light: '#f9f8ea',
+          primary: '#ef4728',
+          secondary: "#083f61"
         },
         fonts: {
           body: 'Inter, system-ui, sans-serif',
