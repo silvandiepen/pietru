@@ -9,3 +9,6 @@ dist/
 .DS_Store
 .venv/
 __pycache__/
+
+# Girk generated output
+apps/docs/public/

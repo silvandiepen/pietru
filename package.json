@@ -26,5 +26,8 @@
   },
   "dependencies": {
     "@sil/ui": "^1.25.1"
+  },
+  "devDependencies": {
+    "girky": "^1.28.0"
   }
 }

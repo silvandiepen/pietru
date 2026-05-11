@@ -1,0 +1,8 @@
+{
+  "project": {
+    "title": "Pietru Docs",
+    "description": "Authenticated mail gateway documentation",
+    "style": "/assets/docs.css",
+    "projectStyleOverrule": "/assets/custom.css"
+  }
+}
