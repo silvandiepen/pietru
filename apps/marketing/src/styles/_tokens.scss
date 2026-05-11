@@ -4,10 +4,10 @@
 // NO hardcoded hex values.
 
 :root {
-  --marketing-alt: var(--pietru-cream-card);
-  --marketing-dark: var(--pietru-navy-deep);
+  --marketing-alt: var(--color-background-alt);
+  --marketing-dark: var(--color-primary);
   --marketing-primary-soft: rgba(255, 59, 31, 0.08);
-  --marketing-radius: var(--pietru-radius-md);
+  --marketing-radius: 0.5rem;
   --marketing-wrap: 62rem;
 
   // Glow effects
@@ -18,20 +18,34 @@
   --shadow-card: 0 1px 3px rgba(6, 31, 50, 0.04), 0 4px 12px rgba(6, 31, 50, 0.03);
   --shadow-card-hover: 0 2px 8px rgba(6, 31, 50, 0.06), 0 8px 24px rgba(6, 31, 50, 0.06);
   --shadow-elevated: 0 4px 16px rgba(6, 31, 50, 0.06), 0 12px 40px rgba(6, 31, 50, 0.04);
-  --shadow-mockup: 0 8px 32px rgba(6, 31, 50, 0.12), 0 24px 64px rgba(6, 31, 50, 0.08);
 }
 
 html,
 body {
-  background: var(--pietru-cream);
-  color: var(--pietru-navy-text);
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+// Override @sil/ui base styles that force 100vh and scroll-snap
+html {
+  height: auto !important;
+  overflow: auto !important;
+  scroll-snap-type: none !important;
+}
+
 body {
   margin: 0;
+  height: auto !important;
+  overflow: auto !important;
+  scroll-snap-type: none !important;
+  background-image: none !important;
+}
+
+#app {
+  min-height: auto !important;
 }
 
 * {
@@ -42,11 +56,16 @@ a {
   color: inherit;
 }
 
+// Override Section component min-height
+.section {
+  min-height: 0 !important;
+}
+
 /* ── Typography ── */
 
 .marketing-eyebrow {
   margin: 0 0 0.75rem;
-  color: var(--pietru-red);
+  color: var(--color-primary-accent, #FF3B1F);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -56,7 +75,7 @@ a {
 
 .marketing-title {
   margin: 0;
-  color: var(--pietru-navy);
+  color: var(--color-foreground);
   font-size: clamp(1.45rem, 2.4vw, 1.75rem);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -74,7 +93,7 @@ a {
 .marketing-subtitle {
   max-width: 38rem;
   margin: 1rem auto 0;
-  color: var(--pietru-muted);
+  color: var(--color-foreground-muted);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.7;
@@ -120,8 +139,8 @@ a {
 }
 
 .marketing-section-dark {
-  background: var(--marketing-dark);
-  color: var(--pietru-cream);
+  background: var(--color-primary);
+  color: var(--color-background);
 
   // Dot pattern overlay for depth
   &::before {
@@ -129,7 +148,7 @@ a {
     position: absolute;
     inset: 0;
     background-image: radial-gradient(
-      color-mix(in srgb, var(--pietru-cream) 8%, transparent) 1px,
+      color-mix(in srgb, var(--color-background) 8%, transparent) 1px,
       transparent 1px
     );
     background-size: 24px 24px;
@@ -148,44 +167,46 @@ a {
   .feature-detail__summary,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: var(--pietru-cream);
+    color: var(--color-background);
   }
 
   .marketing-eyebrow {
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
   }
 
   .marketing-subtitle,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: color-mix(in srgb, var(--pietru-cream) 65%, transparent);
+    color: color-mix(in srgb, var(--color-background) 65%, transparent);
   }
 
   .feature-detail {
-    background: color-mix(in srgb, var(--pietru-cream) 5%, transparent);
-    border-color: color-mix(in srgb, var(--pietru-cream) 10%, transparent);
+    background: color-mix(in srgb, var(--color-background) 5%, transparent);
+    border-color: color-mix(in srgb, var(--color-background) 10%, transparent);
     box-shadow: none;
   }
 
   .feature-item__icon,
   .principle__icon {
     background: rgba(255, 59, 31, 0.12);
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
   }
 }
 
 .marketing-cta-section {
   position: relative;
   overflow: hidden;
+  background: var(--color-primary) !important;
+  padding-block: 5rem !important;
 
-  // Gradient mesh background for atmosphere
+  // Subtle gradient overlay for atmosphere
   &::before {
     content: '';
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 60% 80% at 20% 50%, rgba(255, 59, 31, 0.15), transparent),
-      radial-gradient(ellipse 50% 60% at 80% 30%, rgba(255, 59, 31, 0.1), transparent);
+      radial-gradient(ellipse 60% 80% at 20% 50%, rgba(255, 255, 255, 0.04), transparent),
+      radial-gradient(ellipse 50% 60% at 80% 30%, rgba(255, 255, 255, 0.03), transparent);
     pointer-events: none;
     z-index: 0;
   }
@@ -197,7 +218,7 @@ a {
 
   .marketing-title,
   .marketing-subtitle {
-    color: var(--pietru-cream);
+    color: var(--color-background);
   }
 
   .marketing-subtitle {
@@ -215,9 +236,9 @@ a {
 
 .feature-item {
   min-width: 0;
-  border: 1px solid var(--pietru-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--marketing-radius);
-  background: var(--pietru-cream-card);
+  background: var(--color-background-alt);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -225,7 +246,7 @@ a {
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-card-hover);
-    border-color: color-mix(in srgb, var(--pietru-red) 30%, var(--pietru-border));
+    border-color: color-mix(in srgb, var(--color-primary-accent, #FF3B1F) 30%, var(--color-border));
   }
 
   &__icon {
@@ -237,7 +258,7 @@ a {
     border: 0;
     border-radius: 999px;
     background: var(--marketing-primary-soft);
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
     transition: background 0.25s ease, transform 0.25s ease;
   }
 
@@ -248,7 +269,7 @@ a {
 
   &__title {
     margin: 1rem 0 0.4rem;
-    color: var(--pietru-navy);
+    color: var(--color-foreground);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.35;
@@ -256,7 +277,7 @@ a {
 
   &__desc {
     margin: 0;
-    color: var(--pietru-muted);
+    color: var(--color-foreground-muted);
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.7;
@@ -270,9 +291,9 @@ a {
   grid-template-columns: auto minmax(0, 1fr);
   gap: 1.5rem;
   max-width: 52rem;
-  border: 1px solid var(--pietru-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--marketing-radius);
-  background: var(--pietru-cream-card);
+  background: var(--color-background-alt);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
   transition: box-shadow 0.25s ease;
@@ -293,13 +314,13 @@ a {
       border: 0;
       border-radius: 999px;
       background: var(--marketing-primary-soft);
-      color: var(--pietru-red);
+      color: var(--color-primary-accent, #FF3B1F);
     }
   }
 
   &__title {
     margin: 0 0 0.5rem;
-    color: var(--pietru-navy);
+    color: var(--color-foreground);
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.3;
@@ -308,14 +329,14 @@ a {
   &__summary,
   &__detail {
     margin: 0;
-    color: var(--pietru-muted);
+    color: var(--color-foreground-muted);
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.7;
   }
 
   &__summary {
-    color: var(--pietru-navy);
+    color: var(--color-foreground);
   }
 
   &__detail {
@@ -332,7 +353,7 @@ a {
     li {
       position: relative;
       padding-left: 1.15rem;
-      color: var(--pietru-muted);
+      color: var(--color-foreground-muted);
       font-size: 0.9rem;
       line-height: 1.6;
 
@@ -343,7 +364,7 @@ a {
         width: 0.35rem;
         height: 0.35rem;
         border-radius: 50%;
-        background: var(--pietru-red);
+        background: var(--color-primary-accent, #FF3B1F);
         content: '';
       }
     }
@@ -370,9 +391,9 @@ a {
 
 .principle {
   min-width: 0;
-  border: 1px solid var(--pietru-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--marketing-radius);
-  background: var(--pietru-cream-card);
+  background: var(--color-background-alt);
   box-shadow: var(--shadow-card);
   padding: 1.5rem;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -391,7 +412,7 @@ a {
     margin-bottom: 1rem;
     border-radius: 999px;
     background: var(--marketing-primary-soft);
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
     transition: transform 0.25s ease;
   }
 
@@ -401,7 +422,7 @@ a {
 
   &__title {
     margin: 0 0 0.4rem;
-    color: var(--pietru-navy);
+    color: var(--color-foreground);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.35;
@@ -409,7 +430,7 @@ a {
 
   &__desc {
     margin: 0;
-    color: var(--pietru-muted);
+    color: var(--color-foreground-muted);
     font-size: 0.9rem;
     line-height: 1.7;
   }
@@ -429,8 +450,8 @@ a {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border: 1px solid color-mix(in srgb, var(--pietru-cream) 14%, transparent);
-  border-radius: var(--pietru-radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-background) 14%, transparent);
+  border-radius: 0.75rem;
   background: transparent;
   box-shadow: none;
   padding: 1.75rem;
@@ -443,7 +464,7 @@ a {
 
   &__name {
     margin: 0 0 0.75rem;
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -463,20 +484,20 @@ a {
   }
 
   &__amount {
-    color: var(--pietru-cream);
+    color: var(--color-background);
     font-size: 2rem;
     font-weight: 800;
     line-height: 1;
   }
 
   &__period {
-    color: color-mix(in srgb, var(--pietru-cream) 55%, transparent);
+    color: color-mix(in srgb, var(--color-background) 55%, transparent);
     font-size: 0.85rem;
   }
 
   &__desc {
     margin: 0 0 1.25rem;
-    color: color-mix(in srgb, var(--pietru-cream) 65%, transparent);
+    color: color-mix(in srgb, var(--color-background) 65%, transparent);
     font-size: 0.9rem;
     line-height: 1.7;
   }
@@ -491,7 +512,7 @@ a {
     li {
       position: relative;
       padding-left: 1.25rem;
-      color: color-mix(in srgb, var(--pietru-cream) 75%, transparent);
+      color: color-mix(in srgb, var(--color-background) 75%, transparent);
       font-size: 0.9rem;
       line-height: 1.55;
 
@@ -501,7 +522,7 @@ a {
         left: 0;
         content: '\2713';
         font-size: 0.75rem;
-        color: var(--pietru-red);
+        color: var(--color-primary-accent, #FF3B1F);
       }
     }
   }
@@ -512,8 +533,8 @@ a {
   }
 
   &--highlight {
-    border-color: var(--pietru-red);
-    background: var(--pietru-red);
+    border-color: var(--color-primary-accent, #FF3B1F);
+    background: var(--color-primary-accent, #FF3B1F);
     box-shadow: var(--glow-primary);
 
     &:hover {
@@ -537,16 +558,15 @@ a {
 
 .faq__answer {
   margin: 0;
-  color: var(--pietru-muted);
+  color: var(--color-foreground-muted);
   font-size: 0.9rem;
   line-height: 1.7;
 }
 
-/* ── Hero — 80vh, 50/50 split ── */
+/* ── Hero — 50/50 split ── */
 
 .hero {
-  height: 80vh;
-  min-height: 28rem;
+  min-height: 32rem;
   padding-top: 0;
   overflow: hidden;
 
@@ -559,11 +579,10 @@ a {
 
   &__panel {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--pietru-primary);
+    align-items: flex-end;
+    justify-content: flex-end;
+    background: var(--color-primary);
     padding: 3rem;
-    will-change: transform, opacity;
     position: relative;
     overflow: hidden;
 
@@ -579,25 +598,14 @@ a {
     }
   }
 
-  &__logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+  &__logo-icon {
+    width: min(80%, 20rem);
+    height: auto;
+    max-height: 28rem;
+    object-fit: contain;
+    filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
     position: relative;
     z-index: 1;
-  }
-
-  &__logo-icon {
-    width: min(100%, 18rem);
-    height: auto;
-    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
-  }
-
-  &__logo-wordmark {
-    width: min(80%, 14rem);
-    height: auto;
-    filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
   }
 
   &__content {
@@ -605,24 +613,7 @@ a {
     flex-direction: column;
     justify-content: center;
     padding: 3rem 4rem;
-    will-change: transform, opacity;
   }
-}
-
-/* ── Mockup section — overlaps hero ── */
-
-.mockup-section {
-  margin-top: -5rem;
-  padding-top: 0 !important;
-  padding-bottom: 2rem !important;
-  position: relative;
-  z-index: 2;
-}
-
-.mockup-wrapper {
-  max-width: 72rem;
-  margin-inline: auto;
-  will-change: transform;
 }
 
 /* ── Accessibility ── */
@@ -652,9 +643,11 @@ a {
     height: 1.5rem;
     flex-shrink: 0;
 
+    img,
     svg {
       width: 100%;
       height: 100%;
+      object-fit: contain;
     }
   }
 
@@ -662,174 +655,45 @@ a {
     height: 1.1rem;
     flex-shrink: 0;
 
+    img,
     svg {
       width: auto;
       height: 100%;
+      object-fit: contain;
     }
   }
 }
 
-/* ── Hero — 80vh, 50/50 split ── */
-
-.dashboard-mockup {
-  background: var(--pietru-navy);
-  border-radius: var(--pietru-radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-mockup);
-  position: relative;
-
-  // Subtle glow behind mockup
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: calc(var(--pietru-radius-lg) + 2px);
-    background: linear-gradient(
-      135deg,
-      rgba(255, 59, 31, 0.15),
-      transparent 40%,
-      transparent 60%,
-      rgba(8, 63, 97, 0.1)
-    );
-    z-index: -1;
-    opacity: 1;
-  }
-
-  &__chrome {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0.6rem 0.875rem;
-    background: var(--pietru-navy);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  &__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-
-    &--red { background: #F26D78; }
-    &--yellow { background: #FF8D22; }
-    &--green { background: #2DBE7E; }
-  }
-
-  &__url {
-    flex: 1;
-    margin-left: 8px;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.06);
-    color: color-mix(in srgb, var(--pietru-cream) 35%, transparent);
-    font-size: 0.6rem;
-    font-family: monospace;
-  }
-
-  &__inner {
-    background: var(--pietru-cream-card);
-    border-radius: 0;
-    overflow: hidden;
-  }
-
-  &__sidebar {
-    background: color-mix(in srgb, var(--pietru-navy) 6%, var(--pietru-cream));
-    padding: 0.75rem;
-    border-right: 1px solid var(--pietru-border);
-  }
-
-  &__sidebar-item {
-    display: flex;
+// Fix PillHeader brand-mark slot rendering
+.pill-header__brand-mark {
+  .pietru-logo {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    color: var(--pietru-muted);
-    margin-bottom: 0.2rem;
-    transition: background 0.2s ease, color 0.2s ease;
 
-    &--active {
-      background: rgba(255, 59, 31, 0.1);
-      color: var(--pietru-red);
-    }
-  }
+    &__icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
 
-  &__content {
-    padding: 0.75rem;
-  }
-
-  &__stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  &__stat {
-    background: var(--pietru-cream);
-    border: 1px solid var(--pietru-border);
-    border-radius: 4px;
-    padding: 0.5rem;
-    text-align: center;
-    transition: border-color 0.2s ease;
-  }
-
-  &__stat-value {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--pietru-navy);
-    display: block;
-  }
-
-  &__stat-label {
-    font-size: 0.5rem;
-    color: var(--pietru-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  &__table {
-    width: 100%;
-    font-size: 0.55rem;
-
-    th {
-      text-align: left;
-      padding: 0.3rem 0.4rem;
-      color: var(--pietru-muted);
-      font-weight: 500;
-      border-bottom: 1px solid var(--pietru-border);
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
 
-    td {
-      padding: 0.25rem 0.4rem;
-      color: var(--pietru-navy-text);
-      border-bottom: 1px solid color-mix(in srgb, var(--pietru-border) 50%, transparent);
-    }
-  }
+    &__wordmark {
+      height: 1.1rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
 
-  &__badge {
-    display: inline-block;
-    padding: 0.1rem 0.3rem;
-    border-radius: 3px;
-    font-size: 0.45rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-
-    &--success {
-      background: rgba(45, 190, 126, 0.15);
-      color: #2DBE7E;
-    }
-
-    &--error {
-      background: rgba(242, 109, 120, 0.15);
-      color: #F26D78;
-    }
-
-    &--info {
-      background: rgba(107, 169, 214, 0.15);
-      color: #6BA9D6;
+      img {
+        width: auto;
+        height: 100%;
+        object-fit: contain;
+      }
     }
   }
 }
@@ -844,9 +708,10 @@ a {
 
 .environment-item {
   padding: 1.75rem 1rem;
-  border-right: 1px solid var(--pietru-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   text-align: center;
-  transition: background 0.25s ease;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {
     background: var(--marketing-primary-soft);
@@ -857,7 +722,7 @@ a {
   }
 
   &__icon {
-    color: var(--pietru-red);
+    color: var(--color-primary-accent, #FF3B1F);
     margin-bottom: 0.75rem;
     transition: transform 0.25s ease;
   }
@@ -868,14 +733,14 @@ a {
 
   &__title {
     margin: 0 0 0.35rem;
-    color: var(--pietru-navy);
+    color: var(--color-foreground);
     font-size: 0.85rem;
     font-weight: 700;
   }
 
   &__desc {
     margin: 0;
-    color: var(--pietru-muted);
+    color: var(--color-foreground-muted);
     font-size: 0.8rem;
     line-height: 1.6;
   }
@@ -885,22 +750,22 @@ a {
 
 .marketing-section-dark {
   .steps {
-    --steps-color: var(--pietru-red);
+    --steps-color: var(--color-primary-accent, #FF3B1F);
 
     &__title {
-      color: var(--pietru-cream);
+      color: var(--color-background);
       font-weight: 600;
       font-size: 0.95rem;
     }
 
     &__description {
-      color: color-mix(in srgb, var(--pietru-cream) 60%, transparent);
+      color: color-mix(in srgb, var(--color-background) 60%, transparent);
       font-size: 0.875rem;
     }
 
     &__circle {
       &--active {
-        box-shadow: 0 0 0 4px color-mix(in srgb, var(--pietru-red), transparent 75%);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-accent, #FF3B1F), transparent 75%);
       }
     }
   }
@@ -923,11 +788,8 @@ a {
   }
 
   .hero__logo-icon {
-    width: min(50%, 12rem);
-  }
-
-  .hero__logo-wordmark {
-    width: min(60%, 10rem);
+    width: min(60%, 16rem);
+    max-height: 14rem;
   }
 
   .hero__content {
@@ -939,24 +801,27 @@ a {
     justify-content: center !important;
   }
 
-  .mockup-section {
-    margin-top: -3rem;
-  }
-
-  .mockup-wrapper {
-    max-width: 100%;
-  }
-
+  // Environment grid: vertical stack on mobile
   .environment-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .environment-item {
     border-right: none;
-    border-bottom: 1px solid var(--pietru-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: var(--marketing-radius);
+    background: var(--color-background-alt);
+    box-shadow: var(--shadow-card);
+    text-align: left;
 
-    &:nth-last-child(-n+2) {
-      border-bottom: none;
+    &:last-child {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    &__icon {
+      font-size: 1.5rem;
     }
   }
 }
@@ -969,9 +834,7 @@ a {
   .principles-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 40em) {
   .feature-detail {
     grid-template-columns: 1fr;
   }
@@ -984,23 +847,6 @@ a {
 
   .marketing-section {
     padding-block: 4rem;
-  }
-
-  .environment-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .environment-item {
-    border-right: none;
-    border-bottom: 1px solid var(--pietru-border);
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  .dashboard-mockup__stats {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1017,11 +863,8 @@ a {
   }
 
   .hero__logo-icon {
-    width: min(60%, 10rem);
-  }
-
-  .hero__logo-wordmark {
-    width: min(70%, 8rem);
+    width: min(70%, 12rem);
+    max-height: 10rem;
   }
 
   .hero__content {
@@ -1034,22 +877,5 @@ a {
 
   .marketing-section {
     padding-block: 3rem;
-  }
-
-  .dashboard-mockup__sidebar {
-    display: none;
-  }
-
-  .dashboard-mockup__inner > div {
-    grid-template-columns: 1fr !important;
-  }
-
-  .dashboard-mockup__table {
-    font-size: 0.45rem;
-
-    th,
-    td {
-      padding: 0.2rem 0.25rem;
-    }
   }
 }

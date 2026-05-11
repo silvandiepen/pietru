@@ -1,11 +1,14 @@
 {
   "app": {
     "brand": "Pietru",
+    "tagline": "Email gateway for developers",
     "navFeatures": "Features",
     "navPricing": "Pricing",
     "navAbout": "About",
+    "navDocs": "Docs",
     "openDashboard": "Open Dashboard",
-    "github": "GitHub"
+    "github": "GitHub",
+    "allRightsReserved": "All rights reserved."
   },
   "home": {
     "eyebrow": "Email gateway for developers with multiple products",
@@ -51,7 +54,8 @@
       }
     },
     "features": {
-      "sectionHeading": "Two problems, one dashboard",
+      "sectionHeading": "Features",
+      "sectionTitle": "Two problems, one dashboard",
       "send": {
         "title": "Send",
         "desc": "Route outgoing email from any number of products through your existing providers. One view, all your mail."
@@ -86,6 +90,9 @@
       "heading": "Get started for free"
     },
     "environments": {
+      "eyebrow": "Environments",
+      "title": "Built for every environment",
+      "summary": "From local development to production operations — one email gateway for your entire workflow.",
       "dev": {
         "title": "Development",
         "desc": "Capture test emails locally. Verify sign-up flows and transactional emails without real inboxes."
@@ -183,6 +190,7 @@
     "eyebrow": "Pricing",
     "heroTitle": "Simple, transparent pricing",
     "heroSummary": "Start free, scale when you're ready. No surprise fees, no credit card required to get started.",
+    "popular": "Popular",
     "plans": {
       "free": {
         "name": "Free",

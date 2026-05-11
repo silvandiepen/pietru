@@ -5,12 +5,16 @@
     :navItems="[
       { id: 'features', label: $t('app.navFeatures'), to: '/features' },
       { id: 'pricing', label: $t('app.navPricing'), to: '/pricing' },
-      { id: 'docs', label: 'Docs', href: 'https://docs.pietru.dev', external: true }
+      { id: 'docs', label: $t('app.navDocs'), href: 'https://docs.pietru.dev', external: true }
     ]"
     :actions="headerActions"
+    @themeToggle="toggleColorMode"
   >
     <template #brand-mark>
       <span class="pietru-logo">
+        <span class="pietru-logo__icon">
+          <img src="@/assets/logo-icon-noborder.svg" alt="" aria-hidden="true" />
+        </span>
         <span class="pietru-logo__wordmark">
           <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
         </span>
@@ -34,16 +38,16 @@
             <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
           </span>
         </span>
-        <p class="site-footer__tagline">Email gateway for developers</p>
+        <p class="site-footer__tagline">{{ $t('app.tagline') }}</p>
       </div>
       <nav class="site-footer__nav">
         <RouterLink to="/features">{{ $t('app.navFeatures') }}</RouterLink>
         <RouterLink to="/pricing">{{ $t('app.navPricing') }}</RouterLink>
-        <a href="https://docs.pietru.dev" target="_blank" rel="noopener">Docs</a>
+        <a href="https://docs.pietru.dev" target="_blank" rel="noopener">{{ $t('app.navDocs') }}</a>
         <a href="https://github.com/silvandiepen/pietru" target="_blank" rel="noopener">{{ $t('app.github') }}</a>
       </nav>
       <div class="site-footer__divider" />
-      <p class="site-footer__copy">&copy; {{ new Date().getFullYear() }} Hakobs. All rights reserved.</p>
+      <p class="site-footer__copy">&copy; {{ new Date().getFullYear() }} Hakobs. {{ $t('app.allRightsReserved') }}</p>
     </div>
   </footer>
 </template>
@@ -51,20 +55,18 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { PillHeader } from '@sil/ui'
-import { Colors } from '@sil/ui'
+import { useI18n } from 'lezu-i18n/vue'
+import { useColorMode } from './composables/useColorMode'
+
+const { t } = useI18n()
+const { toggleColorMode } = useColorMode()
 
 const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
 
 const headerActions = computed(() => [
   {
-    id: 'login',
-    label: 'Log in',
-    variant: 'default' as const,
-    handler: () => window.open(`${dashboardUrl}/login`, '_blank'),
-  },
-  {
     id: 'dashboard',
-    label: 'Open Dashboard',
+    label: t('app.openDashboard'),
     variant: 'primary' as const,
     handler: () => window.open(dashboardUrl, '_blank'),
   },
@@ -78,7 +80,7 @@ main {
 
 .site-footer {
   position: relative;
-  background: var(--pietru-navy);
+  background: var(--color-primary);
   padding: 3.5rem 2rem 2.5rem;
   margin-top: 0;
   overflow: hidden;
@@ -115,7 +117,7 @@ main {
 
   &__tagline {
     margin: 0;
-    color: color-mix(in srgb, var(--pietru-cream) 45%, transparent);
+    color: color-mix(in srgb, var(--color-background) 45%, transparent);
     font-size: 0.8rem;
     letter-spacing: 0.02em;
   }
@@ -131,13 +133,13 @@ main {
     justify-content: center;
 
     a {
-      color: color-mix(in srgb, var(--pietru-cream) 60%, transparent);
+      color: color-mix(in srgb, var(--color-background) 60%, transparent);
       font-size: 0.85rem;
       text-decoration: none;
       transition: color 160ms ease;
 
       &:hover {
-        color: var(--pietru-cream);
+        color: var(--color-background);
       }
     }
   }
@@ -145,12 +147,12 @@ main {
   &__divider {
     width: 48px;
     height: 1px;
-    background: color-mix(in srgb, var(--pietru-cream) 12%, transparent);
+    background: color-mix(in srgb, var(--color-background) 12%, transparent);
   }
 
   &__copy {
     margin: 0;
-    color: color-mix(in srgb, var(--pietru-cream) 35%, transparent);
+    color: color-mix(in srgb, var(--color-background) 35%, transparent);
     font-size: 0.75rem;
   }
 }

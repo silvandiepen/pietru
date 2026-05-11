@@ -98,7 +98,7 @@ const features = featureKeys.map((key) => {
           :href="dashboardUrl"
           target="_blank"
         >
-          {{ $t('features.ctaLink') }}
+          {{ $t('features.ctaLink') }} →
         </Button>
       </div>
     </Section>
@@ -113,6 +113,14 @@ const features = featureKeys.map((key) => {
 
   .feature-detail__body {
     padding: 0 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 44em) {
+  .features-page {
+    .feature-detail {
+      grid-template-columns: 1fr;
+    }
   }
 }
 </style>

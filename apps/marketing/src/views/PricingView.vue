@@ -52,7 +52,7 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
             <h2 class="plan__name">
               {{ plan.name }}
               <Badge v-if="plan.key === 'pro'" variant="default" size="small">
-                Popular
+                {{ $t('pricing.popular') }}
               </Badge>
             </h2>
             <div class="plan__price">
@@ -124,6 +124,12 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
   .plan__cta {
     width: fit-content;
     margin-top: auto;
+  }
+}
+
+@media (max-width: 44em) {
+  .pricing-page .plans-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
