@@ -1,18 +1,11 @@
 :root {
-  --color-background: #ffffff;
-  --color-foreground: #101522;
-  --color-primary: #8d940d;
-  --color-text: #101522;
-  --color-text-muted: #4a5568;
-  --color-border: #e8edf0;
-
-  --marketing-alt: #f7f8fa;
-  --marketing-dark: #07132d;
-  --marketing-primary-soft: #e6f7f5;
-  --marketing-radius: 5px;
+  --marketing-alt: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
+  --marketing-dark: var(--color-dark);
+  --marketing-primary-soft: var(--color-primary-light);
+  --marketing-radius: var(--border-radius);
   --marketing-wrap: 62rem;
-  --marketing-shadow: 0 18px 40px color-mix(in srgb, var(--color-text) 8%, transparent);
-  --marketing-shadow-soft: 0 10px 28px color-mix(in srgb, var(--color-text) 6%, transparent);
+  --marketing-shadow: 0 18px 40px color-mix(in srgb, var(--color-foreground) 8%, transparent);
+  --marketing-shadow-soft: 0 10px 28px color-mix(in srgb, var(--color-foreground) 6%, transparent);
 }
 
 html,
