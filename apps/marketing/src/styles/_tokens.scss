@@ -546,7 +546,7 @@ a {
 
 .hero {
   height: 80vh;
-  min-height: 34rem;
+  min-height: 28rem;
   padding-top: 0;
   overflow: hidden;
 
@@ -1001,5 +1001,55 @@ a {
 
   .dashboard-mockup__stats {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Small phones (< 480px) ── */
+
+@media (max-width: 30em) {
+  .hero {
+    min-height: 24rem;
+  }
+
+  .hero__panel {
+    min-height: 14rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .hero__logo-icon {
+    width: min(60%, 10rem);
+  }
+
+  .hero__logo-wordmark {
+    width: min(70%, 8rem);
+  }
+
+  .hero__content {
+    padding: 2rem 1.25rem;
+  }
+
+  .marketing-content {
+    padding-inline: 1.25rem;
+  }
+
+  .marketing-section {
+    padding-block: 3rem;
+  }
+
+  .dashboard-mockup__sidebar {
+    display: none;
+  }
+
+  .dashboard-mockup__inner > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-mockup__table {
+    font-size: 0.45rem;
+
+    th,
+    td {
+      padding: 0.2rem 0.25rem;
+    }
   }
 }
