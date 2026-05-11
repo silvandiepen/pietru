@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'lezu-i18n/vue'
 import { Icon, Icons, Button, Section, Badge, Steps, Colors } from '@sil/ui'
-import logoIcon from '@/assets/logo-icon.svg'
+import logoIcon from '@/assets/logo-icon-noborder.svg'
 import logoWordmark from '@/assets/logo-wordmark.svg'
 
 const { t } = useI18n()

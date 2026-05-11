@@ -23,13 +23,6 @@
     color: var(--pietru-color-text-muted);
   }
 
-  &__intro-icon {
-    width: 4.5rem;
-    height: auto;
-    margin: 0.5rem auto 0;
-    display: block;
-  }
-
   &__card {
     width: min(28rem, 100%);
     display: grid;

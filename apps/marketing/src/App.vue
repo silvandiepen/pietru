@@ -11,9 +11,6 @@
   >
     <template #brand-mark>
       <span class="pietru-logo">
-        <span class="pietru-logo__icon">
-          <img src="@/assets/logo-icon.svg" alt="" aria-hidden="true" />
-        </span>
         <span class="pietru-logo__wordmark">
           <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
         </span>
@@ -31,7 +28,7 @@
       <div class="site-footer__brand">
         <span class="pietru-logo">
           <span class="pietru-logo__icon">
-            <img src="@/assets/logo-icon.svg" alt="" aria-hidden="true" />
+            <img src="@/assets/logo-icon-noborder.svg" alt="" aria-hidden="true" />
           </span>
           <span class="pietru-logo__wordmark">
             <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
