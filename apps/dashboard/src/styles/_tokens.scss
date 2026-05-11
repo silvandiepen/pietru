@@ -1,22 +1,36 @@
 :root {
-  --pietru-color-background: #020b22;
-  --pietru-color-foreground: #ffffff;
-  --pietru-color-surface: #141414;
-  --pietru-color-surface-sidebar: #0a1628;
-  --pietru-color-border: rgba(255, 255, 255, 0.06);
-  --pietru-color-text: #ffffff;
-  --pietru-color-text-muted: #8888a0;
-  --pietru-color-accent: #55c267;
-  --pietru-color-accent-soft: rgba(85, 194, 103, 0.15);
-  --pietru-color-danger: #f40935;
-  --pietru-color-warning: #ff8d22;
-  --pietru-color-success: #55c267;
+  --pietru-color-background: #faf8f5;
+  --pietru-color-foreground: #083F61;
+  --pietru-color-surface: #ffffff;
+  --pietru-color-surface-sidebar: #ffffff;
+  --pietru-color-border: #E7DED0;
+  --pietru-color-text: #083F61;
+  --pietru-color-text-muted: #5D6B72;
+  --pietru-color-accent: #EF4728;
+  --pietru-color-accent-soft: rgba(239, 71, 40, 0.1);
+  --pietru-color-danger: #EF4728;
+  --pietru-color-warning: #D4A017;
+  --pietru-color-success: #2D8A4E;
   --pietru-font-family-base: Inter, system-ui, sans-serif;
   --pietru-font-family-mono: "SF Mono", Monaco, Consolas, monospace;
   --pietru-radius-sm: 8px;
   --pietru-radius-md: 12px;
   --pietru-radius-lg: 18px;
-  --pietru-shadow-panel: none;
-  --pietru-color-panel: #141414;
-  --pietru-color-panel-strong: #1a1a2e;
+  --pietru-shadow-panel: 0 1px 3px rgba(8, 63, 97, 0.06), 0 1px 2px rgba(8, 63, 97, 0.04);
+  --pietru-color-panel: #ffffff;
+  --pietru-color-panel-strong: #f7f2e8;
+
+  --pietru-color-navy: #083F61;
+  --pietru-color-navy-deep: #061F32;
+  --pietru-color-cream: #F4EFE3;
+  --pietru-color-cream-card: #F7F2E8;
+
+  --pietru-stat-sent-bg: #fde8e8;
+  --pietru-stat-sent-color: #c0392b;
+  --pietru-stat-failed-bg: #e8edf2;
+  --pietru-stat-failed-color: #5d6d7e;
+  --pietru-stat-captured-bg: #fef9e7;
+  --pietru-stat-captured-color: #d4a017;
+  --pietru-stat-received-bg: #e8f5e9;
+  --pietru-stat-received-color: #2d8a4e;
 }

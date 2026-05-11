@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
-import { defineTheme, ui } from '@sil/ui/vite'
 
 export default defineConfig(({ mode }) => {
   const envDir = fileURLToPath(new URL('.', import.meta.url))
@@ -12,17 +11,6 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vue(),
-      defineTheme({
-        colors: {
-          dark: '#020b22',
-          light: '#ffffff',
-          primary: '#55c267',
-        },
-        fonts: {
-          body: 'Inter, system-ui, sans-serif',
-        },
-      }),
-      ui(),
     ],
     resolve: {
       alias: {

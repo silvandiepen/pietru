@@ -20,12 +20,12 @@ const normalizedEnvironment = computed(() => props.environment || t('environment
 .environment-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.65rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 999px;
   border: 1px solid var(--pietru-color-border);
-  background: var(--pietru-color-surface-sidebar);
+  background: var(--pietru-color-surface);
   color: var(--pietru-color-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -33,19 +33,19 @@ const normalizedEnvironment = computed(() => props.environment || t('environment
   &[data-environment='production'] {
     color: var(--pietru-color-success);
     border-color: color-mix(in srgb, var(--pietru-color-success) 22%, var(--pietru-color-border));
-    background: color-mix(in srgb, var(--pietru-color-success) 12%, transparent);
+    background: color-mix(in srgb, var(--pietru-color-success) 8%, var(--pietru-color-surface));
   }
 
   &[data-environment='preview'] {
-    color: color-mix(in srgb, var(--pietru-color-accent) 72%, var(--pietru-color-text));
+    color: var(--pietru-color-accent);
     border-color: color-mix(in srgb, var(--pietru-color-accent) 22%, var(--pietru-color-border));
-    background: color-mix(in srgb, var(--pietru-color-accent) 12%, transparent);
+    background: color-mix(in srgb, var(--pietru-color-accent) 8%, var(--pietru-color-surface));
   }
 
   &[data-environment='development'] {
     color: var(--pietru-color-warning);
     border-color: color-mix(in srgb, var(--pietru-color-warning) 22%, var(--pietru-color-border));
-    background: color-mix(in srgb, var(--pietru-color-warning) 12%, transparent);
+    background: color-mix(in srgb, var(--pietru-color-warning) 8%, var(--pietru-color-surface));
   }
 }
 </style>

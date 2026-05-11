@@ -7,6 +7,7 @@
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './styles/tokens';
 
 :root {
   color: var(--pietru-color-text);
@@ -15,7 +16,7 @@
   font-size: 16px;
   line-height: 1.6;
   font-weight: 400;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -35,7 +36,7 @@ body {
 
 a {
   color: inherit;
-  text-decoration-color: var(--pietru-color-border);
+  text-decoration: none;
 }
 
 button,
