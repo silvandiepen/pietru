@@ -34,7 +34,7 @@ const steps: StepItem[] = ['step1', 'step2', 'step3'].map((key) => ({
 
 <template>
   <div class="home">
-    <Section variant="hero" centered :padding="'5.5rem 0 4.5rem'">
+    <Section variant="hero" centered>
       <div class="marketing-header marketing-header--center">
         <div class="marketing-eyebrow">{{ $t('home.eyebrow') }}</div>
         <h1 class="marketing-title marketing-title--hero">

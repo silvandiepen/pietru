@@ -1,7 +1,7 @@
 :root {
   --color-background: #ffffff;
   --color-foreground: #101522;
-  --color-primary: #0d9488;
+  --color-primary: #8d940d;
   --color-text: #101522;
   --color-text-muted: #4a5568;
   --color-border: #e8edf0;
@@ -109,14 +109,14 @@ a {
 
 .marketing-section-dark {
   background: var(--marketing-dark);
-  color: var(--color-background);
+  color: var(--color-light);
 
   .marketing-title,
   .feature-detail__title,
   .feature-detail__summary,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: var(--color-background);
+    color: var(--color-light);
   }
 
   .marketing-eyebrow {
@@ -126,12 +126,12 @@ a {
   .marketing-subtitle,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: color-mix(in srgb, var(--color-background) 78%, transparent);
+    color: color-mix(in srgb, var(--color-light) 78%, transparent);
   }
 
   .feature-detail {
-    background: color-mix(in srgb, var(--color-background) 6%, transparent);
-    border-color: color-mix(in srgb, var(--color-background) 14%, transparent);
+    background: color-mix(in srgb, var(--color-light) 6%, transparent);
+    border-color: color-mix(in srgb, var(--color-light) 14%, transparent);
     box-shadow: none;
   }
 
