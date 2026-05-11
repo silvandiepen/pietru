@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 
-// Styles are injected by ui() Vite plugin from vite.config.ts — no manual import needed.
+// @sil/ui base styles + theme overrides — resolved by ui() Vite plugin
+import 'virtual:sil-ui/theme'
 import './styles/_tokens.scss'
 
 import App from './App.vue'
