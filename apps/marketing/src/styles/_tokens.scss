@@ -196,8 +196,8 @@ a {
 .marketing-cta-section {
   position: relative;
   overflow: hidden;
-  background: var(--color-primary) !important;
-  padding-block: 5rem !important;
+  background: var(--color-primary);
+  padding-block: 5rem;
 
   // Subtle gradient overlay for atmosphere
   &::before {
@@ -578,41 +578,20 @@ a {
   }
 
   &__panel {
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
     background: var(--color-primary);
+    background-image: url(/logo-icon-pietru.svg);
+    background-position: bottom right;
+    background-repeat: no-repeat;
     padding: 3rem;
     position: relative;
     overflow: hidden;
-
-    // Subtle diagonal pattern for depth
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 30% 80%, rgba(255, 255, 255, 0.06), transparent 60%),
-        radial-gradient(ellipse at 70% 20%, rgba(0, 0, 0, 0.05), transparent 50%);
-      pointer-events: none;
-    }
-  }
-
-  &__logo-icon {
-    width: min(80%, 20rem);
-    height: auto;
-    max-height: 28rem;
-    object-fit: contain;
-    filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
-    position: relative;
-    z-index: 1;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3rem 4rem;
+    padding: calc(var(--spacing) * 2) var(--spacing) var(--spacing) var(--spacing);
   }
 }
 
@@ -787,11 +766,6 @@ a {
     padding: 2.5rem;
   }
 
-  .hero__logo-icon {
-    width: min(60%, 16rem);
-    max-height: 14rem;
-  }
-
   .hero__content {
     padding: 2.5rem 2rem;
     text-align: center;
@@ -860,11 +834,6 @@ a {
   .hero__panel {
     min-height: 14rem;
     padding: 2rem 1.5rem;
-  }
-
-  .hero__logo-icon {
-    width: min(70%, 12rem);
-    max-height: 10rem;
   }
 
   .hero__content {

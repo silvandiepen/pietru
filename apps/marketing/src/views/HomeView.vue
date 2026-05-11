@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'lezu-i18n/vue'
 import { Icon, Icons, Button, Section, Badge, Steps, Colors } from '@sil/ui'
-import logoIcon from '@/assets/logo-icon-pietru.svg'
 
 const { t } = useI18n()
 
@@ -63,9 +62,7 @@ const environments = envKeys.map((key) => ({
     <!-- Hero — 50/50: primary left panel with icon + content right -->
     <div class="hero">
       <div class="hero__inner">
-        <div class="hero__panel">
-          <img :src="logoIcon" alt="" aria-hidden="true" class="hero__logo-icon" />
-        </div>
+        <div class="hero__panel" />
 
         <div class="hero__content">
           <Badge variant="primary" size="small">{{ $t('home.eyebrow') }}</Badge>

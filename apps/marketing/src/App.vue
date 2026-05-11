@@ -12,9 +12,6 @@
   >
     <template #brand-mark>
       <span class="pietru-logo">
-        <span class="pietru-logo__icon">
-          <img src="@/assets/logo-icon-noborder.svg" alt="" aria-hidden="true" />
-        </span>
         <span class="pietru-logo__wordmark">
           <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
         </span>
@@ -80,20 +77,13 @@ main {
 
 .site-footer {
   position: relative;
-  background: var(--color-primary);
+  background: var(--color-foreground);
   padding: 3.5rem 2rem 2.5rem;
   margin-top: 0;
   overflow: hidden;
 
   &__glow {
-    position: absolute;
-    top: -80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px;
-    height: 160px;
-    background: radial-gradient(ellipse, rgba(255, 59, 31, 0.08), transparent 70%);
-    pointer-events: none;
+    display: none;
   }
 
   &__content {
@@ -117,7 +107,7 @@ main {
 
   &__tagline {
     margin: 0;
-    color: color-mix(in srgb, var(--color-background) 45%, transparent);
+    color: color-mix(in srgb, white 45%, transparent);
     font-size: 0.8rem;
     letter-spacing: 0.02em;
   }
@@ -133,13 +123,13 @@ main {
     justify-content: center;
 
     a {
-      color: color-mix(in srgb, var(--color-background) 60%, transparent);
+      color: color-mix(in srgb, white 60%, transparent);
       font-size: 0.85rem;
       text-decoration: none;
       transition: color 160ms ease;
 
       &:hover {
-        color: var(--color-background);
+        color: white;
       }
     }
   }
@@ -147,12 +137,12 @@ main {
   &__divider {
     width: 48px;
     height: 1px;
-    background: color-mix(in srgb, var(--color-background) 12%, transparent);
+    background: color-mix(in srgb, white 12%, transparent);
   }
 
   &__copy {
     margin: 0;
-    color: color-mix(in srgb, var(--color-background) 35%, transparent);
+    color: color-mix(in srgb, white 35%, transparent);
     font-size: 0.75rem;
   }
 }
