@@ -132,6 +132,7 @@ a {
 .marketing-section {
   padding-block: 5.5rem;
   position: relative;
+  min-height: 0 !important;
 
   &--tight {
     padding-block: 4.5rem;
@@ -198,6 +199,7 @@ a {
   overflow: hidden;
   background: var(--color-primary);
   padding-block: 5rem;
+  min-height: 0 !important;
 
   // Subtle gradient overlay for atmosphere
   &::before {
@@ -631,7 +633,7 @@ a {
   }
 
   &__wordmark {
-    height: 1.1rem;
+    height: 2rem;
     flex-shrink: 0;
 
     img,
