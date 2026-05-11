@@ -84,6 +84,24 @@
     },
     "finalCta": {
       "heading": "Get started for free"
+    },
+    "environments": {
+      "dev": {
+        "title": "Development",
+        "desc": "Capture test emails locally. Verify sign-up flows and transactional emails without real inboxes."
+      },
+      "staging": {
+        "title": "Staging",
+        "desc": "Test provider switching and delivery in pre-production. Catch issues before they reach users."
+      },
+      "prod": {
+        "title": "Production",
+        "desc": "Send transactional email through your existing providers. One API, any number of products."
+      },
+      "ops": {
+        "title": "Operations",
+        "desc": "Monitor delivery status, debug failures, and track email health across all your products."
+      }
     }
   },
   "features": {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'lezu-i18n/vue'
-import { Button, Section, Collapsible, Badge } from '@sil/ui'
+import { Button, Section, Collapsible, Badge, Card, Colors } from '@sil/ui'
 
 const { t, i18n } = useI18n()
 
@@ -31,15 +31,16 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
   <div class="page pricing-page">
     <Section centered :padding="'5.5rem 0 4.5rem'">
       <div class="marketing-header marketing-header--center">
-        <div class="marketing-eyebrow">{{ $t('pricing.eyebrow') }}</div>
-        <h1 class="marketing-title marketing-title--hero">
+        <Badge variant="primary" size="small">{{ $t('pricing.eyebrow') }}</Badge>
+        <h1 class="marketing-title marketing-title--hero" style="margin-top: 0.75rem;">
           {{ $t('pricing.heroTitle') }}
         </h1>
         <p class="marketing-subtitle">{{ $t('pricing.heroSummary') }}</p>
       </div>
     </Section>
 
-    <Section variant="alternate" class="marketing-section marketing-section--tight">
+    <!-- Plans — dark navy section -->
+    <Section class="marketing-section marketing-section-dark" style="padding-top: 0;">
       <div class="marketing-content">
         <div class="plans-grid">
           <article
@@ -66,7 +67,8 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
             </ul>
             <Button
               class="plan__cta"
-              variant="primary"
+              :variant="plan.key === 'pro' ? 'default' : 'outline'"
+              :color="plan.key === 'pro' ? Colors.DARK : Colors.LIGHT"
               :href="dashboardUrl"
               target="_blank"
             >
@@ -77,6 +79,7 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
       </div>
     </Section>
 
+    <!-- FAQ -->
     <Section class="marketing-section">
       <div class="marketing-content">
         <div class="marketing-header marketing-header--center">
@@ -94,16 +97,17 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
       </div>
     </Section>
 
+    <!-- CTA -->
     <Section variant="cta" centered class="marketing-section marketing-cta-section">
       <h2 class="marketing-title">{{ $t('pricing.cta.heading') }}</h2>
       <div class="marketing-actions">
         <Button
           variant="default"
-          color="dark"
+          :color="Colors.DARK"
           :href="dashboardUrl"
           target="_blank"
         >
-          {{ $t('pricing.cta.button') }}
+          {{ $t('pricing.cta.button') }} →
         </Button>
       </div>
     </Section>
@@ -111,10 +115,15 @@ const faqItems = Array.isArray(faqRaw) ? faqRaw : []
 </template>
 
 <style lang="scss">
-.faq__answer {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.7;
+.pricing-page {
+  .plans-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 44rem;
+  }
+
+  .plan__cta {
+    width: fit-content;
+    margin-top: auto;
+  }
 }
 </style>

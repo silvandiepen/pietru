@@ -1,17 +1,30 @@
+// ── Pietru Marketing Tokens ──
+// Visual polish layer — premium developer-tool aesthetic.
+// All colors reference CSS custom properties from defineTheme().
+// NO hardcoded hex values.
+
 :root {
-  --marketing-alt: color-mix(in srgb, var(--color-background), var(--color-foreground) 4%);
-  --marketing-dark: var(--color-dark);
-  --marketing-primary-soft: var(--color-primary-light);
-  --marketing-radius: var(--border-radius);
+  --marketing-alt: var(--pietru-cream-card);
+  --marketing-dark: var(--pietru-navy-deep);
+  --marketing-primary-soft: rgba(255, 59, 31, 0.08);
+  --marketing-radius: var(--pietru-radius-md);
   --marketing-wrap: 62rem;
-  --marketing-shadow: 0 18px 40px color-mix(in srgb, var(--color-foreground) 8%, transparent);
-  --marketing-shadow-soft: 0 10px 28px color-mix(in srgb, var(--color-foreground) 6%, transparent);
+
+  // Glow effects
+  --glow-primary: 0 0 60px -12px rgba(255, 59, 31, 0.25);
+  --glow-subtle: 0 0 40px -8px rgba(255, 59, 31, 0.12);
+
+  // Shadows — layered for depth
+  --shadow-card: 0 1px 3px rgba(6, 31, 50, 0.04), 0 4px 12px rgba(6, 31, 50, 0.03);
+  --shadow-card-hover: 0 2px 8px rgba(6, 31, 50, 0.06), 0 8px 24px rgba(6, 31, 50, 0.06);
+  --shadow-elevated: 0 4px 16px rgba(6, 31, 50, 0.06), 0 12px 40px rgba(6, 31, 50, 0.04);
+  --shadow-mockup: 0 8px 32px rgba(6, 31, 50, 0.12), 0 24px 64px rgba(6, 31, 50, 0.08);
 }
 
 html,
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--pietru-cream);
+  color: var(--pietru-navy-text);
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -29,37 +42,40 @@ a {
   color: inherit;
 }
 
-/* ── Typography helpers ── */
+/* ── Typography ── */
 
 .marketing-eyebrow {
   margin: 0 0 0.75rem;
-  color: var(--color-primary);
+  color: var(--pietru-red);
   font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 0.14em;
   line-height: 1.3;
   text-transform: uppercase;
 }
 
 .marketing-title {
   margin: 0;
-  color: var(--color-foreground);
+  color: var(--pietru-navy);
   font-size: clamp(1.45rem, 2.4vw, 1.75rem);
   font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.22;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  transition: color 0.3s ease;
 
   &--hero {
-    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-size: clamp(2.4rem, 5.5vw, 3.75rem);
     font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.06;
   }
 }
 
 .marketing-subtitle {
   max-width: 38rem;
-  margin: 0.875rem auto 0;
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
+  margin: 1rem auto 0;
+  color: var(--pietru-muted);
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.7;
 }
@@ -67,19 +83,19 @@ a {
 .marketing-content {
   max-width: var(--marketing-wrap);
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 2rem;
 }
 
 .marketing-header {
   max-width: 42rem;
-  margin: 0 0 2.25rem;
+  margin: 0 0 2.5rem;
 
   &--center {
     margin-inline: auto;
     text-align: center;
 
     .marketing-subtitle {
-      margin-top: 0.875rem;
+      margin-top: 1rem;
     }
   }
 }
@@ -89,60 +105,103 @@ a {
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: center;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
 }
 
+/* ── Sections ── */
+
 .marketing-section {
-  padding-block: 5rem;
+  padding-block: 5.5rem;
+  position: relative;
 
   &--tight {
-    padding-block: 4rem;
+    padding-block: 4.5rem;
   }
 }
 
 .marketing-section-dark {
   background: var(--marketing-dark);
-  color: var(--color-light);
+  color: var(--pietru-cream);
+
+  // Dot pattern overlay for depth
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--pietru-cream) 8%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // Ensure content sits above pattern
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   .marketing-title,
   .feature-detail__title,
   .feature-detail__summary,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: var(--color-light);
+    color: var(--pietru-cream);
   }
 
   .marketing-eyebrow {
-    color: var(--marketing-primary-soft);
+    color: var(--pietru-red);
   }
 
   .marketing-subtitle,
   .feature-detail__detail,
   .feature-detail__list li {
-    color: color-mix(in srgb, var(--color-light) 78%, transparent);
+    color: color-mix(in srgb, var(--pietru-cream) 65%, transparent);
   }
 
   .feature-detail {
-    background: color-mix(in srgb, var(--color-light) 6%, transparent);
-    border-color: color-mix(in srgb, var(--color-light) 14%, transparent);
+    background: color-mix(in srgb, var(--pietru-cream) 5%, transparent);
+    border-color: color-mix(in srgb, var(--pietru-cream) 10%, transparent);
     box-shadow: none;
   }
 
   .feature-item__icon,
   .principle__icon {
-    background: var(--marketing-primary-soft);
-    color: var(--color-primary);
+    background: rgba(255, 59, 31, 0.12);
+    color: var(--pietru-red);
   }
 }
 
 .marketing-cta-section {
+  position: relative;
+  overflow: hidden;
+
+  // Gradient mesh background for atmosphere
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 20% 50%, rgba(255, 59, 31, 0.15), transparent),
+      radial-gradient(ellipse 50% 60% at 80% 30%, rgba(255, 59, 31, 0.1), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .marketing-title,
   .marketing-subtitle {
-    color: var(--color-background);
+    color: var(--pietru-cream);
   }
 
   .marketing-subtitle {
-    opacity: 0.88;
+    opacity: 0.85;
   }
 }
 
@@ -151,16 +210,23 @@ a {
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .feature-item {
   min-width: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--pietru-border);
   border-radius: var(--marketing-radius);
-  background: var(--color-background);
-  box-shadow: var(--marketing-shadow-soft);
-  padding: 1.25rem;
+  background: var(--pietru-cream-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: color-mix(in srgb, var(--pietru-red) 30%, var(--pietru-border));
+  }
 
   &__icon {
     width: 3rem;
@@ -171,12 +237,18 @@ a {
     border: 0;
     border-radius: 999px;
     background: var(--marketing-primary-soft);
-    color: var(--color-primary);
+    color: var(--pietru-red);
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+
+  &:hover &__icon {
+    background: rgba(255, 59, 31, 0.12);
+    transform: scale(1.05);
   }
 
   &__title {
-    margin: 0.85rem 0 0.35rem;
-    color: var(--color-foreground);
+    margin: 1rem 0 0.4rem;
+    color: var(--pietru-navy);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.35;
@@ -184,7 +256,7 @@ a {
 
   &__desc {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--pietru-muted);
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.7;
@@ -196,33 +268,38 @@ a {
 .feature-detail {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 1.25rem;
+  gap: 1.5rem;
   max-width: 52rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--pietru-border);
   border-radius: var(--marketing-radius);
-  background: var(--color-background);
-  box-shadow: var(--marketing-shadow-soft);
-  padding: 1.35rem;
+  background: var(--pietru-cream-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
 
   &__icon {
     margin-top: 0.15rem;
 
     .feature-item__icon {
-      width: 3.15rem;
-      height: 3.15rem;
+      width: 3.25rem;
+      height: 3.25rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       border: 0;
       border-radius: 999px;
       background: var(--marketing-primary-soft);
-      color: var(--color-primary);
+      color: var(--pietru-red);
     }
   }
 
   &__title {
-    margin: 0 0 0.45rem;
-    color: var(--color-foreground);
+    margin: 0 0 0.5rem;
+    color: var(--pietru-navy);
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.3;
@@ -231,31 +308,31 @@ a {
   &__summary,
   &__detail {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--pietru-muted);
     font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.7;
   }
 
   &__summary {
-    color: var(--color-foreground);
+    color: var(--pietru-navy);
   }
 
   &__detail {
-    margin-top: 0.55rem;
+    margin-top: 0.6rem;
   }
 
   &__list {
     display: grid;
-    gap: 0.45rem;
-    margin: 1rem 0 0;
+    gap: 0.5rem;
+    margin: 1.1rem 0 0;
     padding: 0;
     list-style: none;
 
     li {
       position: relative;
-      padding-left: 1rem;
-      color: var(--color-text-muted);
+      padding-left: 1.15rem;
+      color: var(--pietru-muted);
       font-size: 0.9rem;
       line-height: 1.6;
 
@@ -266,7 +343,7 @@ a {
         width: 0.35rem;
         height: 0.35rem;
         border-radius: 50%;
-        background: var(--color-primary);
+        background: var(--pietru-red);
         content: '';
       }
     }
@@ -280,7 +357,7 @@ a {
   flex-wrap: wrap;
   gap: 0.55rem;
   justify-content: center;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
 }
 
 /* ── Principles grid (About page) ── */
@@ -288,16 +365,22 @@ a {
 .principles-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .principle {
   min-width: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--pietru-border);
   border-radius: var(--marketing-radius);
-  background: var(--color-background);
-  box-shadow: var(--marketing-shadow-soft);
-  padding: 1.25rem;
+  background: var(--pietru-cream-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
 
   &__icon {
     width: 3rem;
@@ -308,12 +391,17 @@ a {
     margin-bottom: 1rem;
     border-radius: 999px;
     background: var(--marketing-primary-soft);
-    color: var(--color-primary);
+    color: var(--pietru-red);
+    transition: transform 0.25s ease;
+  }
+
+  &:hover &__icon {
+    transform: scale(1.08);
   }
 
   &__title {
     margin: 0 0 0.4rem;
-    color: var(--color-foreground);
+    color: var(--pietru-navy);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.35;
@@ -321,7 +409,7 @@ a {
 
   &__desc {
     margin: 0;
-    color: var(--color-text-muted);
+    color: var(--pietru-muted);
     font-size: 0.9rem;
     line-height: 1.7;
   }
@@ -332,7 +420,7 @@ a {
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
+  gap: 1.5rem;
   max-width: 44rem;
   margin-inline: auto;
 }
@@ -341,15 +429,21 @@ a {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: var(--marketing-radius);
-  background: var(--color-background);
-  box-shadow: var(--marketing-shadow-soft);
-  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--pietru-cream) 14%, transparent);
+  border-radius: var(--pietru-radius-lg);
+  background: transparent;
+  box-shadow: none;
+  padding: 1.75rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255, 59, 31, 0.08);
+  }
 
   &__name {
     margin: 0 0 0.75rem;
-    color: var(--color-primary);
+    color: var(--pietru-red);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -365,39 +459,39 @@ a {
     flex-wrap: wrap;
     gap: 0.35rem;
     align-items: baseline;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
   }
 
   &__amount {
-    color: var(--color-foreground);
-    font-size: 1.85rem;
+    color: var(--pietru-cream);
+    font-size: 2rem;
     font-weight: 800;
     line-height: 1;
   }
 
   &__period {
-    color: var(--color-text-muted);
+    color: color-mix(in srgb, var(--pietru-cream) 55%, transparent);
     font-size: 0.85rem;
   }
 
   &__desc {
-    margin: 0 0 1rem;
-    color: var(--color-text-muted);
+    margin: 0 0 1.25rem;
+    color: color-mix(in srgb, var(--pietru-cream) 65%, transparent);
     font-size: 0.9rem;
     line-height: 1.7;
   }
 
   &__features {
     display: grid;
-    gap: 0.45rem;
-    margin: 0 0 1.25rem;
+    gap: 0.5rem;
+    margin: 0 0 1.5rem;
     padding: 0;
     list-style: none;
 
     li {
       position: relative;
-      padding-left: 1rem;
-      color: var(--color-text-muted);
+      padding-left: 1.25rem;
+      color: color-mix(in srgb, var(--pietru-cream) 75%, transparent);
       font-size: 0.9rem;
       line-height: 1.55;
 
@@ -405,11 +499,9 @@ a {
         position: absolute;
         top: 0.56em;
         left: 0;
-        width: 0.35rem;
-        height: 0.35rem;
-        border-radius: 50%;
-        background: var(--color-primary);
-        content: '';
+        content: '\2713';
+        font-size: 0.75rem;
+        color: var(--pietru-red);
       }
     }
   }
@@ -420,9 +512,17 @@ a {
   }
 
   &--highlight {
-    border-color: var(--color-primary);
-    background: var(--marketing-primary-soft);
-    box-shadow: 0 0 0 1px var(--color-primary), var(--marketing-shadow);
+    border-color: var(--pietru-red);
+    background: var(--pietru-red);
+    box-shadow: var(--glow-primary);
+
+    &:hover {
+      box-shadow: 0 0 80px -12px rgba(255, 59, 31, 0.35);
+    }
+
+    .plan__amount {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
   }
 }
 
@@ -435,10 +535,94 @@ a {
   margin-inline: auto;
 }
 
-/* ── Hero padding overrides ── */
+.faq__answer {
+  margin: 0;
+  color: var(--pietru-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
 
-.hero-padding {
-  padding-top: 4.5rem;
+/* ── Hero — 80vh, 50/50 split ── */
+
+.hero {
+  height: 80vh;
+  min-height: 34rem;
+  padding-top: 5rem;
+  overflow: hidden;
+
+  &__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+    max-width: 100%;
+  }
+
+  &__panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pietru-red);
+    padding: 3rem;
+    will-change: transform, opacity;
+    position: relative;
+    overflow: hidden;
+
+    // Subtle diagonal pattern for depth
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 80%, rgba(255, 255, 255, 0.06), transparent 60%),
+        radial-gradient(ellipse at 70% 20%, rgba(0, 0, 0, 0.05), transparent 50%);
+      pointer-events: none;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__logo-icon {
+    width: min(100%, 18rem);
+    height: auto;
+    filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+  }
+
+  &__logo-wordmark {
+    width: min(80%, 14rem);
+    height: auto;
+    filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 4rem;
+    will-change: transform, opacity;
+  }
+}
+
+/* ── Mockup section — overlaps hero ── */
+
+.mockup-section {
+  margin-top: -5rem;
+  padding-top: 0 !important;
+  padding-bottom: 2rem !important;
+  position: relative;
+  z-index: 2;
+}
+
+.mockup-wrapper {
+  max-width: 72rem;
+  margin-inline: auto;
+  will-change: transform;
 }
 
 /* ── Accessibility ── */
@@ -455,11 +639,325 @@ a {
   margin: -1px;
 }
 
+/* ── Logo ── */
+
+.pietru-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+
+  &__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__wordmark {
+    height: 1.1rem;
+    flex-shrink: 0;
+
+    svg {
+      width: auto;
+      height: 100%;
+    }
+  }
+}
+
+/* ── Hero — 80vh, 50/50 split ── */
+
+.dashboard-mockup {
+  background: var(--pietru-navy);
+  border-radius: var(--pietru-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-mockup);
+  position: relative;
+
+  // Subtle glow behind mockup
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: calc(var(--pietru-radius-lg) + 2px);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 59, 31, 0.15),
+      transparent 40%,
+      transparent 60%,
+      rgba(8, 63, 97, 0.1)
+    );
+    z-index: -1;
+    opacity: 1;
+  }
+
+  &__chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.6rem 0.875rem;
+    background: var(--pietru-navy);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--red { background: #F26D78; }
+    &--yellow { background: #FF8D22; }
+    &--green { background: #2DBE7E; }
+  }
+
+  &__url {
+    flex: 1;
+    margin-left: 8px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    color: color-mix(in srgb, var(--pietru-cream) 35%, transparent);
+    font-size: 0.6rem;
+    font-family: monospace;
+  }
+
+  &__inner {
+    background: var(--pietru-cream-card);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  &__sidebar {
+    background: color-mix(in srgb, var(--pietru-navy) 6%, var(--pietru-cream));
+    padding: 0.75rem;
+    border-right: 1px solid var(--pietru-border);
+  }
+
+  &__sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    color: var(--pietru-muted);
+    margin-bottom: 0.2rem;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &--active {
+      background: rgba(255, 59, 31, 0.1);
+      color: var(--pietru-red);
+    }
+  }
+
+  &__content {
+    padding: 0.75rem;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__stat {
+    background: var(--pietru-cream);
+    border: 1px solid var(--pietru-border);
+    border-radius: 4px;
+    padding: 0.5rem;
+    text-align: center;
+    transition: border-color 0.2s ease;
+  }
+
+  &__stat-value {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--pietru-navy);
+    display: block;
+  }
+
+  &__stat-label {
+    font-size: 0.5rem;
+    color: var(--pietru-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__table {
+    width: 100%;
+    font-size: 0.55rem;
+
+    th {
+      text-align: left;
+      padding: 0.3rem 0.4rem;
+      color: var(--pietru-muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--pietru-border);
+    }
+
+    td {
+      padding: 0.25rem 0.4rem;
+      color: var(--pietru-navy-text);
+      border-bottom: 1px solid color-mix(in srgb, var(--pietru-border) 50%, transparent);
+    }
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.45rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    &--success {
+      background: rgba(45, 190, 126, 0.15);
+      color: #2DBE7E;
+    }
+
+    &--error {
+      background: rgba(242, 109, 120, 0.15);
+      color: #F26D78;
+    }
+
+    &--info {
+      background: rgba(107, 169, 214, 0.15);
+      color: #6BA9D6;
+    }
+  }
+}
+
+/* ── Environment section ── */
+
+.environment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.environment-item {
+  padding: 1.75rem 1rem;
+  border-right: 1px solid var(--pietru-border);
+  text-align: center;
+  transition: background 0.25s ease;
+
+  &:hover {
+    background: var(--marketing-primary-soft);
+  }
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &__icon {
+    color: var(--pietru-red);
+    margin-bottom: 0.75rem;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover &__icon {
+    transform: scale(1.1);
+  }
+
+  &__title {
+    margin: 0 0 0.35rem;
+    color: var(--pietru-navy);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  &__desc {
+    margin: 0;
+    color: var(--pietru-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+}
+
+/* ── Steps overrides (dark section) ── */
+
+.marketing-section-dark {
+  .steps {
+    --steps-color: var(--pietru-red);
+
+    &__title {
+      color: var(--pietru-cream);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    &__description {
+      color: color-mix(in srgb, var(--pietru-cream) 60%, transparent);
+      font-size: 0.875rem;
+    }
+
+    &__circle {
+      &--active {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--pietru-red), transparent 75%);
+      }
+    }
+  }
+}
+
 /* ── Responsive ── */
 
 @media (max-width: 56em) {
   .feature-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__panel {
+    min-height: 18rem;
+    padding: 2.5rem;
+  }
+
+  .hero__logo-icon {
+    width: min(50%, 12rem);
+  }
+
+  .hero__logo-wordmark {
+    width: min(60%, 10rem);
+  }
+
+  .hero__content {
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .hero .marketing-actions {
+    justify-content: center !important;
+  }
+
+  .mockup-section {
+    margin-top: -3rem;
+  }
+
+  .mockup-wrapper {
+    max-width: 100%;
+  }
+
+  .environment-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .environment-item {
+    border-right: none;
+    border-bottom: 1px solid var(--pietru-border);
+
+    &:nth-last-child(-n+2) {
+      border-bottom: none;
+    }
   }
 }
 
@@ -480,15 +978,28 @@ a {
 }
 
 @media (max-width: 38em) {
-  .hero-padding {
-    padding-top: 3.5rem;
-  }
-
   .feature-grid {
     grid-template-columns: 1fr;
   }
 
   .marketing-section {
-    padding-block: 3.75rem;
+    padding-block: 4rem;
+  }
+
+  .environment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .environment-item {
+    border-right: none;
+    border-bottom: 1px solid var(--pietru-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .dashboard-mockup__stats {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'lezu-i18n/vue'
 import { RouterLink } from 'vue-router'
-import { Icon, Icons, Button, Section } from '@sil/ui'
+import { Icon, Icons, Button, Section, Badge, Card, Colors } from '@sil/ui'
 
 const { t, i18n } = useI18n()
 
@@ -37,8 +37,8 @@ const features = featureKeys.map((key) => {
   <div class="page features-page">
     <Section centered :padding="'5.5rem 0 4.5rem'">
       <div class="marketing-header marketing-header--center">
-        <div class="marketing-eyebrow">{{ $t('features.eyebrow') }}</div>
-        <h1 class="marketing-title marketing-title--hero">
+        <Badge variant="primary" size="small">{{ $t('features.eyebrow') }}</Badge>
+        <h1 class="marketing-title marketing-title--hero" style="margin-top: 0.75rem;">
           {{ $t('features.heroTitle') }}
         </h1>
         <p class="marketing-subtitle">{{ $t('features.heroSummary') }}</p>
@@ -63,12 +63,18 @@ const features = featureKeys.map((key) => {
       :class="{ 'marketing-section-dark': index === 2 }"
     >
       <div class="marketing-content">
-        <article class="feature-detail">
-          <div class="feature-detail__icon">
-            <div class="feature-item__icon">
-              <Icon :name="feature.icon" size="medium" color="primary" />
+        <Card
+          variant="default"
+          hoverable
+          no-padding
+        >
+          <template #header>
+            <div class="feature-detail__header">
+              <div class="feature-item__icon">
+                <Icon :name="feature.icon" size="medium" color="primary" />
+              </div>
             </div>
-          </div>
+          </template>
           <div class="feature-detail__body">
             <h2 class="feature-detail__title">{{ feature.title }}</h2>
             <p class="feature-detail__summary">{{ feature.summary }}</p>
@@ -79,7 +85,7 @@ const features = featureKeys.map((key) => {
               </li>
             </ul>
           </div>
-        </article>
+        </Card>
       </div>
     </Section>
 
@@ -88,7 +94,7 @@ const features = featureKeys.map((key) => {
       <div class="marketing-actions">
         <Button
           variant="default"
-          color="dark"
+          :color="Colors.DARK"
           :href="dashboardUrl"
           target="_blank"
         >
@@ -98,3 +104,15 @@ const features = featureKeys.map((key) => {
     </Section>
   </div>
 </template>
+
+<style lang="scss">
+.features-page {
+  .feature-detail__header {
+    padding: 1.5rem 1.5rem 0;
+  }
+
+  .feature-detail__body {
+    padding: 0 1.5rem 1.5rem;
+  }
+}
+</style>
