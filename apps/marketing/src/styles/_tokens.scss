@@ -561,7 +561,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--pietru-red);
+    background: var(--pietru-primary);
     padding: 3rem;
     will-change: transform, opacity;
     position: relative;
@@ -591,7 +591,7 @@ a {
   &__logo-icon {
     width: min(100%, 18rem);
     height: auto;
-    filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
   }
 
   &__logo-wordmark {
