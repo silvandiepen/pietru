@@ -82,7 +82,7 @@ const environments = envKeys.map((key) => ({
     </div>
 
     <!-- How It Works -->
-    <Section variant="alternate" class="marketing-section marketing-section-dark">
+    <Section class="marketing-section">
       <div class="marketing-content">
         <div class="marketing-header marketing-header--center">
           <Badge variant="primary" size="small">{{ $t('home.howItWorks.eyebrow') }}</Badge>
@@ -123,7 +123,7 @@ const environments = envKeys.map((key) => ({
     </Section>
 
     <!-- Features -->
-    <Section class="marketing-section marketing-section--tight">
+    <Section variant="alternate" class="marketing-section marketing-section--tight">
       <div class="marketing-content">
         <div class="marketing-header marketing-header--center">
           <Badge variant="outline" size="small">{{ $t('home.features.sectionHeading') }}</Badge>

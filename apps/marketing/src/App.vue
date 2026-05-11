@@ -77,7 +77,7 @@ main {
 
 .site-footer {
   position: relative;
-  background: var(--color-foreground);
+  background: var(--color-dark);
   padding: 3.5rem 2rem 2.5rem;
   margin-top: 0;
   overflow: hidden;
