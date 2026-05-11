@@ -7,17 +7,18 @@ import { defineTheme, ui } from '@sil/ui/vite'
 export default defineConfig({
   plugins: [
     vue(),
-    defineTheme({
-      colors: {
-        dark: '#020b22',
-        light: '#ffffff',
-        primary: '#0d9488',
-      },
-      fonts: {
-        body: 'Inter, system-ui, sans-serif',
-      },
+    ui({
+      theme: defineTheme({
+        colors: {
+          dark: '#020b22',
+          light: '#ffffff',
+          primary: '#0d9488',
+        },
+        fonts: {
+          body: 'Inter, system-ui, sans-serif',
+        },
+      }),
     }),
-    ui(),
   ],
   resolve: {
     alias: {
