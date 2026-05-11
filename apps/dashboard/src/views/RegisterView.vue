@@ -1,6 +1,11 @@
 <template>
   <section class="auth-view">
     <form class="auth-view__card" @submit.prevent="submit">
+      <div class="auth-view__brand">
+        <img class="auth-view__brand-wordmark" src="@/assets/logo-wordmark.svg" alt="Pietru" />
+        <span class="auth-view__brand-tagline">Mail gateway</span>
+      </div>
+      <img class="auth-view__intro-icon" src="@/assets/logo-icon-noborder.svg" alt="" aria-hidden="true" />
       <h1>{{ $t('auth.register.title') }}</h1>
       <p>{{ $t('auth.register.description') }}</p>
       <label>
