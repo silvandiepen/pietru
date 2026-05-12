@@ -1,9 +1,6 @@
 // ── Pietru Marketing Tokens ──
-// Visual polish layer — premium developer-tool aesthetic.
-//
-// We configure @sil/ui's SCSS color variables BEFORE the base styles load,
-// so the generated :root custom properties already have our values.
-// No cascade override needed — the defaults ARE our colors.
+// Configure @sil/ui's SCSS color variables so the generated :root
+// custom properties already have Pietru's values baked in.
 
 @use '@sil/ui/defaults' with ($project-colors: (
   'dark': #061F32,
@@ -15,16 +12,15 @@
   'border': #E7DED0,
 ));
 
-// Now load all @sil/ui base styles (includes defaults with our colors baked in)
-@use '@sil/ui/styles';
+// Load @sil/ui base styles (fonts, reset, typography, etc.)
+// Using the exports-resolved path for main.scss (base styles without defaults)
+@use '@sil/ui/styles/main.scss';
 
-// ── Pietru-specific tokens (beyond what @sil/ui provides) ──
+// ── Pietru-specific tokens ──
 :root {
   --font-family: 'Inter', system-ui, sans-serif;
   --font-family-body: 'Inter', system-ui, sans-serif;
   --font-family-heading: 'Rubik', system-ui, sans-serif;
-
-  // ── Pietru-specific tokens ──
   --color-surface: #FAF5ED;
   --color-surface-alt: #F0EBE3;
   --color-muted: #9A8C7E;

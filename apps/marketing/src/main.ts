@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 
-// @sil/ui styles with Pietru's color config baked in via SCSS variables
-// _tokens.scss does: @use '@sil/ui/defaults' with ($project-colors: (...)); @use '@sil/ui/styles';
+// @sil/ui styles + Pietru color config (SCSS variable overrides baked into generated :root)
 import './styles/_tokens.scss'
 
 import App from './App.vue'
