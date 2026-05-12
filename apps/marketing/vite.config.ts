@@ -46,6 +46,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    include: ['highlight.js/lib/core'],
+  },
   test: {
     include: ['apps/marketing/src/**/*.test.ts'],
     plugins: [vue()],
