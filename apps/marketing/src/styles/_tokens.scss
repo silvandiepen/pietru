@@ -1,9 +1,26 @@
 // ── Pietru Marketing Tokens ──
 // Visual polish layer — premium developer-tool aesthetic.
-// All colors reference CSS custom properties from defineTheme().
-// NO hardcoded hex values.
+// Overrides @sil/ui defaults (imported via '@sil/ui/styles' → _defaults.scss).
+// This file loads AFTER @sil/ui styles, so our :root wins the cascade.
 
 :root {
+  // ── Theme colors (override @sil/ui defaults) ──
+  --color-dark: #061F32;
+  --color-light: #F4EFE3;
+  --color-primary: #FF3B1F;
+  --color-secondary: #083F61;
+  --color-success: #2DBE7E;
+  --color-warning: #FF8D22;
+  --color-error: #F26D78;
+  --color-info: #6BA9D6;
+  --color-border: #E7DED0;
+
+  // ── Fonts ──
+  --font-family: 'Inter', system-ui, sans-serif;
+  --font-family-body: 'Inter', system-ui, sans-serif;
+  --font-family-heading: 'Rubik', system-ui, sans-serif;
+
+  // ── Pietru-specific tokens ──
   --marketing-alt: var(--color-background-alt);
   --marketing-dark: var(--color-primary);
   --marketing-primary-soft: rgba(255, 59, 31, 0.08);
