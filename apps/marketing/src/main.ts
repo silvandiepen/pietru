@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 
-// @sil/ui base styles + defaults — resolved by ui() Vite plugin
-import '@sil/ui/styles'
+// @sil/ui styles with Pietru's color config baked in via SCSS variables
+// _tokens.scss does: @use '@sil/ui/defaults' with ($project-colors: (...)); @use '@sil/ui/styles';
 import './styles/_tokens.scss'
 
 import App from './App.vue'
