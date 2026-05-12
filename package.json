@@ -25,6 +25,7 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@sil/color": "^0.5.1",
     "@sil/ui": "^1.25.1"
   },
   "devDependencies": {
