@@ -7,6 +7,7 @@ import HomeEnvironmentsSection from '@/components/home/HomeEnvironmentsSection.v
 import HomeFeaturesSection from '@/components/home/HomeFeaturesSection.vue'
 import HomeHeroSection from '@/components/home/HomeHeroSection.vue'
 import HomeHowItWorksSection from '@/components/home/HomeHowItWorksSection.vue'
+import HomeMailingListsSection from '@/components/home/HomeMailingListsSection.vue'
 
 const { t } = useI18n()
 const bemm = useBemm('home', { includeBaseClass: true })
@@ -62,6 +63,24 @@ const environments = envKeys.map((key) => ({
   desc: t(`home.environments.${key}.desc`),
   icon: envIcons[key],
 }))
+
+const mailingListKeys = ['subscribers', 'campaigns', 'optIn', 'unsubscribe', 'templates', 'analytics'] as const
+
+const mailingListIcons: Record<string, string> = {
+  subscribers: Icons.UI_USER_S,
+  campaigns: Icons.MEDIA_MAIL,
+  optIn: Icons.UI_CHECK_FAT,
+  unsubscribe: Icons.WAYFINDING_CROSS,
+  templates: Icons.UI_LAYERS_2,
+  analytics: Icons.UI_ON_TARGET,
+}
+
+const mailingListItems = mailingListKeys.map((key) => ({
+  key,
+  title: t(`home.mailingLists.${key}.title`),
+  desc: t(`home.mailingLists.${key}.desc`),
+  icon: mailingListIcons[key],
+}))
 </script>
 
 <template>
@@ -91,6 +110,13 @@ const environments = envKeys.map((key) => ({
       :eyebrow="$t('home.features.sectionHeading')"
       :title="$t('home.features.sectionTitle')"
       :features="features"
+    />
+
+    <HomeMailingListsSection
+      :eyebrow="$t('home.mailingLists.eyebrow')"
+      :title="$t('home.mailingLists.title')"
+      :summary="$t('home.mailingLists.summary')"
+      :items="mailingListItems"
     />
 
     <HomeCtaSection

@@ -104,6 +104,35 @@
     "finalCta": {
       "heading": "Get started for free"
     },
+    "mailingLists": {
+      "eyebrow": "Mailing Lists",
+      "title": "Your audience, built in",
+      "summary": "Pietru isn't just for transactional email. Manage subscribers, send campaigns, and handle opt-in flows — all from the same dashboard you already use for your product emails.",
+      "subscribers": {
+        "title": "Subscriber management",
+        "desc": "Add subscribers one by one or import in bulk. Track status — pending, verified, unsubscribed, bounced — in real time."
+      },
+      "campaigns": {
+        "title": "Campaign sending",
+        "desc": "Compose a campaign, pick a mailing list, and send. Track delivery, opens, clicks, and unsubscribes as events roll in."
+      },
+      "optIn": {
+        "title": "Double opt-in",
+        "desc": "Require email verification before subscribers go active. Built-in token generation and verification — no extra setup."
+      },
+      "unsubscribe": {
+        "title": "One-click unsubscribe",
+        "desc": "Every campaign includes a signed unsubscribe link. Pietru handles the token, the status update, and the response page."
+      },
+      "templates": {
+        "title": "Branded templates",
+        "desc": "Design email templates with your brand colors, logo, and typography. Reuse them across campaigns without rebuilding."
+      },
+      "analytics": {
+        "title": "Campaign analytics",
+        "desc": "See sent, delivered, opened, clicked, bounced, and unsubscribed counts per campaign. All in one view."
+      }
+    },
     "environments": {
       "eyebrow": "Environments",
       "title": "Built for every environment",
