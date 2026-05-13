@@ -158,7 +158,7 @@
   "features": {
     "eyebrow": "Features",
     "heroTitle": "Built for developers with more than one product",
-    "heroSummary": "Pietru solves two problems: managing outgoing email across multiple products with different providers, and capturing inbound email for end-to-end testing. Here's how each piece works.",
+    "heroSummary": "Pietru solves two problems: managing outgoing email across multiple products with different providers, and capturing inbound email for end-to-end testing. Plus, built-in mailing lists so you can manage subscribers and send campaigns from the same place. Here's how each piece works.",
     "ctaTitle": "Start using Pietru today",
     "ctaLink": "Open Dashboard",
     "list": {
@@ -226,6 +226,43 @@
           "Dashboard-based provider switching",
           "No code changes required",
           "Per-product routing"
+        ]
+      },
+      "mailing-lists": {
+        "title": "Mailing Lists",
+        "summary": "Manage subscribers, send campaigns, and grow your audience — all from the same dashboard you use for transactional email.",
+        "detail": "Pietru isn't just for transactional email. Create mailing lists per project, import subscribers in bulk, and send campaigns with branded templates. Double opt-in verification, one-click unsubscribe with signed tokens, and full campaign analytics — all built in. No separate Mailchimp account, no syncing subscriber lists between tools.",
+        "quickRef": [
+          "Create unlimited mailing lists per project",
+          "Bulk subscriber import",
+          "Double opt-in with email verification",
+          "Branded email templates with custom colors and logo",
+          "One-click unsubscribe with HMAC-signed tokens",
+          "Campaign analytics: delivered, opened, clicked, bounced"
+        ]
+      },
+      "subscribers": {
+        "title": "Subscribers",
+        "summary": "Add subscribers individually or import thousands at once. Track who's active, pending, or unsubscribed.",
+        "detail": "Every subscriber has a clear lifecycle: they sign up, verify their email (if double opt-in is on), and become active. If they unsubscribe or bounce, their status updates automatically. Import existing lists via the API — Pietru deduplicates and skips already-subscribed addresses. Metadata support lets you attach names, locales, and custom fields to each subscriber.",
+        "quickRef": [
+          "Single and bulk subscriber creation",
+          "Status tracking: pending, verified, unsubscribed, bounced",
+          "Automatic deduplication on import",
+          "Per-subscriber metadata and locale",
+          "Subscriber stats by status"
+        ]
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "summary": "Compose an email, pick a list, and send. Watch delivery, opens, and clicks roll in as events.",
+        "detail": "Create a campaign from a branded template, set the subject, and send it to a mailing list. Pietru tracks every delivery event — sent, delivered, opened, clicked, bounced, unsubscribed — per subscriber. Campaign stats update in real time so you know exactly how your email performed. Draft, schedule, and send campaigns all from the dashboard.",
+        "quickRef": [
+          "Draft, schedule, and send campaigns",
+          "Template-based composition",
+          "Real-time delivery event tracking",
+          "Per-campaign stats: sent, delivered, opened, clicked",
+          "Campaign lifecycle: draft → queued → sending → sent"
         ]
       }
     }

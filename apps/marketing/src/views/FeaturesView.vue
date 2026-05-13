@@ -12,7 +12,7 @@ const bemm = useBemm('features-page', { includeBaseClass: true })
 const dashboardUrl =
   import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
 
-const featureKeys = ['send', 'capture', 'receive', 'track', 'debug', 'switch'] as const
+const featureKeys = ['send', 'capture', 'receive', 'track', 'debug', 'switch', 'mailing-lists', 'subscribers', 'campaigns'] as const
 
 const featureIcons: Record<string, string> = {
   send: Icons.MEDIA_MAIL,
@@ -21,6 +21,9 @@ const featureIcons: Record<string, string> = {
   track: Icons.UI_ON_TARGET,
   debug: Icons.UI_CODE_BRACKETS,
   switch: Icons.ARROWS_ARROW_TRANSFER_LEFT_RIGHT,
+  'mailing-lists': Icons.UI_LAYERS_2,
+  subscribers: Icons.UI_USER_S,
+  campaigns: Icons.UI_CHECK_FAT,
 }
 
 const features = featureKeys.map((key) => {
