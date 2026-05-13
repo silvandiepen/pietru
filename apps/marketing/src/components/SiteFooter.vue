@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useBemm } from 'bemm'
 import { RouterLink } from 'vue-router'
-import { Icon } from '@sil/ui'
+import { ThemeToggle, LanguageSwitch } from '@sil/ui'
+import type { LanguageSwitchOption } from '@sil/ui'
 import { useI18n } from 'lezu-i18n/vue'
 import SiteLogo from './SiteLogo.vue'
 import { useColorMode } from '../composables/useColorMode'
@@ -9,16 +10,17 @@ import { useColorMode } from '../composables/useColorMode'
 const bemm = useBemm('site-footer', { return: 'string' })
 
 const currentYear = new Date().getFullYear()
-const { i18n, t } = useI18n()
+const { i18n } = useI18n()
 const { colorMode, toggleColorMode } = useColorMode()
 
-const locales = [
-  { code: 'en', label: 'English' },
-  { code: 'nl', label: 'Nederlands' },
+const localeOptions: LanguageSwitchOption[] = [
+  { label: 'English', code: 'en', value: 'en' },
+  { label: 'Nederlands', code: 'nl', value: 'nl' },
 ]
 
-function switchLocale(code: string) {
-  i18n.setLocale(code)
+function handleLocaleSelect(option: LanguageSwitchOption) {
+  const code = option.value || option.code
+  if (code) i18n.setLocale(code)
 }
 </script>
 
@@ -42,24 +44,18 @@ function switchLocale(code: string) {
           &copy; {{ currentYear }} Hakobs. {{ $t('app.allRightsReserved') }}
         </p>
         <div :class="bemm('switches')">
-          <button
-            :class="[bemm('switch'), bemm('color-switch')]"
-            :aria-label="colorMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-            @click="toggleColorMode"
-          >
-            <Icon :name="colorMode === 'dark' ? 'weather/sun' : 'weather/moon'" />
-          </button>
-          <div :class="bemm('locale-switch')">
-            <button
-              v-for="loc in locales"
-              :key="loc.code"
-              :class="[bemm('switch'), i18n.getLocale() === loc.code ? bemm('switch--active') : '']"
-              :aria-label="`Switch language to ${loc.label}`"
-              @click="switchLocale(loc.code)"
-            >
-              {{ loc.code.toUpperCase() }}
-            </button>
-          </div>
+          <ThemeToggle
+            :theme="colorMode"
+            @toggle="toggleColorMode"
+          />
+          <LanguageSwitch
+            :model-value="i18n.getLocale()"
+            :options="localeOptions"
+            mode="simple"
+            surface="inline"
+            display-mode="code"
+            @select="handleLocaleSelect"
+          />
         </div>
       </div>
     </div>
@@ -151,43 +147,6 @@ function switchLocale(code: string) {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-
-  &__switch {
-    background: color-mix(in srgb, white 8%, transparent);
-    border: 1px solid color-mix(in srgb, white 10%, transparent);
-    border-radius: var(--border-radius-xs);
-    color: color-mix(in srgb, white 55%, transparent);
-    cursor: pointer;
-    padding: 0.3em 0.5em;
-    font-size: 0.7rem;
-    line-height: 1;
-    transition: all 160ms ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      background: color-mix(in srgb, white 14%, transparent);
-      color: white;
-    }
-
-    &--active {
-      background: color-mix(in srgb, white 18%, transparent);
-      color: white;
-      border-color: color-mix(in srgb, white 20%, transparent);
-    }
-  }
-
-  &__color-switch {
-    .icon {
-      --icon-stroke-color: currentColor;
-    }
-  }
-
-  &__locale-switch {
-    display: flex;
-    gap: 0.25rem;
   }
 }
 </style>
