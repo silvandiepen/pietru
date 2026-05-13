@@ -52,8 +52,10 @@ function handleLocaleSelect(option: LanguageSwitchOption) {
             :model-value="i18n.getLocale()"
             :options="localeOptions"
             mode="simple"
-            surface="inline"
+            surface="context-panel"
             display-mode="code"
+            close-on-select
+            context-panel-position="top"
             @select="handleLocaleSelect"
           />
         </div>
