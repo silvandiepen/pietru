@@ -14,8 +14,8 @@ const { i18n } = useI18n()
 const { colorMode, toggleColorMode } = useColorMode()
 
 const localeOptions: LanguageSwitchOption[] = [
-  { label: 'English', code: 'en', value: 'en' },
-  { label: 'Nederlands', code: 'nl', value: 'nl' },
+  { label: 'English', code: 'en', value: 'en', nativeName: 'English' },
+  { label: 'Dutch', code: 'nl', value: 'nl', nativeName: 'Nederlands' },
 ]
 
 function handleLocaleSelect(option: LanguageSwitchOption) {
