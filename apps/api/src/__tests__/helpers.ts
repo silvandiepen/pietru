@@ -68,6 +68,12 @@ export function createMockEnv(overrides: Partial<Env> = {}): Env {
     STORAGE: createMockR2() as unknown as R2Bucket,
     JWT_SECRET: 'test-jwt-secret-for-testing',
     ENCRYPTION_KEY: 'test-encryption-key-32bytes!!',
+    SYSTEM_EMAIL_API_KEY: 'test-system-email-api-key',
+    SYSTEM_EMAIL_FROM: 'Pietru <noreply@pietru.dev>',
+    DASHBOARD_URL: 'https://app.pietru.dev',
+    PIETRU_SES_REGION: 'eu-central-1',
+    PIETRU_SES_ACCESS_KEY_ID: 'test-access-key',
+    PIETRU_SES_SECRET_ACCESS_KEY: 'test-secret-key',
     ...overrides,
   };
 }

@@ -1,9 +1,13 @@
 <script lang="ts" setup>
+import { useBemm } from 'bemm'
 import { useI18n } from 'lezu-i18n/vue'
-import { RouterLink } from 'vue-router'
-import { Icon, Icons, Button, Section, Badge, Card, Colors } from '@sil/ui'
+import { Icons } from '@sil/ui'
+import FeaturesCtaSection from '@/components/features/FeaturesCtaSection.vue'
+import FeaturesDetailSection from '@/components/features/FeaturesDetailSection.vue'
+import FeaturesHeroSection from '@/components/features/FeaturesHeroSection.vue'
 
 const { t, i18n } = useI18n()
+const bemm = useBemm('features-page', { includeBaseClass: true })
 
 const dashboardUrl =
   import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
@@ -34,93 +38,25 @@ const features = featureKeys.map((key) => {
 </script>
 
 <template>
-  <div class="page features-page">
-    <Section centered :padding="'5.5rem 0 4.5rem'">
-      <div class="marketing-header marketing-header--center">
-        <Badge variant="primary" size="small">{{ $t('features.eyebrow') }}</Badge>
-        <h1 class="marketing-title marketing-title--hero" style="margin-top: 0.75rem;">
-          {{ $t('features.heroTitle') }}
-        </h1>
-        <p class="marketing-subtitle">{{ $t('features.heroSummary') }}</p>
-      </div>
-      <nav class="toc" aria-label="Feature sections">
-        <RouterLink
-          v-for="feature in features"
-          :key="feature.key"
-          :to="{ hash: `#${feature.key}` }"
-        >
-          <Button variant="outline" size="small">{{ feature.title }}</Button>
-        </RouterLink>
-      </nav>
-    </Section>
+  <div :class="bemm()">
+    <FeaturesHeroSection
+      :eyebrow="$t('features.eyebrow')"
+      :title="$t('features.heroTitle')"
+      :summary="$t('features.heroSummary')"
+      :features="features"
+    />
 
-    <Section
+    <FeaturesDetailSection
       v-for="(feature, index) in features"
-      :id="feature.key"
       :key="feature.key"
-      :variant="index % 2 === 0 ? 'alternate' : 'default'"
-      class="marketing-section"
-      :class="{ 'marketing-section-dark': index === 2 }"
-    >
-      <div class="marketing-content">
-        <Card
-          variant="default"
-          hoverable
-          no-padding
-        >
-          <template #header>
-            <div class="feature-detail__header">
-              <div class="feature-item__icon">
-                <Icon :name="feature.icon" size="medium" color="primary" />
-              </div>
-            </div>
-          </template>
-          <div class="feature-detail__body">
-            <h2 class="feature-detail__title">{{ feature.title }}</h2>
-            <p class="feature-detail__summary">{{ feature.summary }}</p>
-            <p class="feature-detail__detail">{{ feature.detail }}</p>
-            <ul class="feature-detail__list">
-              <li v-for="(item, itemIndex) in feature.quickRef" :key="itemIndex">
-                {{ item }}
-              </li>
-            </ul>
-          </div>
-        </Card>
-      </div>
-    </Section>
+      :feature="feature"
+      :index="index"
+    />
 
-    <Section variant="cta" centered class="marketing-section marketing-cta-section">
-      <h2 class="marketing-title">{{ $t('features.ctaTitle') }}</h2>
-      <div class="marketing-actions">
-        <Button
-          variant="default"
-          :color="Colors.DARK"
-          :href="dashboardUrl"
-          target="_blank"
-        >
-          {{ $t('features.ctaLink') }} →
-        </Button>
-      </div>
-    </Section>
+    <FeaturesCtaSection
+      :title="$t('features.ctaTitle')"
+      :button-label="`${$t('features.ctaLink')} →`"
+      :dashboard-url="dashboardUrl"
+    />
   </div>
 </template>
-
-<style lang="scss">
-.features-page {
-  .feature-detail__header {
-    padding: 1.5rem 1.5rem 0;
-  }
-
-  .feature-detail__body {
-    padding: 0 1.5rem 1.5rem;
-  }
-}
-
-@media (max-width: 44em) {
-  .features-page {
-    .feature-detail {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-</style>

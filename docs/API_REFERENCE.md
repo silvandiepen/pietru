@@ -56,7 +56,7 @@ Status `500`.
 
 ## CORS
 
-- Allowed origins: `pietru.dev`, `app.pietru.dev`, `api.pietru.dev`, `localhost:5173`, `localhost:5174`, and `*.pietru-dashboard.pages.dev` / `*.pietru-marketing.pages.dev`
+- Allowed origins: `pietru.dev`, `app.pietru.dev`, `api.pietru.dev`, `localhost:5173`, `localhost:5174`, `127.0.0.1:5173`, `127.0.0.1:5174`, and `*.pietru-dashboard.pages.dev` / `*.pietru-marketing.pages.dev`
 - Credentials: `true`
 - Methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`
 - Headers: `Content-Type`, `Authorization`
@@ -429,6 +429,44 @@ All use **Flexible auth** (project API key, account API key, or session cookie).
 
 ---
 
+### Mailing Lists
+
+#### `POST /mailing-list/subscriptions` — Public mailing-list signup
+
+- **Auth:** None
+- **Body:** validated by `mailingListSubscriptionSchema`
+  ```json
+  {
+    "email": "reader@example.com",
+    "name": "Reader Name",
+    "list": "pietru-updates"
+  }
+  ```
+- **Fields:**
+  - `email` — required valid email address
+  - `name` — optional, trimmed, max 120 chars
+  - `list` — optional, trimmed, max 80 chars, defaults to `pietru-updates`
+- **Response (201):** `{ "data": { "ok": true } }`
+- **Side effects:** Sends an internal system email to the mailing-list owner using `sendSystemEmail({ SYSTEM_EMAIL_API_KEY, SYSTEM_EMAIL_FROM }, ...)`
+- **Current owner recipient:** `hello@hakobs.com`
+- **Persistence:** None. The route does not write to D1/KV/R2; it forwards validated signups through the system email pipeline.
+- **Errors:**
+  - `400 validation_error` — invalid email, name, or list value
+  - `502 subscription_failed` — system email delivery failed
+
+Example:
+
+```bash
+curl -X POST "https://api.pietru.dev/v1/mailing-list/subscriptions" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "reader@example.com",
+    "list": "pietru-updates"
+  }'
+```
+
+---
+
 ### API Projects (programmatic project creation)
 
 #### `POST /api/projects` — Create project via API
@@ -482,7 +520,7 @@ All use **Flexible auth** (project API key, account API key, or session cookie).
 | `STORAGE` | R2 Bucket | Captured message bodies, event payloads |
 | `JWT_SECRET` | string | Signs/verifies session JWTs |
 | `ENCRYPTION_KEY` | string | Encrypts/decrypts provider configs |
-| `SYSTEM_EMAIL_API_KEY` | string | Sends verification & password reset emails |
+| `SYSTEM_EMAIL_API_KEY` | string | Sends verification, password reset, and mailing-list notification emails |
 | `SYSTEM_EMAIL_FROM` | string | From address for system emails |
 | `DASHBOARD_URL` | string | Base URL for email verification/reset links |
 
@@ -542,4 +580,5 @@ Set by middleware, available in route handlers via `c.get()`:
 | `PATCH` | `/projects/:projectId/templates/:templateId` | Flexible | Update template |
 | `DELETE` | `/projects/:projectId/templates/:templateId` | Flexible | Delete template |
 | `POST` | `/webhooks/providers/resend` | None (signed) | Resend webhook |
+| `POST` | `/mailing-list/subscriptions` | None | Public mailing-list signup |
 | `POST` | `/api/projects` | Account API Key | Create project + key via API |

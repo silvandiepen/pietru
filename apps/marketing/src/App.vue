@@ -11,11 +11,7 @@
     @themeToggle="toggleColorMode"
   >
     <template #brand-mark>
-      <span class="pietru-logo">
-        <span class="pietru-logo__wordmark">
-          <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
-        </span>
-      </span>
+      <SiteLogo />
     </template>
   </PillHeader>
 
@@ -23,36 +19,17 @@
     <RouterView />
   </main>
 
-  <footer class="site-footer">
-    <div class="site-footer__glow" />
-    <div class="site-footer__content">
-      <div class="site-footer__brand">
-        <span class="pietru-logo">
-          <span class="pietru-logo__icon">
-            <img src="@/assets/logo-icon-noborder.svg" alt="" aria-hidden="true" />
-          </span>
-          <span class="pietru-logo__wordmark">
-            <img src="@/assets/logo-wordmark.svg" alt="Pietru" />
-          </span>
-        </span>
-        <p class="site-footer__tagline">{{ $t('app.tagline') }}</p>
-      </div>
-      <nav class="site-footer__nav">
-        <RouterLink to="/features">{{ $t('app.navFeatures') }}</RouterLink>
-        <RouterLink to="/pricing">{{ $t('app.navPricing') }}</RouterLink>
-        <a href="https://docs.pietru.dev" target="_blank" rel="noopener">{{ $t('app.navDocs') }}</a>
-        <a href="https://github.com/silvandiepen/pietru" target="_blank" rel="noopener">{{ $t('app.github') }}</a>
-      </nav>
-      <div class="site-footer__divider" />
-      <p class="site-footer__copy">&copy; {{ new Date().getFullYear() }} Hakobs. {{ $t('app.allRightsReserved') }}</p>
-    </div>
-  </footer>
+  <MailingListSection />
+  <SiteFooter />
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { PillHeader } from '@sil/ui'
 import { useI18n } from 'lezu-i18n/vue'
+import MailingListSection from './components/MailingListSection.vue'
+import SiteFooter from './components/SiteFooter.vue'
+import SiteLogo from './components/SiteLogo.vue'
 import { useColorMode } from './composables/useColorMode'
 
 const { t } = useI18n()
@@ -69,81 +46,3 @@ const headerActions = computed(() => [
   },
 ])
 </script>
-
-<style lang="scss">
-main {
-  min-height: 100vh;
-}
-
-.site-footer {
-  position: relative;
-  background: var(--color-dark);
-  padding: 3.5rem 2rem 2.5rem;
-  margin-top: 0;
-  overflow: hidden;
-
-  &__glow {
-    display: none;
-  }
-
-  &__content {
-    max-width: 62rem;
-    margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.25rem;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  &__brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  &__tagline {
-    margin: 0;
-    color: color-mix(in srgb, white 45%, transparent);
-    font-size: 0.8rem;
-    letter-spacing: 0.02em;
-  }
-
-  .pietru-logo__wordmark img {
-    filter: brightness(0) invert(1);
-  }
-
-  &__nav {
-    display: flex;
-    gap: 1.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    a {
-      color: color-mix(in srgb, white 60%, transparent);
-      font-size: 0.85rem;
-      text-decoration: none;
-      transition: color 160ms ease;
-
-      &:hover {
-        color: white;
-      }
-    }
-  }
-
-  &__divider {
-    width: 48px;
-    height: 1px;
-    background: color-mix(in srgb, white 12%, transparent);
-  }
-
-  &__copy {
-    margin: 0;
-    color: color-mix(in srgb, white 35%, transparent);
-    font-size: 0.75rem;
-  }
-}
-</style>

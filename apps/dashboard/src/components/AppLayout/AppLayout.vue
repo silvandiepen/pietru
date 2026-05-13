@@ -123,7 +123,6 @@ const authStore = useAuthStore()
 
 <style lang="scss" scoped>
 .app-layout {
-  min-height: 100vh;
   display: grid;
   grid-template-columns: 18rem minmax(0, 1fr);
 

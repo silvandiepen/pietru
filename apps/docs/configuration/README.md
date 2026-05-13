@@ -22,3 +22,7 @@ Pietru supports three environments:
 | **Production** | Live production traffic |
 
 Switch environments in the dashboard header using the environment badge.
+
+## Mailing Lists
+
+Pietru exposes a public mailing-list subscription endpoint for marketing pages and product update forms. See [Mailing Lists](/configuration/mailing-lists/) for setup, request shape, and operational behavior.

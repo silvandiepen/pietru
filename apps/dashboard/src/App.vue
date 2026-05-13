@@ -54,7 +54,6 @@ textarea {
 }
 
 #app {
-  min-height: 100vh;
   background: var(--pietru-color-background);
 }
 </style>

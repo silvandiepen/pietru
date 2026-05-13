@@ -35,6 +35,34 @@ https://api.pietru.dev/v1
 | `GET` | `/inbox/:id` | Get message details |
 | `GET` | `/projects/:id/messages` | List messages for a project |
 
+### Mailing Lists
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/mailing-list/subscriptions` | Subscribe an email address to a public mailing list |
+
+`POST /mailing-list/subscriptions` is public and does not require an API key. It accepts:
+
+```json
+{
+  "email": "reader@example.com",
+  "name": "Reader Name",
+  "list": "pietru-updates"
+}
+```
+
+Successful requests return:
+
+```json
+{
+  "data": {
+    "ok": true
+  }
+}
+```
+
+See [Mailing Lists](/configuration/mailing-lists/) for setup and operational details.
+
 ### Query Parameters (Messages)
 
 | Parameter | Type | Description |

@@ -10,6 +10,21 @@
     "github": "GitHub",
     "allRightsReserved": "All rights reserved."
   },
+  "mailingList": {
+    "eyebrow": "Mailing list",
+    "title": "Follow what ships next",
+    "summary": "Get short Pietru updates when new email providers, testing workflows, and delivery tools are ready.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "button": "Join list",
+    "buttonSubmitting": "Joining",
+    "status": {
+      "idle": "Product updates only. No spam.",
+      "submitting": "Joining...",
+      "success": "You're on the list.",
+      "error": "Could not join the list right now. Please try again."
+    }
+  },
   "home": {
     "eyebrow": "Email gateway for developers with multiple products",
     "heroHeading": "One dashboard for all your product emails",

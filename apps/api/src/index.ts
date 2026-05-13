@@ -18,6 +18,7 @@ import { replyRoutes } from './routes/reply';
 import { domainVerificationRoutes } from './routes/domain-verifications';
 import { reservedRoutes } from './routes/reserved-addresses';
 import { testAliasRoutes } from './routes/test-aliases';
+import { mailingListRoutes } from './routes/mailing-list';
 
 const app = new Hono<{ Bindings: Env; Variables: AppVariables }>();
 
@@ -32,6 +33,8 @@ app.use(
         'https://api.pietru.dev',
         'http://localhost:5173',
         'http://localhost:5174',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
       ];
       if (allowed.includes(origin)) return origin;
       if (/^https:\/\/[a-z0-9-]+\.pietru-dashboard\.pages\.dev$/.test(origin)) return origin;
@@ -76,6 +79,7 @@ app.route('/v1', replyRoutes);
 app.route('/v1', reservedRoutes);
 app.route('/v1', testAliasRoutes);
 app.route('/v1', domainVerificationRoutes);
+app.route('/v1', mailingListRoutes);
 
 import { handleInboundEmail } from './inbound';
 

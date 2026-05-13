@@ -13,3 +13,10 @@ Pietru sits between your application and email providers (Postmark, SendGrid, Ma
 - **Search and filter** across all projects
 - **Team access** with role-based permissions
 - **API-first** — integrate with your existing workflow
+- **Mailing lists** — capture product update signups through the Pietru API
+
+## Documentation Sections
+
+- [Getting Started](/getting-started/) — Create your account and send your first messages
+- [Configuration](/configuration/) — Configure providers, environments, aliases, and mailing lists
+- [API Reference](/api/) — Use Pietru programmatically

@@ -64,3 +64,9 @@ export const replyMessageSchema = z
       });
     }
   });
+
+export const mailingListSubscriptionSchema = z.object({
+  email: z.string().email(),
+  name: z.string().trim().min(1).max(120).optional(),
+  list: z.string().trim().min(1).max(80).default('pietru-updates'),
+});
