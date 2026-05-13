@@ -15,6 +15,10 @@ on:
       - 'apps/api/**'
       - 'vitest.config.ts'
 
+permissions:
+  contents: read
+  deployments: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - run: for pkg in packages/auth packages/core packages/db packages/providers packages/validation; do npm run build --workspace=$pkg; done
@@ -36,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - run: for pkg in packages/auth packages/core packages/db packages/providers packages/validation; do npm run build --workspace=$pkg; done
