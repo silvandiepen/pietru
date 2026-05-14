@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { apiRequest } from '@/api/client'
 
 export interface DomainVerification {
   id: string
@@ -16,8 +17,6 @@ export interface DomainVerification {
   updated_at: string
 }
 
-const API_BASE = '/v1'
-
 export const useDomainVerificationsStore = defineStore('domainVerifications', () => {
   const items = ref<DomainVerification[]>([])
   const loading = ref(false)
@@ -31,15 +30,10 @@ export const useDomainVerificationsStore = defineStore('domainVerifications', ()
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`${API_BASE}/projects/${projectId}/domain-verifications`, {
-        credentials: 'include',
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error?.message || `HTTP ${res.status}`)
-      }
-      const data = await res.json()
-      items.value = data.data || []
+      const data = await apiRequest<DomainVerification[]>(
+        `/projects/${projectId}/domain-verifications`,
+      )
+      items.value = data || []
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch domain verifications'
     } finally {
@@ -50,19 +44,15 @@ export const useDomainVerificationsStore = defineStore('domainVerifications', ()
   async function addDomain(projectId: string, domain: string) {
     clearError()
     try {
-      const res = await fetch(`${API_BASE}/projects/${projectId}/domain-verifications`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ domain }),
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error?.message || `HTTP ${res.status}`)
-      }
-      const data = await res.json()
-      items.value.unshift(data.data)
-      return data.data
+      const data = await apiRequest<DomainVerification>(
+        `/projects/${projectId}/domain-verifications`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ domain }),
+        },
+      )
+      items.value.unshift(data)
+      return data
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to add domain'
       throw e
@@ -72,18 +62,13 @@ export const useDomainVerificationsStore = defineStore('domainVerifications', ()
   async function verifyDomain(projectId: string, domainId: string) {
     clearError()
     try {
-      const res = await fetch(`${API_BASE}/projects/${projectId}/domain-verifications/${domainId}/verify`, {
-        method: 'POST',
-        credentials: 'include',
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error?.message || `HTTP ${res.status}`)
-      }
-      const data = await res.json()
+      const data = await apiRequest<DomainVerification>(
+        `/projects/${projectId}/domain-verifications/${domainId}/verify`,
+        { method: 'POST' },
+      )
       const idx = items.value.findIndex((i) => i.id === domainId)
-      if (idx >= 0) items.value[idx] = data.data
-      return data.data
+      if (idx >= 0) items.value[idx] = data
+      return data
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to verify domain'
       throw e
@@ -93,14 +78,10 @@ export const useDomainVerificationsStore = defineStore('domainVerifications', ()
   async function removeDomain(projectId: string, domainId: string) {
     clearError()
     try {
-      const res = await fetch(`${API_BASE}/projects/${projectId}/domain-verifications/${domainId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error?.message || `HTTP ${res.status}`)
-      }
+      await apiRequest<{ ok: boolean }>(
+        `/projects/${projectId}/domain-verifications/${domainId}`,
+        { method: 'DELETE' },
+      )
       const idx = items.value.findIndex((i) => i.id === domainId)
       if (idx >= 0) {
         items.value[idx].verification_status = 'DELETED'
