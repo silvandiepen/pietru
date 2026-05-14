@@ -92,7 +92,7 @@ export async function signAwsRequest(
   if (hasBody) {
     headerLines.unshift(`content-type:application/json`);
   }
-  const canonicalHeaders = headerLines.join('\n');
+  const canonicalHeaders = headerLines.join('\n') + '\n';
 
   const canonicalRequest = [
     method,
