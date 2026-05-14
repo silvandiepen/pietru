@@ -19,6 +19,9 @@ const router = createRouter({
     { path: '/inbox', component: () => import('@/views/InboxView.vue') },
     { path: '/inbox/:id', component: () => import('@/views/InboxDetailView.vue') },
     { path: '/settings', component: () => import('@/views/SettingsView.vue') },
+    { path: '/mailing-lists', component: () => import('@/views/MailingListsView.vue') },
+    { path: '/mailing-lists/:id', component: () => import('@/views/MailingListDetailView.vue') },
+    { path: '/mailing-lists/confirm', component: () => import('@/views/MailingListConfirmView.vue'), meta: { public: true } },
     {
       path: '/admin',
       component: () => import('@/views/AdminView.vue'),

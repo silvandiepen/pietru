@@ -1,0 +1,25 @@
+import type { PietruThemeConfig } from './types.js'
+
+export const defaultTheme: Required<PietruThemeConfig> = {
+  logoUrl: '',
+  logoWidth: '200px',
+  logoAlt: '',
+  primaryColor: '#083F61',
+  secondaryColor: '',
+  backgroundColor: '#ffffff',
+  textColor: '#333333',
+  footerBgColor: '#f5f5f5',
+  linkColor: '#083F61',
+  fontFamily: 'system-ui, -apple-system, sans-serif',
+  headingFont: 'system-ui, -apple-system, sans-serif',
+  companyName: '',
+  footerText: '',
+  socialLinks: {},
+  addressLine1: '',
+  addressLine2: '',
+  city: '',
+  country: '',
+  unsubscribePageTitle: 'Unsubscribe',
+  unsubscribePageMessage: 'We\'re sorry to see you go.',
+  unsubscribeButtonColor: '#083F61',
+}
