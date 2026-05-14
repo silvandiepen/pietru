@@ -28,7 +28,7 @@
               <router-link :to="`/mailing-lists/${list.id}`">
                 <strong>{{ list.name }}</strong>
               </router-link>
-              <p>{{ list.slug }} · {{ list.projectId }}</p>
+              <p>{{ list.slug }} · {{ getProjectName(list.projectId) }}</p>
               <p v-if="list.description">{{ list.description }}</p>
             </div>
             <div class="mailing-lists-view__item-meta">
@@ -147,6 +147,10 @@ async function createList() {
 async function deleteList(listId: string) {
   if (!confirm('Delete this mailing list and all its subscribers?')) return
   await store.deleteList(listId)
+}
+
+function getProjectName(projectId: string) {
+  return projectsStore.items.find((p) => p.id === projectId)?.name ?? projectId
 }
 </script>
 

@@ -42,6 +42,19 @@ export const useMailingListsStore = defineStore('mailingLists', {
       }
     },
 
+    async fetchListsByProject(projectId: string) {
+      this.loading = true
+      this.error = null
+      try {
+        const all = await apiRequest<MailingList[]>('/mailing-lists')
+        this.lists = all.filter((l) => l.projectId === projectId)
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : 'Failed to load mailing lists'
+      } finally {
+        this.loading = false
+      }
+    },
+
     async fetchList(listId: string) {
       this.loading = true
       this.error = null

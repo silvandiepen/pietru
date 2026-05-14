@@ -27,8 +27,9 @@ async function sesApiCall(
     env.PIETRU_SES_ACCESS_KEY_ID, env.PIETRU_SES_SECRET_ACCESS_KEY,
   );
 
+  const hasBody = bodyStr.length > 0;
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     'Authorization': authorization,
     'X-Amz-Date': amzDate,
   };
@@ -36,12 +37,13 @@ async function sesApiCall(
   const response = await fetch(url, {
     method,
     headers,
-    body: method !== 'GET' && method !== 'DELETE' ? bodyStr : undefined,
+    body: hasBody ? bodyStr : undefined,
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `SES API error: ${response.status}`);
+    const errorBody = await response.json().catch(() => ({})) as { message?: string; Error?: { Message?: string; Code?: string } };
+    const msg = errorBody.Error?.Message ?? errorBody.message ?? `SES API error: ${response.status}`;
+    throw new Error(msg);
   }
 
   return response.json();

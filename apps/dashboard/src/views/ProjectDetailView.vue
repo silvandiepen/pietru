@@ -167,6 +167,21 @@
         <p v-else class="project-detail-view__empty">{{ $t('projectDetail.noDomains') }}</p>
       </section>
 
+      <section v-if="tab === 'mailing lists'" class="project-detail-view__panel">
+        <h3>Mailing Lists</h3>
+        <p v-if="!projectMailingLists.length" class="project-detail-view__empty">No mailing lists for this project.</p>
+        <ul v-else class="project-detail-view__list">
+          <li v-for="ml in projectMailingLists" :key="ml.id">
+            <div>
+              <strong><router-link :to="`/mailing-lists/${ml.id}`">{{ ml.name }}</router-link></strong>
+              <p>{{ ml.slug }} · {{ ml.subscriberCount ?? 0 }} subscribers</p>
+              <p v-if="ml.description">{{ ml.description }}</p>
+            </div>
+            <button type="button" @click="deleteMailingList(ml.id)">Delete</button>
+          </li>
+        </ul>
+      </section>
+
       <ApiKeyCreateDialog
         :open="dialogOpen"
         :revealed-key="apiKeysStore.lastCreatedKey?.key || null"
@@ -189,6 +204,7 @@ import ProviderConfigForm from '@/components/ProviderConfigForm'
 import { useApiKeysStore } from '@/stores/apiKeys'
 import { useDomainVerificationsStore } from '@/stores/domainVerifications'
 import { useEmailHooksStore } from '@/stores/emailHooks'
+import { useMailingListsStore } from '@/stores/mailingLists'
 import { useProjectsStore } from '@/stores/projects'
 import { useProvidersStore } from '@/stores/providers'
 import type { ApiKeyCreateDialogSubmitPayload } from '@/components/ApiKeyCreateDialog/ApiKeyCreateDialog.model'
@@ -201,6 +217,7 @@ const apiKeysStore = useApiKeysStore()
 const providersStore = useProvidersStore()
 const emailHooksStore = useEmailHooksStore()
 const domainStore = useDomainVerificationsStore()
+const mailingListsStore = useMailingListsStore()
 const { t } = useI18n()
 
 const tabs = [
@@ -209,6 +226,7 @@ const tabs = [
   { key: 'provider config' as const, label: computed(() => t('projectDetail.tabProviderConfig')) },
   { key: 'hooks' as const, label: computed(() => 'Hooks') },
   { key: 'domains' as const, label: computed(() => t('projectDetail.tabDomains')) },
+  { key: 'mailing lists' as const, label: computed(() => 'Mailing Lists') },
 ]
 const tab = ref<(typeof tabs)[number]['key']>('environments')
 const dialogOpen = ref(false)
@@ -228,6 +246,7 @@ const project = computed(() => projectsStore.items.find((item) => item.id === pr
 const apiKeys = computed(() => apiKeysStore.items[projectId.value] || [])
 const providerConfigs = computed(() => providersStore.items[projectId.value] || [])
 const emailHooks = computed(() => emailHooksStore.items[projectId.value] || [])
+const projectMailingLists = computed(() => mailingListsStore.lists)
 
 onMounted(async () => {
   await Promise.all([
@@ -237,6 +256,7 @@ onMounted(async () => {
     providersStore.list(projectId.value),
     emailHooksStore.list(projectId.value),
     domainStore.fetchAll(projectId.value),
+    mailingListsStore.fetchListsByProject(projectId.value),
   ])
   projectsStore.setActiveProject(projectId.value)
 })
@@ -302,6 +322,11 @@ async function refreshDomain(domainId: string) {
 
 async function removeDomain(domainId: string) {
   await domainStore.removeDomain(projectId.value, domainId)
+}
+
+async function deleteMailingList(listId: string) {
+  if (!confirm('Delete this mailing list and all its subscribers?')) return
+  await mailingListsStore.deleteList(listId)
 }
 
 function closeDialog() {

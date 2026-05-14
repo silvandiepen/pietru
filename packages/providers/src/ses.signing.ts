@@ -84,18 +84,22 @@ export async function signAwsRequest(
 
   const payloadHash = await sha256Hex(body);
 
-  const canonicalHeaders = [
-    `content-type:application/json`,
-    `host:${host}`,
-    `x-amz-date:${amzDate}`,
-  ].join('\n');
+  // Only include content-type in signed headers for requests with a body
+  const hasBody = body.length > 0;
+  const signedHeaderNames = hasBody ? 'content-type;host;x-amz-date' : 'host;x-amz-date';
+
+  const headerLines = [`host:${host}`, `x-amz-date:${amzDate}`];
+  if (hasBody) {
+    headerLines.unshift(`content-type:application/json`);
+  }
+  const canonicalHeaders = headerLines.join('\n');
 
   const canonicalRequest = [
     method,
     canonicalUri,
     canonicalQuerystring,
     canonicalHeaders,
-    SIGNED_HEADERS,
+    signedHeaderNames,
     payloadHash,
   ].join('\n');
 
@@ -112,7 +116,7 @@ export async function signAwsRequest(
 
   const authorization = [
     `${ALGORITHM} Credential=${accessKeyId}/${credentialScope}`,
-    `SignedHeaders=${SIGNED_HEADERS}`,
+    `SignedHeaders=${signedHeaderNames}`,
     `Signature=${signature}`,
   ].join(', ');
 
