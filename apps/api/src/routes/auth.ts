@@ -101,19 +101,23 @@ authRoutes.post('/register', async (c) => {
   const session = await createSessionToken(c, userId);
   setCookie(c, 'session', session, sessionCookieOptions());
 
-  // Send verification email (non-blocking — don't fail registration if email fails)
-  const emailConfig = {
-    apiKey: c.env.SYSTEM_EMAIL_API_KEY,
-    from: c.env.SYSTEM_EMAIL_FROM,
-  };
-  const dashboardUrl = c.env.DASHBOARD_URL;
-  sendVerificationEmail(emailConfig, {
-    to: body.data.email.toLowerCase(),
-    token: verifyToken,
-    dashboardUrl,
-  }).catch((err) => {
+  // Send verification email after the response without letting the Worker cancel it.
+  // In Cloudflare Workers, fire-and-forget promises that are not passed to waitUntil()
+  // may be terminated when the request completes, which made delivery nondeterministic.
+  const verificationEmail = sendVerificationEmail(
+    {
+      apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+      from: c.env.SYSTEM_EMAIL_FROM,
+    },
+    {
+      to: body.data.email.toLowerCase(),
+      token: verifyToken,
+      dashboardUrl: c.env.DASHBOARD_URL,
+    },
+  ).catch((err) => {
     console.error('Failed to send verification email:', err);
   });
+  c.executionCtx.waitUntil(verificationEmail);
 
   return c.json(
     success({
@@ -235,19 +239,22 @@ authRoutes.post('/forgot-password', async (c) => {
     )
     .run();
 
-  // Send password reset email (non-blocking)
-  const emailConfig = {
-    apiKey: c.env.SYSTEM_EMAIL_API_KEY,
-    from: c.env.SYSTEM_EMAIL_FROM,
-  };
-  const dashboardUrl = c.env.DASHBOARD_URL;
-  sendPasswordResetEmail(emailConfig, {
-    to: body.data.email.toLowerCase(),
-    token,
-    dashboardUrl,
-  }).catch((err) => {
+  // Send password reset email without blocking the response, but attach it to the
+  // Worker lifetime so Cloudflare does not cancel the send after the request completes.
+  const passwordResetEmail = sendPasswordResetEmail(
+    {
+      apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+      from: c.env.SYSTEM_EMAIL_FROM,
+    },
+    {
+      to: body.data.email.toLowerCase(),
+      token,
+      dashboardUrl: c.env.DASHBOARD_URL,
+    },
+  ).catch((err) => {
     console.error('Failed to send password reset email:', err);
   });
+  c.executionCtx.waitUntil(passwordResetEmail);
 
   return c.json(success({ ok: true }));
 });
