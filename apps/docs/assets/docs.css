@@ -1,0 +1,34 @@
+:root {
+  --docs-accent: #55c267;
+  --docs-accent-soft: color-mix(in srgb, var(--docs-accent) 14%, var(--color-background));
+}
+
+body,
+h1,
+h2,
+h3 {
+  letter-spacing: normal;
+}
+
+.header {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+}
+
+.logo__text,
+.navigation__link:hover,
+.navigation__link--active,
+.content a {
+  color: color-mix(in srgb, var(--color-foreground) 78%, var(--docs-accent));
+}
+
+.content code:not(pre code) {
+  background: var(--docs-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--docs-accent) 28%, transparent);
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.content blockquote {
+  border-left: 0.25rem solid var(--docs-accent);
+  background: var(--docs-accent-soft);
+}
