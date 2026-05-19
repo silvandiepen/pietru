@@ -2,16 +2,20 @@ name: Dashboard CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, development]
     paths:
       - 'apps/dashboard/**'
       - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/dashboard.yml'
   pull_request:
-    branches: [main]
+    branches: [main, development]
     paths:
       - 'apps/dashboard/**'
       - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
 
 permissions:
   contents: read
@@ -27,9 +31,9 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - run: bash -c 'cd apps/dashboard && npx vite build'
+      - run: bash -c 'cd apps/dashboard && rm -rf dist && npx vite build'
         env:
-          VITE_PIETRU_API_URL: https://api.pietru.dev
+          VITE_PIETRU_API_URL: ${{ github.ref == 'refs/heads/development' && 'https://api.dev.pietru.dev' || 'https://api.pietru.dev' }}
       - uses: actions/upload-artifact@v4
         with:
           name: dashboard-dist
@@ -37,7 +41,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,4 +53,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/dashboard/dist --project-name=pietru-dashboard
+          wranglerVersion: '4'
+          command: pages deploy apps/dashboard/dist --project-name=${{ github.ref == 'refs/heads/development' && 'pietru-dashboard-dev' || 'pietru-dashboard' }} --branch=${{ github.ref_name }}

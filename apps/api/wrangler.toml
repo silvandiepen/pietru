@@ -21,3 +21,31 @@ bucket_name = "pietru-storage"
 INBOUND_EMAIL_ADDRESS = "inbound@pietru.dev"
 OUTBOUND_EMAIL_ADDRESS = "no-reply@pietru.dev"
 OUTBOUND_EMAIL_NAME = "Pietru"
+
+[env.development]
+name = "pietru-api-dev"
+routes = [
+  { pattern = "api.dev.pietru.dev", custom_domain = true }
+]
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "pietru-dev"
+database_id = "7803d90e-b6d4-4ab7-b5d3-f1e54f5b4ea8"
+migrations_dir = "../../packages/db/migrations"
+
+[[env.development.kv_namespaces]]
+binding = "KV"
+id = "e3d55d9571454c9f8e2f84f7e67a0b2b"
+
+[[env.development.r2_buckets]]
+binding = "STORAGE"
+bucket_name = "pietru-storage-dev"
+
+[env.development.vars]
+INBOUND_EMAIL_ADDRESS = "inbound@dev.pietru.dev"
+OUTBOUND_EMAIL_ADDRESS = "no-reply@dev.pietru.dev"
+OUTBOUND_EMAIL_NAME = "Pietru Dev"
+SYSTEM_EMAIL_FROM = "Pietru Dev <no-reply@dev.pietru.dev>"
+DASHBOARD_URL = "https://app.dev.pietru.dev"
+PIETRU_SES_REGION = "eu-central-1"

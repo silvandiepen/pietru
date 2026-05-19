@@ -5,7 +5,7 @@
     :navItems="[
       { id: 'features', label: $t('app.navFeatures'), to: '/features' },
       { id: 'pricing', label: $t('app.navPricing'), to: '/pricing' },
-      { id: 'docs', label: $t('app.navDocs'), href: 'https://docs.pietru.dev', external: true }
+      { id: 'docs', label: $t('app.navDocs'), href: docsUrl, external: true }
     ]"
     :actions="headerActions"
     @themeToggle="toggleColorMode"
@@ -36,6 +36,7 @@ const { t } = useI18n()
 const { toggleColorMode } = useColorMode()
 
 const dashboardUrl = import.meta.env.VITE_PIETRU_DASHBOARD_URL || 'https://app.pietru.dev'
+const docsUrl = import.meta.env.VITE_PIETRU_DOCS_URL || 'https://docs.pietru.dev'
 
 const headerActions = computed(() => [
   {

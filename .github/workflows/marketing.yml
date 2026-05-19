@@ -2,16 +2,20 @@ name: Marketing CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, development]
     paths:
       - 'apps/marketing/**'
       - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/marketing.yml'
   pull_request:
-    branches: [main]
+    branches: [main, development]
     paths:
       - 'apps/marketing/**'
       - 'packages/**'
+      - 'package.json'
+      - 'package-lock.json'
 
 permissions:
   contents: read
@@ -27,7 +31,11 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - run: bash -c 'cd apps/marketing && npx vite build'
+      - run: bash -c 'cd apps/marketing && rm -rf dist && npx vite build'
+        env:
+          VITE_PIETRU_API_URL: ${{ github.ref == 'refs/heads/development' && 'https://api.dev.pietru.dev' || 'https://api.pietru.dev' }}
+          VITE_PIETRU_DASHBOARD_URL: ${{ github.ref == 'refs/heads/development' && 'https://app.dev.pietru.dev' || 'https://app.pietru.dev' }}
+          VITE_PIETRU_DOCS_URL: ${{ github.ref == 'refs/heads/development' && 'https://docs.dev.pietru.dev' || 'https://docs.pietru.dev' }}
       - uses: actions/upload-artifact@v4
         with:
           name: marketing-dist
@@ -35,7 +43,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,4 +55,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/marketing/dist --project-name=pietru-marketing
+          wranglerVersion: '4'
+          command: pages deploy apps/marketing/dist --project-name=${{ github.ref == 'refs/heads/development' && 'pietru-marketing-dev' || 'pietru-marketing' }} --branch=${{ github.ref_name }}

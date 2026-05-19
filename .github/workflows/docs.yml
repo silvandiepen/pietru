@@ -1,21 +1,19 @@
-name: API CI
+name: Docs CI
 
 on:
   push:
     branches: [main, development]
     paths:
-      - 'packages/**'
-      - 'apps/api/**'
-      - 'vitest.config.ts'
+      - 'apps/docs/**'
+      - 'docs/**'
       - 'package.json'
       - 'package-lock.json'
-      - '.github/workflows/api.yml'
+      - '.github/workflows/docs.yml'
   pull_request:
     branches: [main, development]
     paths:
-      - 'packages/**'
-      - 'apps/api/**'
-      - 'vitest.config.ts'
+      - 'apps/docs/**'
+      - 'docs/**'
       - 'package.json'
       - 'package-lock.json'
 
@@ -24,7 +22,7 @@ permissions:
   deployments: write
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,25 +31,25 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - run: for pkg in packages/auth packages/core packages/db packages/providers packages/validation; do npm run build --workspace=$pkg; done
-      - run: npx vitest run apps/api packages
+      - run: bash -c 'cd apps/docs && rm -rf public && npx girk'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-public
+          path: apps/docs/public
 
   deploy:
-    needs: test
+    needs: build
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/download-artifact@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      - run: npm ci
-      - run: for pkg in packages/auth packages/core packages/db packages/providers packages/validation; do npm run build --workspace=$pkg; done
+          name: docs-public
+          path: apps/docs/public
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4'
-          workingDirectory: apps/api
-          command: ${{ github.ref == 'refs/heads/development' && 'deploy --env development' || 'deploy' }}
+          command: pages deploy apps/docs/public --project-name=${{ github.ref == 'refs/heads/development' && 'pietru-docs-dev' || 'pietru-docs' }} --branch=${{ github.ref_name }}

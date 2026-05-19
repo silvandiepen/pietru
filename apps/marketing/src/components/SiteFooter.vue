@@ -12,6 +12,7 @@ const bemm = useBemm('site-footer', { return: 'string' })
 const currentYear = new Date().getFullYear()
 const { i18n } = useI18n()
 const { colorMode, toggleColorMode } = useColorMode()
+const docsUrl = import.meta.env.VITE_PIETRU_DOCS_URL || 'https://docs.pietru.dev'
 
 const localeOptions: LanguageSwitchOption[] = [
   { label: 'English', code: 'en', value: 'en', nativeName: 'English' },
@@ -35,7 +36,7 @@ function handleLocaleSelect(option: LanguageSwitchOption) {
       <nav :class="bemm('nav')">
         <RouterLink to="/features">{{ $t('app.navFeatures') }}</RouterLink>
         <RouterLink to="/pricing">{{ $t('app.navPricing') }}</RouterLink>
-        <a href="https://docs.pietru.dev" target="_blank" rel="noopener">{{ $t('app.navDocs') }}</a>
+        <a :href="docsUrl" target="_blank" rel="noopener">{{ $t('app.navDocs') }}</a>
         <a href="https://github.com/silvandiepen/pietru" target="_blank" rel="noopener">{{ $t('app.github') }}</a>
       </nav>
       <div :class="bemm('divider')" />
