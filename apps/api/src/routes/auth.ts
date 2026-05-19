@@ -1,5 +1,5 @@
 import { hashPassword, hashToken, verifyPassword, generateToken } from '@pietru/auth';
-import { generateId, sendVerificationEmail, sendPasswordResetEmail } from '@pietru/core';
+import { generateId, MESSAGE_EVENT_TYPES, MESSAGE_STATUSES, sendVerificationEmail, sendPasswordResetEmail } from '@pietru/core';
 import {
   changePasswordSchema,
   forgotPasswordSchema,
@@ -60,6 +60,72 @@ async function createSessionToken(c: { env: Env }, userId: string) {
   return jwt;
 }
 
+async function captureTestAliasSystemEmail(
+  env: Env,
+  options: { to: string; from: string; subject: string; html: string; text: string; token: string },
+) {
+  const [, domain = ''] = options.to.toLowerCase().split('@');
+  if (domain !== 'test.pietru.dev') {
+    return;
+  }
+
+  const localPart = options.to.split('@')[0]?.toLowerCase().trim();
+  if (!localPart) {
+    return;
+  }
+
+  const alias = await env.DB.prepare(
+    'SELECT id, user_id, project_id, local_part FROM test_aliases WHERE local_part = ? AND is_active = 1',
+  )
+    .bind(localPart)
+    .first<{ id: string; user_id: string; project_id: string | null; local_part: string }>();
+
+  if (!alias?.project_id) {
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const messageId = generateId('msg');
+  const tags = { test_alias: alias.local_part, user_id: alias.user_id, system_email: 'verification' };
+
+  await env.DB.prepare(
+    `INSERT INTO messages (
+      id, project_id, provider_config_id, environment, to_address, from_address,
+      reply_to, cc_json, bcc_json, subject, html, text, status, provider,
+      provider_message_id, error, tags_json, raw_storage_key, html_storage_key,
+      text_storage_key, idempotency_key_hash, created_at, queued_at, sent_at, failed_at
+    ) VALUES (?, ?, NULL, 'production', ?, ?, NULL, NULL, NULL, ?, ?, ?, ?, 'pietru_system_email_capture',
+      NULL, NULL, ?, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL)`,
+  )
+    .bind(
+      messageId,
+      alias.project_id,
+      options.to,
+      options.from,
+      options.subject,
+      options.html,
+      options.text,
+      MESSAGE_STATUSES.received,
+      JSON.stringify(tags),
+      now,
+    )
+    .run();
+
+  await env.DB.prepare(
+    'INSERT INTO message_events (id, message_id, project_id, type, provider, payload_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
+    .bind(
+      generateId('evt'),
+      messageId,
+      alias.project_id,
+      MESSAGE_EVENT_TYPES.received,
+      'pietru_system_email_capture',
+      JSON.stringify({ to: options.to, from: options.from, test_alias: alias.local_part, token: options.token }),
+      now,
+    )
+    .run();
+}
+
 const authRoutes = new Hono<App>();
 
 authRoutes.post('/register', async (c) => {
@@ -104,18 +170,34 @@ authRoutes.post('/register', async (c) => {
   // Send verification email after the response without letting the Worker cancel it.
   // In Cloudflare Workers, fire-and-forget promises that are not passed to waitUntil()
   // may be terminated when the request completes, which made delivery nondeterministic.
-  const verificationEmail = sendVerificationEmail(
-    {
-      apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+  const toEmail = body.data.email.toLowerCase();
+  const verifyUrl = `${c.env.DASHBOARD_URL}/verify-email?token=${encodeURIComponent(verifyToken)}`;
+  const verificationEmail = Promise.allSettled([
+    sendVerificationEmail(
+      {
+        apiKey: c.env.SYSTEM_EMAIL_API_KEY,
+        from: c.env.SYSTEM_EMAIL_FROM,
+      },
+      {
+        to: toEmail,
+        token: verifyToken,
+        dashboardUrl: c.env.DASHBOARD_URL,
+      },
+    ),
+    captureTestAliasSystemEmail(c.env, {
+      to: toEmail,
       from: c.env.SYSTEM_EMAIL_FROM,
-    },
-    {
-      to: body.data.email.toLowerCase(),
+      subject: 'Verify your email — Pietru',
+      html: `<p>Verify your email: <a href="${verifyUrl}">${verifyUrl}</a></p>`,
+      text: `Verify your email\n\n${verifyUrl}`,
       token: verifyToken,
-      dashboardUrl: c.env.DASHBOARD_URL,
-    },
-  ).catch((err) => {
-    console.error('Failed to send verification email:', err);
+    }),
+  ]).then((results) => {
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.error('Failed to send or capture verification email:', result.reason);
+      }
+    }
   });
   c.executionCtx.waitUntil(verificationEmail);
 

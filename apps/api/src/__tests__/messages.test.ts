@@ -1,10 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { messageRoutes } from '../routes/messages';
 import { createMockDb, createMockEnv, createMockKv, createMockR2 } from './helpers';
 import { generateApiKey, hashApiKey } from '@pietru/auth';
 
 const PROJECT_ID = 'proj_abc123';
 const ENVIRONMENT = 'development';
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 /**
  * Helper to fetch against the messageRoutes Hono app.
@@ -364,6 +368,101 @@ describe('POST /messages', () => {
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error.code).toBe('invalid_from_domain');
+  });
+
+  it('requires Pietru SMTP domain verification to belong to the sending project', async () => {
+    const mockDb = createMockDb();
+    let callCount = 0;
+    mockDb.first = vi.fn(async () => {
+      callCount++;
+      if (callCount === 1) {
+        return { id: 'pak_1', project_id: PROJECT_ID, environment: ENVIRONMENT, revoked_at: null };
+      }
+      if (callCount === 2) {
+        return {
+          id: 'pcfg_1',
+          project_id: PROJECT_ID,
+          provider_type: 'pietru',
+          config_encrypted: '{}',
+          mode: 'send',
+          environment: ENVIRONMENT,
+          default_from: 'Pietru <no-reply@pietru.dev>',
+          allowed_domains_json: '["pietru.dev"]',
+        };
+      }
+      return null;
+    });
+
+    const { res, mockDb: db } = await fetchMessageRoute({
+      method: 'POST',
+      path: '/messages',
+      headers: { Authorization: `Bearer ${projectKey}` },
+      body: {
+        to: 'user@example.com',
+        from: 'Pietru <no-reply@pietru.dev>',
+        subject: 'Test',
+        html: '<p>Hi</p>',
+      },
+      mockDb,
+    });
+
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error.code).toBe('domain_not_verified');
+    expect(db.bind).toHaveBeenCalledWith('pietru.dev', PROJECT_ID, 'SUCCESS');
+  });
+
+  it('allows Pietru SMTP no-reply@pietru.dev when pietru.dev is verified for the sending project', async () => {
+    const mockDb = createMockDb();
+    let callCount = 0;
+    mockDb.first = vi.fn(async () => {
+      callCount++;
+      if (callCount === 1) {
+        return { id: 'pak_1', project_id: PROJECT_ID, environment: ENVIRONMENT, revoked_at: null };
+      }
+      if (callCount === 2) {
+        return {
+          id: 'pcfg_1',
+          project_id: PROJECT_ID,
+          provider_type: 'pietru',
+          config_encrypted: '{}',
+          mode: 'send',
+          environment: ENVIRONMENT,
+          default_from: 'Pietru <no-reply@pietru.dev>',
+          allowed_domains_json: '["pietru.dev"]',
+        };
+      }
+      if (callCount === 3) {
+        return { verification_status: 'SUCCESS' };
+      }
+      if (callCount === 4) {
+        return { id: 'msg_new', status: 'sent', from_address: 'Pietru <no-reply@pietru.dev>' };
+      }
+      return null;
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(JSON.stringify({ MessageId: 'ses_123' }), { status: 200, headers: { 'Content-Type': 'application/json' } })),
+    );
+
+    const { res, mockDb: db } = await fetchMessageRoute({
+      method: 'POST',
+      path: '/messages',
+      headers: { Authorization: `Bearer ${projectKey}` },
+      body: {
+        to: 'user@example.com',
+        from: 'Pietru <no-reply@pietru.dev>',
+        subject: 'Test',
+        html: '<p>Hi</p>',
+      },
+      mockDb,
+    });
+
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    expect(body.data.status).toBe('sent');
+    expect(fetch).toHaveBeenCalled();
+    expect(db.bind).toHaveBeenCalledWith('pietru.dev', PROJECT_ID, 'SUCCESS');
   });
 });
 

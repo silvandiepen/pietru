@@ -107,6 +107,27 @@ describe('GET /inbox', () => {
     expect(body.data.items[0].id).toBe('msg_1');
   });
 
+  it('does not include NULL-project messages for a regular authenticated user', async () => {
+    const mockDb = createMockDb();
+    setupSessionAuth(mockDb);
+
+    mockDb.all = vi.fn(async () => ({ results: [] }));
+
+    const { res, mockDb: db } = await fetchInboxRoute({
+      method: 'GET',
+      path: '/inbox',
+      headers: { Cookie: await createSessionCookie() },
+      mockDb,
+    });
+
+    expect(res.status).toBe(200);
+    const sql = vi.mocked(db.prepare).mock.calls.find(([query]) => String(query).startsWith('SELECT m.*'))?.[0] as string;
+    expect(sql).toContain('INNER JOIN projects p ON p.id = m.project_id');
+    expect(sql).toContain('WHERE p.user_id = ?');
+    expect(sql).not.toContain('m.project_id IS NULL');
+    expect(db.bind).toHaveBeenLastCalledWith(USER_ID, 21);
+  });
+
   it('filters by project slug or ID', async () => {
     const mockDb = createMockDb();
     setupSessionAuth(mockDb);

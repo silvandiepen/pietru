@@ -33,7 +33,7 @@ inboxRoutes.get('/inbox', requireUserSession, async (c) => {
   const decodedCursor = queryCursor ? decodeCursor(queryCursor) : null;
 
   const filters: unknown[] = [userId];
-  let where = ' FROM messages m LEFT JOIN projects p ON p.id = m.project_id WHERE (p.user_id = ? OR m.project_id IS NULL)';
+  let where = ' FROM messages m INNER JOIN projects p ON p.id = m.project_id WHERE p.user_id = ?';
 
   if (queryProject) {
     // Support filtering by project slug or ID

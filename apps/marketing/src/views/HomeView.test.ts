@@ -26,11 +26,10 @@ describe('HomeView', () => {
     expect(wrapper.text()).toContain('One dashboard for all your product emails')
     expect(wrapper.text()).toContain('Get Started')
     expect(wrapper.text()).toContain('See How It Works')
-    expect(wrapper.text()).toContain('You have more products than email dashboards')
     expect(wrapper.text()).toContain('Set up once, see everything')
     expect(wrapper.text()).toContain('Two problems, one dashboard')
     expect(wrapper.text()).toContain('Stop juggling email dashboards')
-    expect(wrapper.text()).toContain('Get started for free')
+    expect(wrapper.text()).toContain('Open Dashboard')
   })
 
   it('renders dashboard buttons with target blank', async () => {

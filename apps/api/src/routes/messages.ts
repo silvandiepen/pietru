@@ -207,9 +207,9 @@ messageRoutes.post('/messages', requireProjectApiKey, async (c) => {
         const fromDomain = parsedFrom.email?.split('@')[1]?.toLowerCase();
         if (fromDomain) {
           const domainVerification = await c.env.DB.prepare(
-            'SELECT verification_status FROM domain_verifications WHERE domain = ? AND verification_status = ?',
+            'SELECT verification_status FROM domain_verifications WHERE domain = ? AND project_id = ? AND verification_status = ?',
           )
-            .bind(fromDomain, 'SUCCESS')
+            .bind(fromDomain, projectId, 'SUCCESS')
             .first<{ verification_status: string }>();
           if (!domainVerification) {
             return c.json(
